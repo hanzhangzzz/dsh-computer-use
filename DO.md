@@ -73,3 +73,12 @@
   计数路径。验证：单测全绿（click.after 含 iana 元素 + unchangedSince=2 折叠）；模型级
   multi-hop 16.9s pass，两次 click 的 result 均携带完整 post-click 列表，第二次 click 直接
   用第一次附带列表的 About Us。开放：部分变化页元素级 diff、超大列表分页。
+- 2026-08-25 05:50（do-something #9）：动作面补全——computer_type（索引寻址输入）。seam 加
+  type 方法（返回 filled/text/after 快照，与 click 同模式），provider 用 locator.fill + settle，
+  Consumer 加 computer_type 工具（SNAPSHOT_VALUE_PROPERTIES 常量统一 click/type 的 after schema，
+  消除复制）。排障：describeLocator 的 role 分类与 snapshot 不对称（漏 input/textarea，type 返
+  回 other ""）——补齐对称，正是主仓 prefer symmetry 规则的实例；另有一次 Edit 误插模块顶层
+  （匹配到错误注释锚点），读文件重排。验证：单测 2/2（httpbin 表单输入回显 value 进 name）；
+  模型级 Wikipedia 搜索任务：navigate→snapshot→type{19,"DeepSeek"}→click{21}→落在
+  en.wikipedia.org/wiki/DeepSeek（还顺带处理了自动补全建议）。动作面余量：scroll、按键、坐标
+  兜底。

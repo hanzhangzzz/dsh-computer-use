@@ -63,4 +63,18 @@ describe('computer-playwright provider over ctx.computer', () => {
       // owns the lifetime; Chrome exits with its stdio pipe.
       void ctx
   })
+
+  test('type fills a form textbox and reflects the value in the next snapshot', async () => {
+    const ctx = await mounted()
+    await ctx.computer.navigate('https://httpbin.org/forms/post')
+    const snap = await ctx.computer.snapshot()
+    const box = snap.elements.find(el => el.role === 'textbox')
+    expect(box).toBeDefined()
+    const typed = await ctx.computer.type(box!.index, 'Alice Zhang')
+    expect(typed.filled).toContain('textbox')
+    expect(typed.text).toBe('Alice Zhang')
+    // The post-input snapshot reflects the value through the element name.
+    const reflected = typed.after.elements.find(el => el.index === box!.index)
+    expect(reflected?.name).toContain('Alice Zhang')
+  })
 })

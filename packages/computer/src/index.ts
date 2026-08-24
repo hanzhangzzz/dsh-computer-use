@@ -15,6 +15,7 @@ import type {
   ComputerProvider,
   ComputerScreenshot,
   ComputerSnapshot,
+  ComputerTypeResult,
 } from './types.ts'
 import { ComputerError } from './types.ts'
 
@@ -26,6 +27,7 @@ export type {
   ComputerProvider,
   ComputerScreenshot,
   ComputerSnapshot,
+  ComputerTypeResult,
 } from './types.ts'
 
 declare module '@deepseek-ai/cordis' {
@@ -105,6 +107,11 @@ export class ComputerRuntime extends Service {
   /** @returns the click outcome from the selected provider. */
   async click(index: number, signal?: AbortSignal): Promise<ComputerClickResult> {
     return resolveProvider(this.providers, this.providerId).click(index, signal)
+  }
+
+  /** @returns the text-input outcome from the selected provider. */
+  async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
+    return resolveProvider(this.providers, this.providerId).type(index, text, signal)
   }
 
   /** @returns the screenshot from the selected provider. */

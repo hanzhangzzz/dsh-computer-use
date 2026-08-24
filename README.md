@@ -76,6 +76,10 @@ Single calls are fine at a 128k window, but repeat snapshots of an unchanged hea
 
 Still open: element-level diffs for partially changed pages, and capping/paginating very large lists.
 
+## Action surface
+
+`computer_navigate`, `computer_snapshot`, `computer_click`, `computer_type` (added 2026-08-25, index-addressed fill with the post-input snapshot embedded — verified with a live Wikipedia search that landed on the DeepSeek article through the autocomplete suggestion), `computer_screenshot`. Scroll, keys, and coordinate fallback remain open.
+
 ## Packaging (local, publish-ready)
 
 Three packages, all names free on npm as of 2026-08-24: `dsh-computer`, `dsh-computer-playwright`, `dsh-tool-computer`. The latter carries the bundle manifest (`dsh.bundle.patch` → `cordis.patch.yml`, package-name entries) and is what users install; `pnpm -r pack --dry-run` shows each tarball carrying `lib/` + LICENSE + README (+ patch). Note: the npm name `dsh-computer-use` itself is taken by an unrelated third-party plugin (jerryweizhihao, screen-coordinate-style computer use) — independent signal that this niche is active.

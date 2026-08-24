@@ -39,7 +39,26 @@ export const Config: z<Config> = z.object({
   screenshot: z.boolean().default(true),
 })
 
-/** Canonical screenshot value: the durable attachment reference plus metadata. */
+/** JSON Schema for one canonical snapshot value, shared by click/type outputs. */
+const SNAPSHOT_VALUE_PROPERTIES = {
+  url: { type: 'string', required: true },
+  title: { type: 'string', required: true },
+  elements: {
+    type: 'array',
+    required: true,
+    items: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        index: { type: 'integer', required: true },
+        role: { type: 'string', required: true },
+        name: { type: 'string', required: true },
+      },
+    },
+  },
+  unchangedSince: { type: 'integer' },
+} as const
+
 export interface ComputerScreenshotValue {
   readonly attachmentId: string
   readonly mediaType: 'image/png'
@@ -150,29 +169,7 @@ export function apply(ctx: Context, config: Config): void {
         properties: {
           clicked: { type: 'string', required: true },
           url: { type: 'string', required: true },
-          after: {
-            type: 'object',
-            required: true,
-            additionalProperties: false,
-            properties: {
-              url: { type: 'string', required: true },
-              title: { type: 'string', required: true },
-              elements: {
-                type: 'array',
-                required: true,
-                items: {
-                  type: 'object',
-                  additionalProperties: false,
-                  properties: {
-                    index: { type: 'integer', required: true },
-                    role: { type: 'string', required: true },
-                    name: { type: 'string', required: true },
-                  },
-                },
-              },
-              unchangedSince: { type: 'integer' },
-            },
-          },
+          after: { type: 'object', required: true, additionalProperties: false, properties: SNAPSHOT_VALUE_PROPERTIES },
         },
       },
       render: (_args, value) => [{ type: 'text', text: formatClick(value) }],
@@ -186,6 +183,44 @@ export function apply(ctx: Context, config: Config): void {
       return {
         clicked: result.clicked,
         url: result.url,
+        after: {
+          url: after.url,
+          title: after.title,
+          elements: [...after.elements],
+          ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
+        },
+      }
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'computer_type',
+    description: 'Type text into the textbox element at the given index from the latest snapshot (replaces existing content). Returns what was filled and the post-input snapshot with updated element names.',
+    parameters: {
+      index: { type: 'number', required: true, description: 'Element index from the latest snapshot.' },
+      text: { type: 'string', required: true, description: 'Text to enter.' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          filled: { type: 'string', required: true },
+          text: { type: 'string', required: true },
+          after: { type: 'object', required: true, additionalProperties: false, properties: SNAPSHOT_VALUE_PROPERTIES },
+        },
+      },
+      render: (_args, value) => [{ type: 'text', text: formatType(value) }],
+    },
+    timeoutMs,
+    isConcurrencySafe: () => false,
+    async execute(args, exec) {
+      const { index, text } = parseTypeArgs(args)
+      const result = await ctx.computer.type(index, text, exec.signal)
+      const after = result.after
+      return {
+        filled: result.filled,
+        text: result.text,
         after: {
           url: after.url,
           title: after.title,
@@ -244,6 +279,27 @@ function parseClickArgs(args: unknown): { index: number } {
     throw new Error('computer_click: index must be a non-negative integer from computer_snapshot')
   }
   return { index: value.index }
+}
+
+/** Narrow validated type args. */
+function parseTypeArgs(args: unknown): { index: number; text: string } {
+  const value = args as { index?: unknown; text?: unknown }
+  if (typeof value.index !== 'number' || !Number.isInteger(value.index) || value.index < 0) {
+    throw new Error('computer_type: index must be a non-negative integer from the latest snapshot')
+  }
+  if (typeof value.text !== 'string') {
+    throw new Error('computer_type: text must be a string')
+  }
+  return { index: value.index, text: value.text }
+}
+
+/** Lossy display of a type result: what was filled plus the post-input view. */
+function formatType(value: JsonValue): string {
+  const typed = value as { filled: string; text: string; after: { unchangedSince?: number } }
+  const after = typed.after.unchangedSince !== undefined
+    ? `unchanged since snapshot #${typed.after.unchangedSince} (prior indices remain valid)`
+    : formatSnapshot((value as { after: JsonValue }).after)
+  return [`filled ${typed.filled} with "${typed.text}"`, '', after].join('\n')
 }
 
 /** Lossy display of a snapshot value for model-facing text. */

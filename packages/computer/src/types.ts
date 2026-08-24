@@ -51,6 +51,16 @@ export interface ComputerClickResult {
   readonly after: ComputerSnapshot
 }
 
+/** Outcome of one text input, reported for model-side verification. */
+export interface ComputerTypeResult {
+  /** Description of the filled element (role + name). */
+  readonly filled: string
+  /** The text that was entered. */
+  readonly text: string
+  /** Snapshot taken after the input settled; the input loop's new baseline. */
+  readonly after: ComputerSnapshot
+}
+
 /** A PNG screenshot for visual verification. */
 export interface ComputerScreenshot {
   /** Encoded PNG bytes. */
@@ -78,6 +88,8 @@ export interface ComputerProvider {
   snapshot(signal?: AbortSignal): Promise<ComputerSnapshot>
   /** Click the element at {@link ComputerElement.index} from the last snapshot. */
   click(index: number, signal?: AbortSignal): Promise<ComputerClickResult>
+  /** Type text into the element at {@link ComputerElement.index} from the last snapshot. */
+  type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult>
   /** Capture the current viewport as PNG. */
   screenshot(signal?: AbortSignal): Promise<ComputerScreenshot>
   /** Release the backing surface; called once on dispose. */

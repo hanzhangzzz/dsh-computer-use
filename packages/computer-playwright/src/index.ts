@@ -18,6 +18,7 @@ import type {
   ComputerProvider,
   ComputerScreenshot,
   ComputerSnapshot,
+  ComputerTypeResult,
 } from 'dsh-computer'
 import type {} from 'dsh-computer'
 
@@ -164,6 +165,16 @@ class PlaywrightProvider implements ComputerProvider {
     return { clicked: described, url: page.url(), after }
   }
 
+  async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
+    const page = await this.getPage(signal)
+    const locator = page.locator(INTERACTIVE_SELECTOR).nth(index)
+    const described = await describeLocator(locator)
+    await locator.fill(text)
+    await page.waitForTimeout(300)
+    const after = await this.snapshot(signal)
+    return { filled: described, text, after }
+  }
+
   async screenshot(signal?: AbortSignal): Promise<ComputerScreenshot> {
     const page = await this.getPage(signal)
     const data = await page.screenshot({ type: 'png' })
@@ -182,17 +193,26 @@ class PlaywrightProvider implements ComputerProvider {
   }
 }
 
-/** One-line role+name description of a locator for click verification. */
+/** One-line role+name description of a locator for click/type verification. */
 async function describeLocator(locator: import('playwright-core').Locator): Promise<string> {
   const role = await locator.evaluate(node => {
     const el = node as HTMLElement
     return el.getAttribute('role')
       ?? (el instanceof HTMLAnchorElement ? 'link'
         : el instanceof HTMLButtonElement ? 'button'
+        : el instanceof HTMLInputElement ? (el.type === 'checkbox' || el.type === 'radio' ? el.type : 'textbox')
+        : el instanceof HTMLTextAreaElement ? 'textbox'
         : el instanceof HTMLSelectElement ? 'select'
+        : el.isContentEditable ? 'textbox'
         : 'other')
   })
-  const name = (await locator.innerText().catch(() => '')) || await locator.getAttribute('aria-label').catch(() => null) || ''
+  const name = (await locator.innerText().catch(() => ''))
+    || await locator.getAttribute('aria-label').catch(() => null)
+    || await locator.evaluate(node => {
+      const el = node as HTMLInputElement
+      return el.value || el.placeholder || ''
+    }).catch(() => '')
+    || ''
   return `${role} "${name.slice(0, 120)}"`
 }
 
