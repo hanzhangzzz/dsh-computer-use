@@ -11,6 +11,7 @@ import z from '@deepseek-ai/schemastery'
 import type {
   ComputerClickResult,
   ComputerElement,
+  ComputerKeyPressResult,
   ComputerNavigation,
   ComputerProvider,
   ComputerScreenshot,
@@ -23,6 +24,7 @@ export { ComputerError } from './types.ts'
 export type {
   ComputerClickResult,
   ComputerElement,
+  ComputerKeyPressResult,
   ComputerNavigation,
   ComputerProvider,
   ComputerScreenshot,
@@ -112,6 +114,11 @@ export class ComputerRuntime extends Service {
   /** @returns the text-input outcome from the selected provider. */
   async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
     return resolveProvider(this.providers, this.providerId).type(index, text, signal)
+  }
+
+  /** @returns the key-press outcome from the selected provider. */
+  async pressKey(key: string, signal?: AbortSignal): Promise<ComputerKeyPressResult> {
+    return resolveProvider(this.providers, this.providerId).pressKey(key, signal)
   }
 
   /** @returns the screenshot from the selected provider. */

@@ -78,7 +78,7 @@ Still open: element-level diffs for partially changed pages, and capping/paginat
 
 ## Action surface
 
-`computer_navigate`, `computer_snapshot`, `computer_click`, `computer_type` (added 2026-08-25, index-addressed fill with the post-input snapshot embedded — verified with a live Wikipedia search that landed on the DeepSeek article through the autocomplete suggestion), `computer_screenshot`. Scroll, keys, and coordinate fallback remain open.
+`computer_navigate`, `computer_snapshot`, `computer_click`, `computer_type` (index-addressed fill with the post-input snapshot embedded), `computer_press_key` (added 2026-08-25; Enter-submit verified on a live Wikipedia search — four tool calls straight to the article), `computer_screenshot`. Snapshot enumeration now retries once on the navigation race that used to surface "Execution context was destroyed" as a tool error. Scroll and coordinate fallback remain open.
 
 ## Packaging (local, publish-ready)
 

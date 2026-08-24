@@ -231,6 +231,41 @@ export function apply(ctx: Context, config: Config): void {
     },
   }))
 
+  ctx.tools.register(defineTool({
+    name: 'computer_press_key',
+    description: 'Press one keyboard key on the focused element (e.g. `Enter` to submit a filled form, `Escape` to dismiss). Returns the post-press snapshot.',
+    parameters: {
+      key: { type: 'string', required: true, description: 'Key in Playwright syntax: Enter, Escape, Tab, ArrowDown, or a single character.' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          key: { type: 'string', required: true },
+          after: { type: 'object', required: true, additionalProperties: false, properties: SNAPSHOT_VALUE_PROPERTIES },
+        },
+      },
+      render: (_args, value) => [{ type: 'text', text: formatKeyPress(value) }],
+    },
+    timeoutMs,
+    isConcurrencySafe: () => false,
+    async execute(args, exec) {
+      const { key } = parseKeyPressArgs(args)
+      const result = await ctx.computer.pressKey(key, exec.signal)
+      const after = result.after
+      return {
+        key: result.key,
+        after: {
+          url: after.url,
+          title: after.title,
+          elements: [...after.elements],
+          ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
+        },
+      }
+    },
+  }))
+
   if (config.screenshot ?? true) {
     ctx.tools.register(defineTool({
       name: 'computer_screenshot',
@@ -291,6 +326,24 @@ function parseTypeArgs(args: unknown): { index: number; text: string } {
     throw new Error('computer_type: text must be a string')
   }
   return { index: value.index, text: value.text }
+}
+
+/** Narrow validated key-press args. */
+function parseKeyPressArgs(args: unknown): { key: string } {
+  const value = args as { key?: unknown }
+  if (typeof value.key !== 'string' || value.key.length === 0 || value.key.length > 32) {
+    throw new Error('computer_press_key: key must be a short non-empty string (e.g. "Enter")')
+  }
+  return { key: value.key }
+}
+
+/** Lossy display of a key-press result. */
+function formatKeyPress(value: JsonValue): string {
+  const press = value as { key: string; after: { unchangedSince?: number } }
+  const after = press.after.unchangedSince !== undefined
+    ? `unchanged since snapshot #${press.after.unchangedSince} (prior indices remain valid)`
+    : formatSnapshot((value as { after: JsonValue }).after)
+  return [`pressed ${press.key}`, '', after].join('\n')
 }
 
 /** Lossy display of a type result: what was filled plus the post-input view. */

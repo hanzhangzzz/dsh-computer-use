@@ -14,6 +14,7 @@ import type { Browser, Page } from 'playwright-core'
 import type {
   ComputerClickResult,
   ComputerElement,
+  ComputerKeyPressResult,
   ComputerNavigation,
   ComputerProvider,
   ComputerScreenshot,
@@ -113,33 +114,8 @@ class PlaywrightProvider implements ComputerProvider {
 
   async snapshot(signal?: AbortSignal): Promise<ComputerSnapshot> {
     const page = await this.getPage(signal)
-    const handle = await page.evaluateHandle(selector => {
-      const nodes = Array.from(document.querySelectorAll(selector))
-      return nodes.map((node, index) => {
-        const el = node as HTMLElement
-        const role =
-          el.getAttribute('role')
-          ?? (el instanceof HTMLAnchorElement ? 'link'
-            : el instanceof HTMLButtonElement ? 'button'
-            : el instanceof HTMLInputElement ? (el.type === 'checkbox' || el.type === 'radio' ? el.type : 'textbox')
-            : el instanceof HTMLSelectElement ? 'select'
-            : el instanceof HTMLTextAreaElement ? 'textbox'
-            : el.isContentEditable ? 'textbox'
-            : 'other')
-        const name =
-          el.getAttribute('aria-label')
-          ?? (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
-            ? (el.value || el.placeholder)
-            : el instanceof HTMLSelectElement
-              ? el.value
-              : (el.textContent ?? '').trim())
-          ?? ''
-        return { index, role, name: name.slice(0, 200) }
-      })
-    }, INTERACTIVE_SELECTOR)
+    const elements = await enumerateInteractive(page)
     throwIfAborted(signal)
-    const elements = (await handle.jsonValue()) as ComputerElement[]
-    await handle.dispose()
     const url = page.url()
     const title = await page.title()
     const fingerprint = `${url}\n${elements.map(el => `${el.role}:${el.name}`).join('\n')}`
@@ -173,6 +149,15 @@ class PlaywrightProvider implements ComputerProvider {
     await page.waitForTimeout(300)
     const after = await this.snapshot(signal)
     return { filled: described, text, after }
+  }
+
+  async pressKey(key: string, signal?: AbortSignal): Promise<ComputerKeyPressResult> {
+    const page = await this.getPage(signal)
+    await page.keyboard.press(key)
+    await page.waitForLoadState('domcontentloaded', { timeout: 3_000 }).catch(() => {})
+    await page.waitForTimeout(300)
+    const after = await this.snapshot(signal)
+    return { key, after }
   }
 
   async screenshot(signal?: AbortSignal): Promise<ComputerScreenshot> {
@@ -219,6 +204,51 @@ async function describeLocator(locator: import('playwright-core').Locator): Prom
 /** Fail fast on cancellation between async steps. */
 function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) throw new Error('the computer call was canceled')
+}
+
+/**
+ * Enumerate interactive elements on one page. A navigation racing the
+ * enumeration destroys the execution context; that failure waits for the new
+ * document and retries once instead of surfacing to the model.
+ */
+async function enumerateInteractive(page: Page): Promise<ComputerElement[]> {
+  const enumerate = () => page.evaluateHandle(selector => {
+    const nodes = Array.from(document.querySelectorAll(selector))
+    return nodes.map((node, index) => {
+      const el = node as HTMLElement
+      const role =
+        el.getAttribute('role')
+        ?? (el instanceof HTMLAnchorElement ? 'link'
+          : el instanceof HTMLButtonElement ? 'button'
+          : el instanceof HTMLInputElement ? (el.type === 'checkbox' || el.type === 'radio' ? el.type : 'textbox')
+          : el instanceof HTMLSelectElement ? 'select'
+          : el instanceof HTMLTextAreaElement ? 'textbox'
+          : el.isContentEditable ? 'textbox'
+          : 'other')
+      const name =
+        el.getAttribute('aria-label')
+        ?? (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
+          ? (el.value || el.placeholder)
+          : el instanceof HTMLSelectElement
+            ? el.value
+            : (el.textContent ?? '').trim())
+        ?? ''
+      return { index, role, name: name.slice(0, 200) }
+    })
+  }, INTERACTIVE_SELECTOR)
+  try {
+    const handle = await enumerate()
+    const elements = (await handle.jsonValue()) as ComputerElement[]
+    await handle.dispose()
+    return elements
+  } catch (error: unknown) {
+    if (!(error instanceof Error) || !String(error.message).includes('Execution context was destroyed')) throw error
+    await page.waitForLoadState('domcontentloaded', { timeout: 5_000 }).catch(() => {})
+    const handle = await enumerate()
+    const elements = (await handle.jsonValue()) as ComputerElement[]
+    await handle.dispose()
+    return elements
+  }
 }
 
 /** Register the provider into `ctx.computer`. */

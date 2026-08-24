@@ -82,3 +82,10 @@
   模型级 Wikipedia 搜索任务：navigate→snapshot→type{19,"DeepSeek"}→click{21}→落在
   en.wikipedia.org/wiki/DeepSeek（还顺带处理了自动补全建议）。动作面余量：scroll、按键、坐标
   兜底。
+- 2026-08-25 07:00（do-something #10）：computer_press_key（Enter/Esc 等按键）。首跑暴露真
+  实缺陷：动作触发导航时 after-snapshot 的 evaluateHandle 撞上 "Execution context was
+  destroyed"（log 确认 2 次，模型靠补 snapshot 自愈掩盖）——修法：枚举抽成
+  enumerateInteractive，context-destroyed 时等 domcontentloaded 重试一次。验证：单测 2/2；
+  模型级 Wikipedia 搜索 Enter 路径重跑，log 0 次竞态报错，四步直达词条（navigate→snapshot
+  →type{19}→press_key{Enter}）。教训：模型自愈会把基础设施缺陷藏成"偶尔多一步"——log 级
+  核验（grep 报错串）必须在每次模型级验证里做。动作面余量：scroll、坐标兜底。

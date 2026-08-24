@@ -73,6 +73,14 @@ export interface ComputerScreenshot {
   readonly height: number
 }
 
+/** Outcome of one key press, reported for model-side verification. */
+export interface ComputerKeyPressResult {
+  /** The key that was pressed, in Playwright key syntax (e.g. `Enter`, `Escape`). */
+  readonly key: string
+  /** Snapshot taken after the press settled; the interaction's new baseline. */
+  readonly after: ComputerSnapshot
+}
+
 /**
  * A computer use provider: drives one interactive surface. Implementations
  * must forward cancellation into their underlying driver wherever feasible.
@@ -90,6 +98,8 @@ export interface ComputerProvider {
   click(index: number, signal?: AbortSignal): Promise<ComputerClickResult>
   /** Type text into the element at {@link ComputerElement.index} from the last snapshot. */
   type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult>
+  /** Press one keyboard key (e.g. `Enter`, `Escape`) on the focused element. */
+  pressKey(key: string, signal?: AbortSignal): Promise<ComputerKeyPressResult>
   /** Capture the current viewport as PNG. */
   screenshot(signal?: AbortSignal): Promise<ComputerScreenshot>
   /** Release the backing surface; called once on dispose. */
