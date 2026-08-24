@@ -1,0 +1,6 @@
+packages:
+  - packages/*
+allowBuilds:
+  # vitest transforms TS through esbuild; its install script installs the
+  # platform binary.
+  esbuild: true

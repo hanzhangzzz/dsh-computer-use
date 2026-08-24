@@ -1,2 +1,5 @@
+node_modules/
+lib/
+*.tsbuildinfo
 # Playwright-MCP server-side artifacts (auto-saved snapshots/screenshots)
 experiments/*/.playwright-mcp/

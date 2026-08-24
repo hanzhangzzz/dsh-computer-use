@@ -1,0 +1,24 @@
+{
+  "name": "dsh-computer-use",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc -b packages/computer packages/computer-playwright packages/tool-computer",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "link:../deepseek-harness/vendor/cordis",
+    "@deepseek-ai/dsh-attachment": "link:../deepseek-harness/packages/attachment/attachment",
+    "@deepseek-ai/dsh-llm": "link:../deepseek-harness/packages/llm/llm",
+    "@deepseek-ai/dsh-system-prompt": "link:../deepseek-harness/packages/core/system-prompt",
+    "@deepseek-ai/dsh-tools": "link:../deepseek-harness/packages/core/tools",
+    "@deepseek-ai/schemastery": "link:../deepseek-harness/vendor/schemastery",
+    "@types/node": "^22.19.0",
+    "playwright-core": "^1.61.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

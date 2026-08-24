@@ -1,0 +1,35 @@
+{
+  "name": "dsh-tool-computer",
+  "version": "0.1.0",
+  "description": "Model-facing computer_* tools over ctx.computer for DeepSeek Harness",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "computer-use"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "lib/types/index.d.ts"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "dsh-computer": "^0.1.0"
+  },
+  "dependencies": {
+    "dsh-computer": "workspace:*"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT"
+}

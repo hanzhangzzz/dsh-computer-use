@@ -1,0 +1,37 @@
+{
+  "name": "dsh-computer-playwright",
+  "version": "0.1.0",
+  "description": "Playwright provider for the dsh computer use seam: drives a local Chrome over playwright-core",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "computer-use",
+    "playwright"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "lib/types/index.d.ts"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "dsh-computer": "^0.1.0"
+  },
+  "dependencies": {
+    "dsh-computer": "workspace:*",
+    "playwright-core": "^1.61.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT"
+}
