@@ -2,9 +2,16 @@
 
 Computer use capability for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), packaged as an installable plugin (same distribution model as dsh-diagram: standalone npm package + `cordis.patch.yml` patch-layer bundle).
 
-## Status: Phase 0 — grounding feasibility
+## Status: Phase 0 complete — grounding measured
 
-The whole design gates on one unverified number: how accurately `deepseek-v4-flash-vision-exp` localizes GUI elements at its ~640k-pixel image budget. No public evidence exists (no OSWorld entry, nothing in the official docs), so we measure it ourselves on ScreenSpot-v2 before committing to an architecture.
+The whole design gates on one unverified number: how accurately `deepseek-v4-flash-vision-exp` localizes GUI elements at its ~640k-pixel image budget. No public evidence exists (no OSWorld entry, nothing in the official docs), so we measured it ourselves on ScreenSpot-v2 (200 samples, 2026-08-24, results in `experiments/screenspot-grounding/results/`):
+
+| mode | accuracy | median error | parse/API failures |
+|---|---|---|---|
+| single-shot | **61.8%** (118/191) | 60 px | 9/200 |
+| two-step region refine | 53.5% (93/174) | 80 px | 26/200 |
+
+Read: far above non-grounding generalist models (o3-class coordinate output sits near 23% on comparable tasks), well below specialized grounders (UI-TARS class, 85%+). Two-step refine is a net loss as naively implemented — the crop rescued 27 misses but broke 42 hits, mostly by losing global context. Consequence for the design: vision-only grounding cannot be the primary click path; the plugin leads with structure-first targeting (accessibility tree / DOM element index) and uses vision coordinates as the fallback, which the measured 62% supports well when wrapped in a screenshot-verify-retry loop.
 
 ```sh
 cd experiments/screenspot-grounding
