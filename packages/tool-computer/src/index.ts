@@ -70,6 +70,32 @@ export function apply(ctx: Context, config: Config): void {
   })
 
   ctx.tools.register(defineTool({
+    name: 'computer_navigate',
+    description: 'Open a URL in the browser page and wait for it to load. Returns the settled URL and page title.',
+    parameters: {
+      url: { type: 'string', required: true, description: 'The http(s) URL to open.' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          url: { type: 'string', required: true },
+          title: { type: 'string', required: true },
+        },
+      },
+      render: (_args, value) => [{ type: 'text', text: `loaded ${(value as { url: string }).url} — ${(value as { title: string }).title}` }],
+    },
+    timeoutMs,
+    isConcurrencySafe: () => false,
+    async execute(args, exec) {
+      const { url } = parseNavigateArgs(args)
+      const nav = await ctx.computer.navigate(url, exec.signal)
+      return { url: nav.url, title: nav.title }
+    },
+  }))
+
+  ctx.tools.register(defineTool({
     name: 'computer_snapshot',
     description: 'List the interactive elements of the current browser page with stable indices, plus its URL and title. Always call this before clicking.',
     parameters: {},
@@ -161,6 +187,15 @@ export function apply(ctx: Context, config: Config): void {
       },
     }))
   }
+}
+
+/** Narrow validated navigate args. */
+function parseNavigateArgs(args: unknown): { url: string } {
+  const value = args as { url?: unknown }
+  if (typeof value.url !== 'string' || !/^https?:\/\//.test(value.url)) {
+    throw new Error('computer_navigate: url must be an http(s) URL string')
+  }
+  return { url: value.url }
 }
 
 /** Narrow validated click args. */

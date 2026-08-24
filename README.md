@@ -37,6 +37,16 @@ Two findings that cost debugging time, both now fixed by configuration:
 1. **Playwright-MCP returns an image block only when `browser_take_screenshot` is called without `filename`**; passing a filename saves the PNG to disk and returns a text link, which silently bypasses the whole image path. Models pass `filename` readily — prompt for empty-args calls, or make Phase 2's tool Consumer not expose the parameter at all.
 2. **`~/.dsh/settings.yaml` overrides the adapter's model catalog** and the vision model entry there lacked `inputModalities`, so dsh's MCP image admission correctly rejected screenshots (`[image unavailable: … does not declare image input]`) despite the source default declaring them. Any host reusing this overlay needs `inputModalities: [text, image]` on the model entry.
 
+## Phase 2 in progress — the plugin exists and closes the loop
+
+The design review (docs/phase2-design-review.md) overturned the original provider order: Playwright/CDP local Chrome is the first provider (fast feedback loop, interface defined on mature semantics), E2B Desktop deferred. The tracer bullet is real and green (2026-08-24):
+
+- Three packages: `dsh-computer` (Service Definition, mirrors dsh-web selection semantics), `dsh-computer-playwright` (lazy headless Chrome over playwright-core, structure-first snapshot indices), `dsh-tool-computer` (`computer_navigate/snapshot/click/screenshot`; the no-code-analysis-of-screenshots rule is baked into tool descriptions).
+- `pnpm run typecheck` aligns against the main repo's real types via `link:` devDependencies; `pnpm run test` drives real Chrome through the seam (navigate → snapshot → click by index → screenshot, 5.5s).
+- Full model loop proven with the plugin loaded by absolute path (`experiments/phase2-tracer/cordis.patch.yml`): the session log shows `computer_navigate → computer_snapshot → computer_click{index:0} → computer_screenshot` and a durable image block; the model's answer contains purely visual facts (teal IANA logo) unreachable from the accessibility tree.
+
+Remaining before this phase closes: Consumer-level composition test, the 10-task acceptance suite (E8), snapshot token-cost measurement, packaging (npm publish + relative-path patch).
+
 ## Planned phases
 
 - **Phase 2** — the plugin proper: a `computer` capability seam (Service Definition + provider + tool Consumer) with screenshot/click/type/scroll/key actions, E2B Desktop as the first provider, approval wired into dsh's interaction seam.

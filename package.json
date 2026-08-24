@@ -6,8 +6,9 @@
     "node": "^22.19.0 || >=24.0.0"
   },
   "scripts": {
-    "typecheck": "tsc -b packages/computer packages/computer-playwright packages/tool-computer",
-    "test": "vitest run"
+    "build": "tsdown --config packages/computer/tsdown.config.ts && tsdown --config packages/computer-playwright/tsdown.config.ts && tsdown --config packages/tool-computer/tsdown.config.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -b packages/computer packages/computer-playwright packages/tool-computer"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "link:../deepseek-harness/vendor/cordis",
@@ -18,6 +19,7 @@
     "@deepseek-ai/schemastery": "link:../deepseek-harness/vendor/schemastery",
     "@types/node": "^22.19.0",
     "playwright-core": "^1.61.0",
+    "tsdown": "^0.22.14",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }

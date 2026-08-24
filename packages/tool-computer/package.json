@@ -10,16 +10,16 @@
   ],
   "type": "module",
   "main": "lib/index.js",
-  "types": "lib/types/index.d.ts",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/types/index.d.ts",
+      "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
     }
   },
   "files": [
     "lib/index.js",
-    "lib/types/index.d.ts"
+    "lib/index.d.ts"
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.1",

@@ -28,3 +28,11 @@
   （需解决未构建 workspace 包在 dsh Loader 里的解析，候选路径：dsh plugin add file: 装进
   $DSH_HOME/profiles 或 tsx alias）；③playwright-core 1.62.1 与主仓 Playwright-MCP 用的
   1.61.1 并存（无冲突但可对齐）。
+- 2026-08-24 20:45（do-something #3）：tracer bullet 终点达成——插件装载进 dsh、模型闭环
+  跑通。关键发现：①loader 的 baseUrl 是 $DSH_HOME/profiles/<name> 而非进程 cwd，相对路径
+  name 会解析错位，本机 overlay 用绝对路径（experiments/phase2-tracer/cordis.patch.yml）；
+  ②tsc 无法 emit `.ts` 后缀导入的 js，构建链改用 tsdown（与 dsh-diagram 同款）；③补了缺失的
+  computer_navigate 工具。验证：log 里 computer_navigate→computer_snapshot→computer_click
+  {index:0}→computer_screenshot 顺序调用 + 1 个持久化 image 块，模型输出含纯视觉事实（teal
+  IANA logo）。pnpm run typecheck/test 全绿。遗留：Consumer 组合测试、10 任务验收（E8）、
+  snapshot token 成本实测、包化发布（届时 patch 改回包名）。
