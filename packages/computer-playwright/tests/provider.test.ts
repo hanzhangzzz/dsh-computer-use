@@ -46,6 +46,14 @@ describe('computer-playwright provider over ctx.computer', () => {
       expect(shot.data[0]).toBe(0x89)
       expect(shot.data[1]).toBe(0x50)
       expect(shot.data.byteLength).toBeGreaterThan(1000)
+
+      // Unchanged-page detection: after landing, a repeat snapshot with no
+      // navigation collapses to a light unchanged marker.
+      const before = await ctx.computer.snapshot()
+      expect(before.unchangedSince).toBeUndefined()
+      const after = await ctx.computer.snapshot()
+      expect(after.unchangedSince).toBe(2)
+      expect(after.elements).toEqual([])
       // Context teardown follows main-repo test convention: the vitest process
       // owns the lifetime; Chrome exits with its stdio pipe.
       void ctx

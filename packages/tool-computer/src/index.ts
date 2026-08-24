@@ -119,6 +119,7 @@ export function apply(ctx: Context, config: Config): void {
               },
             },
           },
+          unchangedSince: { type: 'integer' },
         },
       },
       render: (_args, value) => [{ type: 'text', text: formatSnapshot(value) }],
@@ -127,7 +128,12 @@ export function apply(ctx: Context, config: Config): void {
     isConcurrencySafe: () => false,
     async execute(_args, exec) {
       const snap = await ctx.computer.snapshot(exec.signal)
-      return { url: snap.url, title: snap.title, elements: [...snap.elements] }
+      return {
+        url: snap.url,
+        title: snap.title,
+        elements: [...snap.elements],
+        ...snap.unchangedSince !== undefined ? { unchangedSince: snap.unchangedSince } : {},
+      }
     },
   }))
 
@@ -209,7 +215,15 @@ function parseClickArgs(args: unknown): { index: number } {
 
 /** Lossy display of a snapshot value for model-facing text. */
 function formatSnapshot(value: JsonValue): string {
-  const snap = value as { url: string; title: string; elements: Array<{ index: number; role: string; name: string }> }
+  const snap = value as { url: string; title: string; elements: Array<{ index: number; role: string; name: string }>; unchangedSince?: number }
+  if (snap.unchangedSince !== undefined) {
+    return [
+      `# ${snap.title}`,
+      snap.url,
+      '',
+      `unchanged since snapshot #${snap.unchangedSince}: the page's interactive elements are identical; indices from that snapshot remain valid.`,
+    ].join('\n')
+  }
   const lines = [`# ${snap.title}`, snap.url, '']
   for (const el of snap.elements) {
     const label = el.name === '' ? '' : ` "${el.name}"`

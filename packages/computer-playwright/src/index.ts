@@ -62,6 +62,8 @@ export const PROVIDER_ID = 'playwright'
 class PlaywrightProvider implements ComputerProvider {
   readonly id = PROVIDER_ID
   private page: Page | undefined
+  /** Fingerprint of the last full snapshot, for unchanged-page detection. */
+  private lastSnapshot: { url: string; fingerprint: string; seq: number } | undefined
 
   constructor(private readonly ctx: Context, private readonly config: Required<Config>) {}
 
@@ -137,7 +139,15 @@ class PlaywrightProvider implements ComputerProvider {
     throwIfAborted(signal)
     const elements = (await handle.jsonValue()) as ComputerElement[]
     await handle.dispose()
-    return { url: page.url(), title: await page.title(), elements }
+    const url = page.url()
+    const title = await page.title()
+    const fingerprint = `${url}\n${elements.map(el => `${el.role}:${el.name}`).join('\n')}`
+    const last = this.lastSnapshot
+    if (last !== undefined && last.url === url && last.fingerprint === fingerprint) {
+      return { url, title, elements: [], unchangedSince: last.seq }
+    }
+    this.lastSnapshot = { url, fingerprint, seq: (last?.seq ?? 0) + 1 }
+    return { url, title, elements }
   }
 
   async click(index: number, signal?: AbortSignal): Promise<ComputerClickResult> {

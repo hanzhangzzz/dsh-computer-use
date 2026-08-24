@@ -59,3 +59,9 @@
   README+patch）。发现：npm 上 dsh-computer-use 名被无关第三方 jerryweizhihao 占用（也是
   dsh computer use 插件，屏幕坐标姿态）——竞品信号入 README。发布留人类：选 npm 账号与
   GitHub 远端、补 repository 字段、pnpm -r publish。Phase 2 本地工作全部收口。
+- 2026-08-25 03:30（do-something #7）：Phase 3 第一片落地——unchanged-since-N 快照去重。
+  provider 对每次全量 snapshot 记指纹（URL + 元素 role/name 列表），同页重复 snapshot 返回
+  `unchanged since snapshot #N` + 空 elements + 索引仍有效语义；schema/render/execute 全链
+  更新。验证三层：typecheck+build 0 错；真实浏览器测试断言 unchangedSince=2/elements=[]
+  （6.75s 过）；模型级（snapshot-index-stability 验收任务重跑 passed，模型正确引用标记回答
+  索引一致性）。仍开放：部分变化页的元素级 diff、超大列表分页截断。

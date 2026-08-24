@@ -25,6 +25,12 @@ export interface ComputerSnapshot {
   readonly title: string
   /** Interactive elements in DOM order; the model addresses these by index. */
   readonly elements: readonly ComputerElement[]
+  /**
+   * Sequence number of the first snapshot this page state is identical to;
+   * present (with empty `elements`) when the provider recognizes an unchanged
+   * page. Indices from that snapshot remain valid.
+   */
+  readonly unchangedSince?: number
 }
 
 /** Outcome of one navigation. */
