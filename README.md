@@ -45,7 +45,7 @@ The design review (docs/phase2-design-review.md) overturned the original provide
 - `pnpm run typecheck` aligns against the main repo's real types via `link:` devDependencies; `pnpm run test` drives real Chrome through the seam (navigate → snapshot → click by index → screenshot, 5.5s).
 - Full model loop proven with the plugin loaded by absolute path (`experiments/phase2-tracer/cordis.patch.yml`): the session log shows `computer_navigate → computer_snapshot → computer_click{index:0} → computer_screenshot` and a durable image block; the model's answer contains purely visual facts (teal IANA logo) unreachable from the accessibility tree.
 
-Remaining before this phase closes: snapshot token-cost measurement on heavy pages, packaging (npm publish + relative-path patch), hardening the prompt against prior-knowledge shortcuts (see acceptance notes).
+Remaining before this phase closes: packaging (npm publish + relative-path patch). Prior-knowledge shortcut behavior was not observed in the clean acceptance run (the earlier "model fabricated answers" reading was a scorer bug, not model behavior); treat it as a live risk only if it shows up again.
 
 ## Acceptance: 10-task suite (E8) — 10/10, 2026-08-24
 
@@ -56,6 +56,20 @@ Remaining before this phase closes: snapshot token-cost measurement on heavy pag
 - Structure-first held throughout: no task needed coordinates; every click came from a snapshot index.
 
 Two driver bugs produced a false "model fabricated answers without calling tools" reading before the clean run — the scorer missed tool calls because (a) `json.dumps` renders `"type": "tool-call"` with a space the matcher lacked, and (b) session logs are multi-frame zstd and one-shot decompress stops at frame one. Both fixed in `run.py`; lesson recorded: **log-derived verdicts need the same adversarial checking as model claims**.
+
+## Snapshot token cost (measured from acceptance logs, 2026-08-24)
+
+The flat element-list projection costs, per `computer_snapshot` call:
+
+| page | elements | bytes | ~tokens |
+|---|---|---|---|
+| example.com | 1 | 59 B | 14 |
+| iana.org help page | 31 | 0.8 KB | 205 |
+| news.ycombinator.com | 227 | 6 KB | 1.5k |
+| go.dev/doc | 241 | 7.6 KB | 1.9k |
+| en.wikipedia.org Main Page | 833 | 22 KB | 5.2k |
+
+Single calls are fine at a 128k window, but repeat snapshots of an unchanged heavy page repeat the full cost (observed: 3× 5.2k on one Wikipedia task) and break KV reuse. This is the measured case for Phase 3's diff projection: on unchanged pages return "unchanged since snapshot N", and cap/paginate element lists beyond a few hundred entries.
 
 ## Planned phases
 

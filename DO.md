@@ -45,3 +45,10 @@
   与模型声明同级的对抗式核查。遗留：重页面 snapshot token 成本实测、npm 包化、以及"先验可
   知页面的捷径行为"仅被 prompt 弱缓解（本轮硬约束重跑时统计 bug 未修，缓解效果实际未测，
   但干净数据下 10/10 未出现捷径行为——风险存疑但未证伪，生产前需重审）。
+- 2026-08-25 01:10（do-something #5）：snapshot token 成本实测完成（数据来自验收 run 的
+  session log，零新跑）：example 14 tok / HN 1.5k / go.dev 1.9k / Wikipedia Main Page
+  833 元素 5.2k tok；观测到同页重复 snapshot 全额重复成本（3×5.2k）。结论入 README：单次
+  可接受，重页面重复 snapshot 是 Phase 3 diff 投影的实证依据（unchanged-since-N + 大列表
+  分页截断）。#3 捷径风险降级：干净数据未观测到（此前"编造"读数是判分 bug），仅复发时重审。
+  遗留：npm 包化（本地部分可做，发布动作留给人类）；Phase 3 方向已有两条实证依据（E7 坐标
+  兜底 + 本轮 diff 投影）。
