@@ -37,6 +37,10 @@ describe('computer-playwright provider over ctx.computer', () => {
       const click = await ctx.computer.click(link!.index)
       expect(click.clicked).toContain('link')
       expect(click.url).toContain('iana.org')
+      // The click embeds its post-click snapshot as the next baseline.
+      expect(click.after.url).toContain('iana.org')
+      expect(click.after.unchangedSince).toBeUndefined()
+      expect(click.after.elements.length).toBeGreaterThanOrEqual(1)
 
       const shot = await ctx.computer.screenshot()
       expect(shot.mediaType).toBe('image/png')
@@ -47,10 +51,11 @@ describe('computer-playwright provider over ctx.computer', () => {
       expect(shot.data[1]).toBe(0x50)
       expect(shot.data.byteLength).toBeGreaterThan(1000)
 
-      // Unchanged-page detection: after landing, a repeat snapshot with no
-      // navigation collapses to a light unchanged marker.
+      // Unchanged-page detection: the click's embedded snapshot is the new
+      // baseline (seq 2 on the IANA page), so repeat snapshots collapse to a
+      // light unchanged marker pointing at it.
       const before = await ctx.computer.snapshot()
-      expect(before.unchangedSince).toBeUndefined()
+      expect(before.unchangedSince).toBe(2)
       const after = await ctx.computer.snapshot()
       expect(after.unchangedSince).toBe(2)
       expect(after.elements).toEqual([])

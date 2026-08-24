@@ -139,7 +139,7 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.tools.register(defineTool({
     name: 'computer_click',
-    description: 'Click the interactive element at the given index from the latest computer_snapshot. Returns what was clicked and where the page went.',
+    description: 'Click the interactive element at the given index from the latest computer_snapshot. Returns what was clicked, where the page went, and the post-click snapshot (element indices for the next click; an "unchanged" marker means the prior indices remain valid).',
     parameters: {
       index: { type: 'number', required: true, description: 'Element index from computer_snapshot.' },
     },
@@ -150,16 +150,49 @@ export function apply(ctx: Context, config: Config): void {
         properties: {
           clicked: { type: 'string', required: true },
           url: { type: 'string', required: true },
+          after: {
+            type: 'object',
+            required: true,
+            additionalProperties: false,
+            properties: {
+              url: { type: 'string', required: true },
+              title: { type: 'string', required: true },
+              elements: {
+                type: 'array',
+                required: true,
+                items: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    index: { type: 'integer', required: true },
+                    role: { type: 'string', required: true },
+                    name: { type: 'string', required: true },
+                  },
+                },
+              },
+              unchangedSince: { type: 'integer' },
+            },
+          },
         },
       },
-      render: (_args, value) => [{ type: 'text', text: `clicked ${stringify(value).clicked}; now at ${stringify(value).url}` }],
+      render: (_args, value) => [{ type: 'text', text: formatClick(value) }],
     },
     timeoutMs,
     isConcurrencySafe: () => false,
     async execute(args, exec) {
       const { index } = parseClickArgs(args)
       const result = await ctx.computer.click(index, exec.signal)
-      return { clicked: result.clicked, url: result.url }
+      const after = result.after
+      return {
+        clicked: result.clicked,
+        url: result.url,
+        after: {
+          url: after.url,
+          title: after.title,
+          elements: [...after.elements],
+          ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
+        },
+      }
     },
   }))
 
@@ -235,6 +268,15 @@ function formatSnapshot(value: JsonValue): string {
 /** Coerce a validated canonical value for two-field reads. */
 function stringify(value: JsonValue): { clicked: string; url: string } {
   return value as { clicked: string; url: string }
+}
+
+/** Lossy display of a click result: what was clicked plus the post-click view. */
+function formatClick(value: JsonValue): string {
+  const click = value as { clicked: string; url: string; after: { url: string; title: string; elements: Array<{ index: number; role: string; name: string }>; unchangedSince?: number } }
+  const after = click.after.unchangedSince !== undefined
+    ? `unchanged since snapshot #${click.after.unchangedSince} (prior indices remain valid)`
+    : formatSnapshot(click.after)
+  return [`clicked ${click.clicked}; now at ${click.url}`, '', after].join('\n')
 }
 
 /** Project the screenshot value: the image block plus its text metadata. */

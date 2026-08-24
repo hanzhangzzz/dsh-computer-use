@@ -47,6 +47,8 @@ export interface ComputerClickResult {
   readonly clicked: string
   /** URL after the click settled (navigation may or may not have happened). */
   readonly url: string
+  /** Snapshot taken after the click settled; the click loop's new baseline. */
+  readonly after: ComputerSnapshot
 }
 
 /** A PNG screenshot for visual verification. */

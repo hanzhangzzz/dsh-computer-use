@@ -65,3 +65,11 @@
   更新。验证三层：typecheck+build 0 错；真实浏览器测试断言 unchangedSince=2/elements=[]
   （6.75s 过）；模型级（snapshot-index-stability 验收任务重跑 passed，模型正确引用标记回答
   索引一致性）。仍开放：部分变化页的元素级 diff、超大列表分页截断。
+- 2026-08-25 04:40（do-something #8）：Phase 3 第二片——click 附带 post-click 快照。
+  click 返回扩展 after 字段（domcontentloaded + 300ms settle 后的元素列表，unchanged 语义
+  复用），click 循环省一次 snapshot 往返。排障记录：首版 300ms 不够 IANA 渲染（elements=0，
+  模型级任务靠模型自补 snapshot 兜住），加 waitForLoadState('domcontentloaded', 3s) 修复；
+  测试 seq 断言两次改错（先 3 后 2），根因是自己没先推演完整 seq 流——写断言前先走一遍
+  计数路径。验证：单测全绿（click.after 含 iana 元素 + unchangedSince=2 折叠）；模型级
+  multi-hop 16.9s pass，两次 click 的 result 均携带完整 post-click 列表，第二次 click 直接
+  用第一次附带列表的 About Us。开放：部分变化页元素级 diff、超大列表分页。

@@ -155,7 +155,13 @@ class PlaywrightProvider implements ComputerProvider {
     const locator = page.locator(INTERACTIVE_SELECTOR).nth(index)
     const described = await describeLocator(locator)
     await locator.click()
-    return { clicked: described, url: page.url() }
+    // The post-click snapshot is the next iteration's baseline. A click that
+    // triggers navigation must wait for the new document before enumeration;
+    // a same-page click fails that wait immediately, which is fine.
+    await page.waitForLoadState('domcontentloaded', { timeout: 3_000 }).catch(() => {})
+    await page.waitForTimeout(300)
+    const after = await this.snapshot(signal)
+    return { clicked: described, url: page.url(), after }
   }
 
   async screenshot(signal?: AbortSignal): Promise<ComputerScreenshot> {

@@ -69,7 +69,12 @@ The flat element-list projection costs, per `computer_snapshot` call:
 | go.dev/doc | 241 | 7.6 KB | 1.9k |
 | en.wikipedia.org Main Page | 833 | 22 KB | 5.2k |
 
-Single calls are fine at a 128k window, but repeat snapshots of an unchanged heavy page repeat the full cost (observed: 3× 5.2k on one Wikipedia task) and break KV reuse. First mitigation shipped (Phase 3 opener): the provider fingerprints each full snapshot (URL + element role/name list); a repeat snapshot of an identical page returns `unchanged since snapshot #N` with empty elements and a guarantee that prior indices remain valid — verified at the model level (the model reads the marker and answers index-stability questions from it). Still open: element-level diffs for partially changed pages, and capping/paginating very large lists.
+Single calls are fine at a 128k window, but repeat snapshots of an unchanged heavy page repeat the full cost (observed: 3× 5.2k on one Wikipedia task) and break KV reuse. Two mitigations shipped (Phase 3):
+
+1. **Unchanged-page collapse**: the provider fingerprints each full snapshot (URL + element role/name list); a repeat snapshot of an identical page returns `unchanged since snapshot #N` with empty elements and a guarantee that prior indices remain valid — verified at the model level.
+2. **Post-click snapshot**: `computer_click` embeds the post-click element list (after `domcontentloaded` + settle), so the click loop needs no separate snapshot round trip — the model chains clicks straight off the returned list. Verified on the two-hop acceptance task: both clicks returned their full post-click lists and the second click targeted an element from the first's embedded list.
+
+Still open: element-level diffs for partially changed pages, and capping/paginating very large lists.
 
 ## Packaging (local, publish-ready)
 
