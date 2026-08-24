@@ -1,0 +1,88 @@
+{
+  "tasks": [
+    {
+      "id": "baseline-example-iana",
+      "prompt": "用 computer_ 开头的工具：computer_navigate 打开 https://example.com ，computer_snapshot 后点击 More information 链接，报告最终 URL。",
+      "pass": {
+        "url_contains": "iana.org"
+      }
+    },
+    {
+      "id": "hn-first-story",
+      "prompt": "用 computer_ 开头的工具：打开 https://news.ycombinator.com ，snapshot 找到第一条新闻的标题链接（titleline 里最大的 a），点击它，报告落点域名和标题。",
+      "pass": {
+        "tool": "computer_click",
+        "text_any": [
+          "报道",
+          "文章",
+          "http"
+        ]
+      }
+    },
+    {
+      "id": "wikipedia-contents",
+      "prompt": "用 computer_ 开头的工具：打开 https://en.wikipedia.org/wiki/Main_Page ，snapshot 后点击名为 Contents 的链接，报告新页面标题。",
+      "pass": {
+        "url_contains": "Wikipedia:Contents"
+      }
+    },
+    {
+      "id": "httpbin-elements",
+      "prompt": "用 computer_ 开头的工具：打开 https://httpbin.org/html ，snapshot 后报告页面可交互元素总数和链接指向的 URL。 硬性要求：每个结论必须来自本轮工具返回；调用工具之前禁止回答，禁止凭记忆或常识描述任何页面内容。",
+      "pass": {
+        "tool": "computer_snapshot",
+        "text_any": [
+          "1"
+        ]
+      }
+    },
+    {
+      "id": "navigate-error-dns",
+      "prompt": "用 computer_ 开头的工具：computer_navigate 打开 https://this-domain-does-not-exist-zzz941.com ，报告发生了什么错误。不要重试超过一次。",
+      "pass": {
+        "error_handled": true
+      }
+    },
+    {
+      "id": "iana-back-link",
+      "prompt": "用 computer_ 开头的工具：打开 https://www.iana.org/help/example-domains ，snapshot 后点击 Instructions and Guides 圆角按钮，报告落点 URL。",
+      "pass": {
+        "url_contains": "iana.org"
+      }
+    },
+    {
+      "id": "go-docs",
+      "prompt": "用 computer_ 开头的工具：打开 https://go.dev/doc ，snapshot 后点击 Getting started 链接，报告新页面 URL。",
+      "pass": {
+        "url_contains": "go.dev/doc/tutorial"
+      }
+    },
+    {
+      "id": "example-screenshot-visual",
+      "prompt": "用 computer_ 开头的工具：打开 https://example.com ，computer_screenshot 截图并直接描述图像里的标题文字和链接颜色。禁止写代码分析图片。 硬性要求：每个结论必须来自本轮工具返回；调用工具之前禁止回答，禁止凭记忆或常识描述任何页面内容。",
+      "pass": {
+        "image_block": true,
+        "text_any": [
+          "蓝"
+        ]
+      }
+    },
+    {
+      "id": "snapshot-index-stability",
+      "prompt": "用 computer_ 开头的工具：打开 https://example.com ，连续两次 computer_snapshot ，报告两次的元素索引是否一致，以及链接的索引号。 硬性要求：每个结论必须来自本轮工具返回；调用工具之前禁止回答，禁止凭记忆或常识描述任何页面内容。",
+      "pass": {
+        "tool": "computer_snapshot",
+        "text_any": [
+          "0"
+        ]
+      }
+    },
+    {
+      "id": "multi-hop",
+      "prompt": "用 computer_ 开头的工具：打开 https://example.com ，点链接到 IANA 页面，再在该页面 snapshot 点击页脚 About Us，报告最终 URL。",
+      "pass": {
+        "url_contains": "iana.org/about"
+      }
+    }
+  ]
+}

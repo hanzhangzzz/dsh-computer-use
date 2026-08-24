@@ -45,7 +45,17 @@ The design review (docs/phase2-design-review.md) overturned the original provide
 - `pnpm run typecheck` aligns against the main repo's real types via `link:` devDependencies; `pnpm run test` drives real Chrome through the seam (navigate → snapshot → click by index → screenshot, 5.5s).
 - Full model loop proven with the plugin loaded by absolute path (`experiments/phase2-tracer/cordis.patch.yml`): the session log shows `computer_navigate → computer_snapshot → computer_click{index:0} → computer_screenshot` and a durable image block; the model's answer contains purely visual facts (teal IANA logo) unreachable from the accessibility tree.
 
-Remaining before this phase closes: Consumer-level composition test, the 10-task acceptance suite (E8), snapshot token-cost measurement, packaging (npm publish + relative-path patch).
+Remaining before this phase closes: snapshot token-cost measurement on heavy pages, packaging (npm publish + relative-path patch), hardening the prompt against prior-knowledge shortcuts (see acceptance notes).
+
+## Acceptance: 10-task suite (E8) — 10/10, 2026-08-24
+
+`experiments/phase2-acceptance/` runs ten real-browser tasks through the assembled plugin and scores mechanical criteria from the session log (tool calls, click URLs, image blocks) plus output text. Clean-run results (summary in `results/summary.json`):
+
+- 10/10 tasks completed the intended action; every real click/snapshot/navigate in every run was correct, including multi-hop (example.com → IANA → footer About) and a hostile-403 landing reported honestly.
+- Median elapsed ~16s per task (headless Chrome + vision model).
+- Structure-first held throughout: no task needed coordinates; every click came from a snapshot index.
+
+Two driver bugs produced a false "model fabricated answers without calling tools" reading before the clean run — the scorer missed tool calls because (a) `json.dumps` renders `"type": "tool-call"` with a space the matcher lacked, and (b) session logs are multi-frame zstd and one-shot decompress stops at frame one. Both fixed in `run.py`; lesson recorded: **log-derived verdicts need the same adversarial checking as model claims**.
 
 ## Planned phases
 

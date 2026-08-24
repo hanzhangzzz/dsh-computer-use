@@ -1,0 +1,18 @@
+{
+  "id": "multi-hop",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 17.2,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_snapshot",
+    "computer_click"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "完成。最终 URL 是 **https://www.iana.org/about**\n\n流程回顾：\n1. 打开 https://example.com（Example Domain）\n2. 点击链接 \"Learn more\" → 进入 IANA 页面 https://www.iana.org/help/example-domains\n3. 在该页面 snapshot 中点击页脚链接 \"About Us\" → 跳转至 **https://www.iana.org/about**\n"
+}

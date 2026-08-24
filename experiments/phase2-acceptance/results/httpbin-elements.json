@@ -1,0 +1,18 @@
+{
+  "id": "httpbin-elements",
+  "passed": true,
+  "checks": {
+    "tool": true,
+    "text_any": true
+  },
+  "elapsed_s": 20.2,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_snapshot"
+  ],
+  "image_blocks": 1,
+  "exit": 0,
+  "output_tail": "基于本轮工具返回的报告：\n\n1. **页面加载**：`computer_navigate` 成功加载 `https://httpbin.org/html`（settled URL 为 https://httpbin.org/html）。\n\n2. **可交互元素总数：0**。\n   - 两次 `computer_snapshot` 调用均返回空列表（未列出任何可交互元素，返回内容仅为页面标题为空、URL 一行），即快照工具未检测到任何可交互元素。\n\n3. **链接指向的 URL：没有**。\n   - snapshot 返回中未列出任何链接或链接 URL；\n   - `computer_screenshot` 显示的页面内容为标题 \"Herman Melville – Moby-Dick\" 和一段正文文本，画面中未出现任何链接样式的文本（无下划线/链接色），也未观察到可点击的链接元素。\n\n**结论**：该页面无可交互元素（总数 0），也没有检测到任何链接（无指向的 URL）。所有结论均只依据本轮工具返回（navigate → snapshot ×2 → screenshot）。\n"
+}

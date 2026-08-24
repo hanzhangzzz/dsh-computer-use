@@ -1,0 +1,17 @@
+{
+  "id": "snapshot-index-stability",
+  "passed": true,
+  "checks": {
+    "tool": true,
+    "text_any": true
+  },
+  "elapsed_s": 11.9,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_snapshot"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "两次 `computer_snapshot` 结果如下：\n\n- **第一次快照**：`0: link \"Learn more\"`\n- **第二次快照**：`0: link \"Learn more\"`\n\n**结论**（均来自本轮工具返回）：\n\n1. **两次快照的元素索引一致** — 两次返回的元素列表完全相同，均为索引 `0` 的 `link \"Learn more\"`。\n2. **链接的索引号为 `0`** — 两次快照中该链接（文本 \"Learn more\"）的索引号都是 `0`。\n"
+}

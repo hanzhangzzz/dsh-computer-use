@@ -1,0 +1,19 @@
+{
+  "id": "baseline-example-iana",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 22.2,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_click",
+    "computer_navigate",
+    "computer_screenshot"
+  ],
+  "image_blocks": 2,
+  "exit": 0,
+  "output_tail": "完成。\n\n**最终 URL：https://www.iana.org/help/example-domains**\n\n操作过程：\n1. `computer_navigate` 打开 `https://example.com` — 页面标题 \"Example Domain\"\n2. `computer_snapshot` — 页面上唯一的链接是 **\"Learn more\"**（即您所说的 \"More information\" 链接）\n3. `computer_click` 点击索引 0 的 \"Learn more\" 链接 — 跳转到 IANA 的 \"Example Domains\" 页面\n4. 截图验证 — 页面为 IANA（Internet Assigned Numbers Authority）的 Example Domains 文档页，内容说明 example.com / example.org 等域名仅用于文档示例，不可注册或转让。\n"
+}

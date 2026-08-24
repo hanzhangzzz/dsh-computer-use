@@ -36,3 +36,12 @@
   {index:0}→computer_screenshot 顺序调用 + 1 个持久化 image 块，模型输出含纯视觉事实（teal
   IANA logo）。pnpm run typecheck/test 全绿。遗留：Consumer 组合测试、10 任务验收（E8）、
   snapshot token 成本实测、包化发布（届时 patch 改回包名）。
+- 2026-08-24 23:50（do-something #4）：E8 验收完成——10 任务全过（experiments/
+  phase2-acceptance/，median ~16s/任务，全部 click 走 snapshot 索引零坐标，含 multi-hop 和
+  403 落点的诚实报告）。重大过程教训：判分脚本两个 bug（json.dumps 带空格导致 tool-call
+  匹配永不命中；session log 是多帧 zstd，oneshot 解压只出第一帧）一度制造"模型不调工具纯编造"
+  的假象，险些把错误结论写进 README——靠手动反查 log 推翻。已在 run.py 修复（结构化遍历 +
+  stream_reader read_across_frames + 判分大小写不敏感）。教训入 README：log 推导的结论需要
+  与模型声明同级的对抗式核查。遗留：重页面 snapshot token 成本实测、npm 包化、以及"先验可
+  知页面的捷径行为"仅被 prompt 弱缓解（本轮硬约束重跑时统计 bug 未修，缓解效果实际未测，
+  但干净数据下 10/10 未出现捷径行为——风险存疑但未证伪，生产前需重审）。

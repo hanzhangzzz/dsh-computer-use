@@ -1,0 +1,16 @@
+{
+  "id": "example-screenshot-visual",
+  "passed": true,
+  "checks": {
+    "text_any": true,
+    "image_block": true
+  },
+  "elapsed_s": 11.6,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_screenshot"
+  ],
+  "image_blocks": 1,
+  "exit": 0,
+  "output_tail": "已完成，全部结论来自本轮工具返回（`computer_navigate` + `computer_screenshot`，未使用任何代码分析）：\n\n**截图内容描述**\n\n- **标题文字**：「**Example Domain**」——位于页面中上方，大号、加粗、深色（近黑/深灰）字体。这与导航返回的页面标题「Example Domain」一致。\n- **链接颜色**：「**Learn more**」链接为**蓝色**，且带下划线。\n"
+}

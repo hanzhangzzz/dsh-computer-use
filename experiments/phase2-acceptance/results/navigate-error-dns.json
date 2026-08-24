@@ -1,0 +1,14 @@
+{
+  "id": "navigate-error-dns",
+  "passed": true,
+  "checks": {
+    "error_handled": true
+  },
+  "elapsed_s": 11.2,
+  "tool_calls": [
+    "computer_navigate"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "执行结果如下，未做任何重试：\n\n**打开网址时发生错误：** `page.goto: net::ERR_CONNECTION_CLOSED`\n\n**详情：**\n- **URL：** `https://this-domain-does-not-exist-zzz941.com/`\n- **错误信息：** `net::ERR_CONNECTION_CLOSED`\n- **调用日志：** `navigating to \"https://this-domain-does-not-exist-zzz941.com/\", waiting until \"load\"`\n\n**说明：** 浏览器尝试访问该域名时，连接在页面加载完成前被对方关闭（connection closed），未能加载出任何页面。这与预期一致——这是一个不存在的域名，DNS 解析或 TCP 连接建立阶段即失败，浏览器没有呈现错误页内容，而是直接在导航阶段抛出了连接关闭的异常。\n"
+}

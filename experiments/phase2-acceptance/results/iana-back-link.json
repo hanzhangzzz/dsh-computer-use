@@ -1,0 +1,18 @@
+{
+  "id": "iana-back-link",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 16.9,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_click",
+    "computer_screenshot"
+  ],
+  "image_blocks": 2,
+  "exit": 0,
+  "output_tail": "完成。点击页面上部区域左侧的「← Instructions and Guides」圆角按钮后，浏览器落点 URL 为：\n\n**https://www.iana.org/help**\n\n页面标题为 \"Instructions and Guides\"，内容为 IANA 的指南汇总页（Root Zone Management 等章节）。\n"
+}

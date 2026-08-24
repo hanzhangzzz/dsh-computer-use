@@ -1,0 +1,23 @@
+{
+  "id": "wikipedia-contents",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 30.9,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_screenshot",
+    "computer_snapshot",
+    "computer_click",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_click",
+    "computer_snapshot"
+  ],
+  "image_blocks": 2,
+  "exit": 0,
+  "output_tail": "完成 ✅\n\n- 打开 https://en.wikipedia.org/wiki/Main_Page （维基百科主页）\n- snapshot 后发现 \"Contents\" 链接在折叠的主菜单中不可见，先点击了 \"Main menu\" 展开侧边栏\n- 再点击名为 **Contents** 的链接，成功跳转到 `https://en.wikipedia.org/wiki/Wikipedia:Contents`\n\n**新页面标题：Wikipedia:Contents - Wikipedia**（英文维基百科的\"目录\"页面）\n"
+}

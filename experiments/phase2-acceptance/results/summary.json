@@ -1,0 +1,90 @@
+{
+  "total": 10,
+  "passed": 9,
+  "results": [
+    {
+      "id": "baseline-example-iana",
+      "passed": true,
+      "checks": {
+        "url_contains": true
+      },
+      "elapsed_s": 22.2
+    },
+    {
+      "id": "hn-first-story",
+      "passed": false,
+      "checks": {
+        "tool": true,
+        "text_any": false
+      },
+      "elapsed_s": 23.2
+    },
+    {
+      "id": "wikipedia-contents",
+      "passed": true,
+      "checks": {
+        "url_contains": true
+      },
+      "elapsed_s": 30.9
+    },
+    {
+      "id": "httpbin-elements",
+      "passed": true,
+      "checks": {
+        "tool": true,
+        "text_any": true
+      },
+      "elapsed_s": 20.2
+    },
+    {
+      "id": "navigate-error-dns",
+      "passed": true,
+      "checks": {
+        "error_handled": true
+      },
+      "elapsed_s": 11.2
+    },
+    {
+      "id": "iana-back-link",
+      "passed": true,
+      "checks": {
+        "url_contains": true
+      },
+      "elapsed_s": 16.9
+    },
+    {
+      "id": "go-docs",
+      "passed": true,
+      "checks": {
+        "url_contains": true
+      },
+      "elapsed_s": 15.0
+    },
+    {
+      "id": "example-screenshot-visual",
+      "passed": true,
+      "checks": {
+        "text_any": true,
+        "image_block": true
+      },
+      "elapsed_s": 11.6
+    },
+    {
+      "id": "snapshot-index-stability",
+      "passed": true,
+      "checks": {
+        "tool": true,
+        "text_any": true
+      },
+      "elapsed_s": 11.9
+    },
+    {
+      "id": "multi-hop",
+      "passed": true,
+      "checks": {
+        "url_contains": true
+      },
+      "elapsed_s": 17.2
+    }
+  ]
+}
