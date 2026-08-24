@@ -1,0 +1,18 @@
+# The dsh-computer-use bundle patch: mounts the computer capability seam,
+# the Playwright provider, and the model-facing tool Consumer. Package-name
+# entry `name` fields resolve from the profile's installed node_modules.
+
+- insert:
+    - id: computer
+      name: dsh-computer
+
+    - id: computer-playwright
+      name: dsh-computer-playwright
+      config:
+        # Headless local Chrome at the Phase 0 calibration viewport.
+        headless: true
+        viewportWidth: 1280
+        viewportHeight: 800
+
+    - id: tool-computer
+      name: dsh-tool-computer

@@ -71,6 +71,12 @@ The flat element-list projection costs, per `computer_snapshot` call:
 
 Single calls are fine at a 128k window, but repeat snapshots of an unchanged heavy page repeat the full cost (observed: 3× 5.2k on one Wikipedia task) and break KV reuse. This is the measured case for Phase 3's diff projection: on unchanged pages return "unchanged since snapshot N", and cap/paginate element lists beyond a few hundred entries.
 
+## Packaging (local, publish-ready)
+
+Three packages, all names free on npm as of 2026-08-24: `dsh-computer`, `dsh-computer-playwright`, `dsh-tool-computer`. The latter carries the bundle manifest (`dsh.bundle.patch` → `cordis.patch.yml`, package-name entries) and is what users install; `pnpm -r pack --dry-run` shows each tarball carrying `lib/` + LICENSE + README (+ patch). Note: the npm name `dsh-computer-use` itself is taken by an unrelated third-party plugin (jerryweizhihao, screen-coordinate-style computer use) — independent signal that this niche is active.
+
+Human steps left before publish: pick the npm account and GitHub remote (huajuan404 vs hanzhangzzz), add `repository` fields, `pnpm -r publish`, then users install with `dsh plugin --profile <name> add dsh-tool-computer`.
+
 ## Planned phases
 
 - **Phase 2** — the plugin proper: a `computer` capability seam (Service Definition + provider + tool Consumer) with screenshot/click/type/scroll/key actions, E2B Desktop as the first provider, approval wired into dsh's interaction seam.

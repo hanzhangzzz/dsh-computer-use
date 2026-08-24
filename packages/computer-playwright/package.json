@@ -19,8 +19,10 @@
     }
   },
   "files": [
-    "lib/index.js",
-    "lib/index.d.ts"
+    "LICENSE",
+    "README.md",
+    "lib/index.d.ts",
+    "lib/index.js"
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
@@ -33,5 +35,6 @@
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "huajuan404"
 }

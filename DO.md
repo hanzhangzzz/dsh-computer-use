@@ -52,3 +52,10 @@
   分页截断）。#3 捷径风险降级：干净数据未观测到（此前"编造"读数是判分 bug），仅复发时重审。
   遗留：npm 包化（本地部分可做，发布动作留给人类）；Phase 3 方向已有两条实证依据（E7 坐标
   兜底 + 本轮 diff 投影）。
+- 2026-08-25 02:20（do-something #6）：npm 包化本地部分完成——三包（dsh-computer /
+  dsh-computer-playwright / dsh-tool-computer，npm 名全空闲）补齐 LICENSE/author/files，
+  tool-computer 携带 bundle manifest（dsh.bundle.patch → cordis.patch.yml，包名 entry，
+  显式 headless+1280x800），pnpm -r pack --dry-run 验证三 tarball 内容正确（lib+LICENSE+
+  README+patch）。发现：npm 上 dsh-computer-use 名被无关第三方 jerryweizhihao 占用（也是
+  dsh computer use 插件，屏幕坐标姿态）——竞品信号入 README。发布留人类：选 npm 账号与
+  GitHub 远端、补 repository 字段、pnpm -r publish。Phase 2 本地工作全部收口。
