@@ -1,2 +1,2 @@
-.env
-__pycache__/
+# Playwright-MCP server-side artifacts (auto-saved snapshots/screenshots)
+experiments/*/.playwright-mcp/
