@@ -172,3 +172,7 @@
 - 2026-08-26 02:10（do-something 新循环 #6）：0.3.2 断连围栏的回归测试落地——vitest 内 launch
   带 CDP 端口的普通 Chrome 充当宿主，attach 后 kill，断言三类调用均报 guidance 错误
   （do not restart / has disconnected / report to the user）。13 单测全绿。安全语义进回归网。
+- 2026-08-26 03:05（do-something 新循环 #7）：断连行为验证脚本（experiments/wechat-devtools/
+  verify-detach.sh，只写未跑——含模型任务需在场执行）。流程：CDP 宿主起→dsh 任务首 snapshot
+  落 log 即 kill 宿主→模型下一步应收 guidance 错误并停手；脚本解 log 判 guidance 出现次数与
+  bash 调用数（期望 0）。语法+静态检查过。用法已注释在脚本头。
