@@ -114,7 +114,12 @@ class PlaywrightProvider implements ComputerProvider {
 
   async snapshot(signal?: AbortSignal): Promise<ComputerSnapshot> {
     const page = await this.getPage(signal)
-    const elements = await enumerateInteractive(page)
+    const handles = await interactiveHandles(page)
+    const elements: ComputerElement[] = []
+    for (const handle of handles) {
+      const described = await describeElement(handle)
+      elements.push({ ...described, index: elements.length })
+    }
     throwIfAborted(signal)
     const url = page.url()
     const title = await page.title()
@@ -129,9 +134,12 @@ class PlaywrightProvider implements ComputerProvider {
 
   async click(index: number, signal?: AbortSignal): Promise<ComputerClickResult> {
     const page = await this.getPage(signal)
-    const locator = page.locator(INTERACTIVE_SELECTOR).nth(index)
-    const described = await describeLocator(locator)
-    await locator.click()
+    const handles = await interactiveHandles(page)
+    const handle = handles[index]
+    if (handle === undefined) throw new Error(`computer_click: no element at index ${index}; take a fresh snapshot`)
+    const target = await describeElement(handle)
+    const described = `${target.role} "${target.name}"`
+    await handle.click()
     // The post-click snapshot is the next iteration's baseline. A click that
     // triggers navigation must wait for the new document before enumeration;
     // a same-page click fails that wait immediately, which is fine.
@@ -143,9 +151,12 @@ class PlaywrightProvider implements ComputerProvider {
 
   async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
     const page = await this.getPage(signal)
-    const locator = page.locator(INTERACTIVE_SELECTOR).nth(index)
-    const described = await describeLocator(locator)
-    await locator.fill(text)
+    const handles = await interactiveHandles(page)
+    const handle = handles[index]
+    if (handle === undefined) throw new Error(`computer_type: no element at index ${index}; take a fresh snapshot`)
+    const target = await describeElement(handle)
+    const described = `${target.role} "${target.name}"`
+    await handle.fill(text)
     await page.waitForTimeout(300)
     const after = await this.snapshot(signal)
     return { filled: described, text, after }
@@ -178,11 +189,55 @@ class PlaywrightProvider implements ComputerProvider {
   }
 }
 
-/** One-line role+name description of a locator for click/type verification. */
-async function describeLocator(locator: import('playwright-core').Locator): Promise<string> {
-  const role = await locator.evaluate(node => {
-    const el = node as HTMLElement
-    return el.getAttribute('role')
+/** Fail fast on cancellation between async steps. */
+function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw new Error('the computer call was canceled')
+}
+
+/**
+ * Filtered interactive-element handles on one page, in DOM order — the single
+ * authority for snapshot indices: snapshot describes them, click/type address
+ * them by position in this array. Hidden regions are skipped, and so are
+ * interlanguage switcher links (an `a` whose `lang` differs from the document
+ * language) — measured on Wikipedia these are half the element list and almost
+ * never the task target. A navigation racing the enumeration destroys the
+ * execution context; that failure waits for the new document and retries once
+ * instead of surfacing to the model.
+ */
+async function interactiveHandles(page: Page): Promise<Array<import('playwright-core').ElementHandle<HTMLElement>>> {
+  const collect = () => page.evaluateHandle(selector => {
+    const nodes = Array.from(document.querySelectorAll(selector))
+    const docLang = document.documentElement.lang || ''
+    const out: HTMLElement[] = []
+    for (const node of nodes) {
+      const el = node as HTMLElement
+      if (el.closest('[aria-hidden="true"]') !== null) continue
+      const elLang = el.getAttribute('lang')
+      if (el instanceof HTMLAnchorElement && elLang !== null && elLang !== '' && elLang !== docLang) continue
+      out.push(el)
+    }
+    return out
+  }, INTERACTIVE_SELECTOR)
+  const resolve = async () => {
+    const arrayHandle = await collect()
+    const properties = await arrayHandle.getProperties()
+    await arrayHandle.dispose()
+    return [...properties.values()] as Array<import('playwright-core').ElementHandle<HTMLElement>>
+  }
+  try {
+    return await resolve()
+  } catch (error: unknown) {
+    if (!(error instanceof Error) || !String(error.message).includes('Execution context was destroyed')) throw error
+    await page.waitForLoadState('domcontentloaded', { timeout: 5_000 }).catch(() => {})
+    return await resolve()
+  }
+}
+
+/** Role+name projection of one enumerated element, matching snapshot indices. */
+async function describeElement(handle: import('playwright-core').ElementHandle<HTMLElement>): Promise<ComputerElement> {
+  return handle.evaluate(el => {
+    const role =
+      el.getAttribute('role')
       ?? (el instanceof HTMLAnchorElement ? 'link'
         : el instanceof HTMLButtonElement ? 'button'
         : el instanceof HTMLInputElement ? (el.type === 'checkbox' || el.type === 'radio' ? el.type : 'textbox')
@@ -190,65 +245,16 @@ async function describeLocator(locator: import('playwright-core').Locator): Prom
         : el instanceof HTMLSelectElement ? 'select'
         : el.isContentEditable ? 'textbox'
         : 'other')
+    const name =
+      el.getAttribute('aria-label')
+      ?? (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
+        ? (el.value || el.placeholder)
+        : el instanceof HTMLSelectElement
+          ? el.value
+          : (el.textContent ?? '').trim())
+      ?? ''
+    return { index: 0, role, name: String(name).slice(0, 200) }
   })
-  const name = (await locator.innerText().catch(() => ''))
-    || await locator.getAttribute('aria-label').catch(() => null)
-    || await locator.evaluate(node => {
-      const el = node as HTMLInputElement
-      return el.value || el.placeholder || ''
-    }).catch(() => '')
-    || ''
-  return `${role} "${name.slice(0, 120)}"`
-}
-
-/** Fail fast on cancellation between async steps. */
-function throwIfAborted(signal: AbortSignal | undefined): void {
-  if (signal?.aborted) throw new Error('the computer call was canceled')
-}
-
-/**
- * Enumerate interactive elements on one page. A navigation racing the
- * enumeration destroys the execution context; that failure waits for the new
- * document and retries once instead of surfacing to the model.
- */
-async function enumerateInteractive(page: Page): Promise<ComputerElement[]> {
-  const enumerate = () => page.evaluateHandle(selector => {
-    const nodes = Array.from(document.querySelectorAll(selector))
-    return nodes.map((node, index) => {
-      const el = node as HTMLElement
-      const role =
-        el.getAttribute('role')
-        ?? (el instanceof HTMLAnchorElement ? 'link'
-          : el instanceof HTMLButtonElement ? 'button'
-          : el instanceof HTMLInputElement ? (el.type === 'checkbox' || el.type === 'radio' ? el.type : 'textbox')
-          : el instanceof HTMLSelectElement ? 'select'
-          : el instanceof HTMLTextAreaElement ? 'textbox'
-          : el.isContentEditable ? 'textbox'
-          : 'other')
-      const name =
-        el.getAttribute('aria-label')
-        ?? (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement
-          ? (el.value || el.placeholder)
-          : el instanceof HTMLSelectElement
-            ? el.value
-            : (el.textContent ?? '').trim())
-        ?? ''
-      return { index, role, name: name.slice(0, 200) }
-    })
-  }, INTERACTIVE_SELECTOR)
-  try {
-    const handle = await enumerate()
-    const elements = (await handle.jsonValue()) as ComputerElement[]
-    await handle.dispose()
-    return elements
-  } catch (error: unknown) {
-    if (!(error instanceof Error) || !String(error.message).includes('Execution context was destroyed')) throw error
-    await page.waitForLoadState('domcontentloaded', { timeout: 5_000 }).catch(() => {})
-    const handle = await enumerate()
-    const elements = (await handle.jsonValue()) as ComputerElement[]
-    await handle.dispose()
-    return elements
-  }
 }
 
 /** Register the provider into `ctx.computer`. */

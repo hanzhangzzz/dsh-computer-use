@@ -105,3 +105,12 @@
   导致模型 6 次 navigate 重试后换策略完成（环境韧性，非插件缺陷，log 佐证）。run.py 增强：
   --tasks 文件参数、min_clicks 判分、summary 按任务集分文件。收割决策输入补齐：简单 10/10 +
   长链 5/5，成功率边界在恶劣外站（时间成本而非正确性）。
+- 2026-08-25 11:40（do-something #14）：snapshot 信噪比实测与降噪。测量先行：role 噪音假设
+  被推翻（presentation 仅 1 个），真噪音是 interwiki 语言链接——Wikipedia Main Page 688 元素
+  里 349 个（51%）是 a[lang] 切换链接。降噪：枚举跳过 aria-hidden 区 + 与文档主语言不同的
+  a[lang] 链接（通用启发式非 Wikipedia 特化），效果 688→330（-52%）。关键重构：click/type
+  原用 locator.nth(index) 对未过滤列表寻址——过滤后会错位点错元素，已改为 snapshot/click/
+  type 共用同一个过滤句柄数组（interactiveHandles 为索引唯一权威，describeElement 结构化
+  返回）。验证：单测 12/12；wikipedia-contents + wikipedia-walk（双 click 索引对齐正确）
+  pass；0 竞态。过程失误：一次 python 批量替换匹配错锚点半途失败留下不一致文件，靠整读
+  重写恢复——批量改码前先确认锚点唯一。
