@@ -176,3 +176,7 @@
   verify-detach.sh，只写未跑——含模型任务需在场执行）。流程：CDP 宿主起→dsh 任务首 snapshot
   落 log 即 kill 宿主→模型下一步应收 guidance 错误并停手；脚本解 log 判 guidance 出现次数与
   bash 调用数（期望 0）。语法+静态检查过。用法已注释在脚本头。
+- 2026-08-26 05:00（do-something 新循环 #10）：AGENTS.md（+CLAUDE.md 软链）——未来 session 的
+  仓库导航：三角色布局、代码里看不出的不变量（ctx.get、attach 终态、相对导入）、验证/发布
+  命令、无人值守纪律。遗留小项：tool-computer 的 npm 包 README 缺安装命令，与下次代码变化
+  一起发布（不为 README 单独发版）。
