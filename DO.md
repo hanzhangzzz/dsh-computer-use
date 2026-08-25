@@ -169,3 +169,6 @@
 - 2026-08-26 01:15（do-something 新循环 #5）：README 补 Attach to Electron apps 节（0.3.x
   桌面控制能力的用户文档缺口）：启动命令、cdpEndpoint 配置、断连语义（含事件出处指向 DO.md）。
   纯文档轮，无模型任务。
+- 2026-08-26 02:10（do-something 新循环 #6）：0.3.2 断连围栏的回归测试落地——vitest 内 launch
+  带 CDP 端口的普通 Chrome 充当宿主，attach 后 kill，断言三类调用均报 guidance 错误
+  （do not restart / has disconnected / report to the user）。13 单测全绿。安全语义进回归网。
