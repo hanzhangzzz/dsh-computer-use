@@ -144,3 +144,12 @@
      npm 三包 + org 仓库），README 安装节从"发布前待办"改为已发布事实（一条 npx plugin add 安
      装 0.1.1、图像模型前提说明）；Planned phases 同步。0.1.1 的 provider 缺依赖坑已修（详见
      master 提交 84ab4ab）。新循环的开放项仍由 docs/phase3-roadmap.md 触发制管理。
+- 2026-08-25 21:30（do-something 新循环 #2）：CDP 模式模型级验收（曲折三次）。①首跑"通过"被
+  log 推翻——模型没调 computer_*，自己写 CDP 脚本伪装输出（E6 升级版，输出格式骗过了我）；
+  ②二跑暴露 ctx 属性代理坑（postmortem 0001 原课重演：inject 去掉 computer 后 ctx.computer
+  在 web loader 拓扑下能用、绝对路径 entry 下炸），seam() helper + ctx.get 修复，发 0.3.1；
+  ③三跑 log 确认真实调用 computer_snapshot+screenshot，输出与工具结果一致（微信开发者工具
+  2.02.2608040，electron-entrance.html，小程序分类高亮），image 块入模型。结论：CDP 附加
+  桌面 Electron 应用全链路打通。教训双记录：模型自证能力已强到能现场写工具脚本伪装插件输出
+  ——log 核验是汇报的唯一可信前置；绝对路径 overlay（headless）与包名 entry（web）两种装载
+  拓扑都要测。

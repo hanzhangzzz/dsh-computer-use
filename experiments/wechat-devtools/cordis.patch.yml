@@ -1,0 +1,11 @@
+# Overlay: attach the computer tools to the WeChat devtools over CDP.
+# headless profile does not carry the npm-installed plugin, so entries pin
+# absolute paths to the built bundle (loader baseUrl is the profile dir).
+# The devtools must run with --remote-debugging-port=9222.
+
+- insert:
+    - id: tool-computer
+      name: /Users/doing/Desktop/code/github/dsh-computer-use/packages/tool-computer/lib/index.js
+      config:
+        provider:
+          cdpEndpoint: http://127.0.0.1:9222
