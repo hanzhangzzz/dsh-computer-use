@@ -78,3 +78,25 @@ describe('computer-playwright provider over ctx.computer', () => {
     expect(reflected?.name).toContain('Alice Zhang')
   })
 })
+
+describe('attach detach semantics (0.3.2 guard)', () => {
+  test('a disconnected attachment makes every later call fail with restart guidance', async () => {
+    // A plain headless Chrome standing in for any attached Electron app.
+    const { chromium } = await import('playwright-core')
+    const host = await chromium.launch({ channel: 'chrome', headless: true, args: ['--remote-debugging-port=9223'] })
+    const ctx = new Context()
+    await ctx.plugin(ComputerRuntime)
+    await ctx.plugin(computerPlaywright, { cdpEndpoint: 'http://127.0.0.1:9223' })
+    // Attached and working.
+    const snap = await ctx.computer.snapshot()
+    expect(snap.elements).toBeDefined()
+
+    // The host app goes away on its own terms.
+    await host.close()
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    await expect(ctx.computer.snapshot()).rejects.toThrow(/do not restart the application yourself/)
+    await expect(ctx.computer.click(0)).rejects.toThrow(/has disconnected/)
+    await expect(ctx.computer.screenshot()).rejects.toThrow(/report this to the user/)
+  })
+})
