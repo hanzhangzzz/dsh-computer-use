@@ -73,6 +73,8 @@ def run_task(task: dict) -> dict:
         hit = any(criteria['url_contains'] in u or criteria['url_contains'] in output for u in click_urls) \
             or criteria['url_contains'] in output
         checks['url_contains'] = hit
+    if 'min_clicks' in criteria:
+        checks['min_clicks'] = len(click_urls) >= criteria['min_clicks']
     if 'tool' in criteria:
         checks['tool'] = criteria['tool'] in tool_calls
     if 'text_any' in criteria:
@@ -92,8 +94,13 @@ def run_task(task: dict) -> dict:
 
 
 def main() -> None:
-    tasks = json.loads((HERE / 'tasks.json').read_text())['tasks']
-    only = sys.argv[1:] if len(sys.argv) > 1 else None
+    args = sys.argv[1:]
+    tasks_file = HERE / 'tasks.json'
+    if args and args[0].endswith('.json'):
+        tasks_file = pathlib.Path(args[0]).resolve()
+        args = args[1:]
+    tasks = json.loads(tasks_file.read_text())['tasks']
+    only = args or None
     RESULTS.mkdir(exist_ok=True)
     results = []
     for task in tasks:
@@ -112,7 +119,7 @@ def main() -> None:
         'passed': sum(1 for r in results if r.get('passed')),
         'results': [{k: r[k] for k in ('id', 'passed', 'checks', 'elapsed_s')} for r in results],
     }
-    (RESULTS / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
+    (RESULTS / f'summary-{tasks_file.stem}.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
     print(json.dumps(summary['results'], ensure_ascii=False, indent=2))
 
 

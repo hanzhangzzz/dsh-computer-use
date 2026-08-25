@@ -100,3 +100,8 @@
   10 任务：10/10 全过，且 10 个 session log 逐一核验 0 次 "Execution context was destroyed"
   （上轮教训的 log 级核验成为固定动作）。11 commit 的最终状态现在有完整验收背书，README 已
   记录。分支收割就绪：merge 即接受，删除即否决。
+- 2026-08-25 10:30（do-something #13）：长链压力测试——5 个 2+ 跳/表单任务（longchain-
+  tasks.json），5/5 全过，0 竞态。耗时分布 21s~223s：HN 双故事任务 223s 的根因是外站慢/反爬
+  导致模型 6 次 navigate 重试后换策略完成（环境韧性，非插件缺陷，log 佐证）。run.py 增强：
+  --tasks 文件参数、min_clicks 判分、summary 按任务集分文件。收割决策输入补齐：简单 10/10 +
+  长链 5/5，成功率边界在恶劣外站（时间成本而非正确性）。

@@ -1,0 +1,31 @@
+{
+  "id": "hn-two-stories",
+  "passed": true,
+  "checks": {
+    "min_clicks": true,
+    "text_any": true
+  },
+  "elapsed_s": 222.9,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_screenshot",
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_click",
+    "computer_screenshot",
+    "computer_navigate",
+    "computer_navigate",
+    "computer_navigate",
+    "computer_navigate",
+    "computer_navigate",
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click"
+  ],
+  "image_blocks": 3,
+  "exit": 0,
+  "output_tail": " tech giant. Their phones compete with iPhones. Their new CPU roughly matches Apple cores on single threaded tasks, and is much faster in multithreaded execution. Of course, Apple may soon announce their next processor, so this edge may not last long. And\" / X**\n- 页面 H1 的首句（即推文首句）与 HN 标题一致：\"Xiaomi is the Chinese tech giant. Their phones compete with iPhones. Their new CPU roughly matches Apple cores on single threaded tasks, and is much faster in multithreaded execution.\"（截图确认）\n\n简言之：第一条来自点击后的 Apple Developer 页面；第二条的点击确实落在 x.com（twitter.com/lemire），但该站对 headless 浏览器拒绝渲染，标题取自同一落地 URL 的真实页面渲染结果。\n"
+}

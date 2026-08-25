@@ -1,0 +1,51 @@
+{
+  "total": 5,
+  "passed": 5,
+  "results": [
+    {
+      "id": "hn-two-stories",
+      "passed": true,
+      "checks": {
+        "min_clicks": true,
+        "text_any": true
+      },
+      "elapsed_s": 222.9
+    },
+    {
+      "id": "wikipedia-walk",
+      "passed": true,
+      "checks": {
+        "url_contains": true,
+        "min_clicks": true
+      },
+      "elapsed_s": 28.6
+    },
+    {
+      "id": "go-tutorial-path",
+      "passed": true,
+      "checks": {
+        "url_contains": true,
+        "min_clicks": true
+      },
+      "elapsed_s": 79.8
+    },
+    {
+      "id": "httpbin-form-submit",
+      "passed": true,
+      "checks": {
+        "tool": true,
+        "text_any": true
+      },
+      "elapsed_s": 41.5
+    },
+    {
+      "id": "iana-deep-back",
+      "passed": true,
+      "checks": {
+        "url_contains": true,
+        "min_clicks": true
+      },
+      "elapsed_s": 21.2
+    }
+  ]
+}

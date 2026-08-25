@@ -1,0 +1,19 @@
+{
+  "id": "iana-deep-back",
+  "passed": true,
+  "checks": {
+    "url_contains": true,
+    "min_clicks": true
+  },
+  "elapsed_s": 21.2,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_click",
+    "computer_screenshot"
+  ],
+  "image_blocks": 1,
+  "exit": 0,
+  "output_tail": "完成。操作过程与结果如下：\n\n1. 打开 https://www.iana.org/help/example-domains（页面标题 \"Example Domains\"）\n2. 点击页脚的 **About Us** → 进入 https://www.iana.org/about（页面标题 \"About us\"）\n3. 在 About 页面点击顶部导航的 **Domains** → 进入最终页面\n\n**结果：**\n- 最终 URL：**https://www.iana.org/domains**\n- 主标题（H1）：**Domain Name Services**\n"
+}

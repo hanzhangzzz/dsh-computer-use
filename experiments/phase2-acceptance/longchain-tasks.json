@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "id": "hn-two-stories",
+      "prompt": "用 computer_ 开头的工具：打开 https://news.ycombinator.com ，snapshot 点开第一条新闻，报告它的标题和落点域名；然后 computer_navigate 回 https://news.ycombinator.com ，再点开第二条新闻，报告第二条的标题和落点域名。两个标题都必须来自真实点击后的页面。",
+      "pass": { "min_clicks": 2, "text_any": ["第一条", "第二条"] }
+    },
+    {
+      "id": "wikipedia-walk",
+      "prompt": "用 computer_ 开头的工具完成一段维基百科漫步：打开 https://en.wikipedia.org/wiki/Computer ，snapshot 后点击页面正文里的一个蓝色链接到达新词条，再在新词条里点另一个链接到达第三个词条，报告三个词条的标题和最终 URL。不要用搜索框。",
+      "pass": { "min_clicks": 2, "url_contains": "wikipedia.org/wiki" }
+    },
+    {
+      "id": "go-tutorial-path",
+      "prompt": "用 computer_ 开头的工具：打开 https://go.dev/doc ，点击 Getting started，在到达的页面里再点 Tutorial: Get started with Go，报告最终页面的 URL 和页面里列出的第一个步骤的大意。",
+      "pass": { "min_clicks": 2, "url_contains": "go.dev/doc/tutorial/getting-started" }
+    },
+    {
+      "id": "httpbin-form-submit",
+      "prompt": "用 computer_ 开头的工具：打开 https://httpbin.org/forms/post ，snapshot 找到 Customer Name 输入框用 computer_type 填入 Alice，找到另一个文本输入框填入 Bob@x.com，然后点击提交按钮，报告响应 JSON 里 custname 字段的值。",
+      "pass": { "tool": "computer_type", "text_any": ["Alice"] }
+    },
+    {
+      "id": "iana-deep-back",
+      "prompt": "用 computer_ 开头的工具：打开 https://www.iana.org/help/example-domains ，点击页脚的 About Us，在 About 页面里点击左侧或顶部导航的 Domains，报告最终 URL 和该页面的主标题。",
+      "pass": { "min_clicks": 2, "url_contains": "iana.org" }
+    }
+  ]
+}

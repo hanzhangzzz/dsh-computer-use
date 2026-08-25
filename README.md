@@ -57,6 +57,7 @@ Remaining before this phase closes: packaging (npm publish + relative-path patch
 
 - 10/10 tasks completed the intended action; every real click/snapshot/navigate in every run was correct, including multi-hop (example.com → IANA → footer About) and a hostile-403 landing reported honestly.
 - Re-run in full on the final 11-commit state (2026-08-25, after `computer_type`/`computer_press_key`/race-retry landed): 10/10 again, and zero "Execution context was destroyed" occurrences across all ten session logs.
+- Long-chain stress suite (5 tasks with 2+ clicks or form input, `longchain-tasks.json`): 5/5 pass. Fastest 21s (two-hop IANA), slowest 223s (HN two-story: hostile external sites cost six navigate retries that the model absorbed by switching strategy — environment resilience, not a plugin defect; zero race errors).
 - Median elapsed ~16s per task (headless Chrome + vision model).
 - Structure-first held throughout: no task needed coordinates; every click came from a snapshot index.
 
