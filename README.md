@@ -86,15 +86,19 @@ Still open: element-level diffs for partially changed pages, and capping/paginat
 
 `computer_navigate`, `computer_snapshot`, `computer_click`, `computer_type` (index-addressed fill with the post-input snapshot embedded), `computer_press_key` (added 2026-08-25; Enter-submit verified on a live Wikipedia search — four tool calls straight to the article), `computer_screenshot`. Snapshot enumeration now retries once on the navigation race that used to surface "Execution context was destroyed" as a tool error. Scroll and coordinate fallback remain open.
 
-## Packaging (local, publish-ready)
+## Install (published)
 
-Three packages, all names free on npm as of 2026-08-24: `dsh-computer`, `dsh-computer-playwright`, `dsh-tool-computer`. The latter carries the bundle manifest (`dsh.bundle.patch` → `cordis.patch.yml`, package-name entries) and is what users install; `pnpm -r pack --dry-run` shows each tarball carrying `lib/` + LICENSE + README (+ patch). Note: the npm name `dsh-computer-use` itself is taken by an unrelated third-party plugin (jerryweizhihao, screen-coordinate-style computer use) — independent signal that this niche is active.
+```sh
+npx -y @deepseek-ai/dsh@latest plugin --profile web add dsh-tool-computer
+```
 
-Human steps left before publish: pick the npm account and GitHub remote (huajuan404 vs hanzhangzzz), add `repository` fields, `pnpm -r publish`, then users install with `dsh plugin --profile <name> add dsh-tool-computer`.
+That single command installs the bundle and its Playwright provider (one install is complete as of `dsh-tool-computer@0.1.1`); start with `npx -y @deepseek-ai/dsh@latest web` and the `computer_*` tools are live in the session. The agent model must declare image input for `computer_screenshot` to reach the model — `deepseek-v4-flash-vision-exp` does.
+
+Published 2026-08-25 (npm: `dsh-computer@0.1.0`, `dsh-computer-playwright@0.1.0`, `dsh-tool-computer@0.1.1`; repo: hanzhangzzz/dsh-computer-use). The npm name `dsh-computer-use` itself is taken by an unrelated third-party plugin — independent signal that this niche is active.
 
 ## Planned phases
 
-- **Phase 2** — delivered on `do/main` (15 commits): the `computer` capability seam, Playwright provider, tool Consumer, acceptance evidence, packaging. Awaiting harvest.
-- **Phase 3** — activation-triggered per [docs/phase3-roadmap.md](docs/phase3-roadmap.md): every open item (scroll, coordinate fallback, element diff, pagination, approval, E2B Desktop, publish) carries its measured evidence, activation signal, and cost; nothing is built before its trigger fires.
+- **Phase 2** — shipped and published (npm + GitHub, 2026-08-25).
+- **Phase 3** — activation-triggered per [docs/phase3-roadmap.md](docs/phase3-roadmap.md): every open item (scroll, coordinate fallback, element diff, pagination, approval, E2B Desktop) carries its measured evidence, activation signal, and cost; nothing is built before its trigger fires.
 
 Design inputs and the full investigation (Codex architecture analysis, ecosystem survey, dsh readiness audit) live in the project discussion; conclusions get distilled into this README as they solidify.

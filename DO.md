@@ -136,3 +136,11 @@
 - 2026-08-25 17:20（do-something #20）：收割检查——未收割、无新指令。stray summary 第二次
   出现，按修生成器原则根因修复：run.py 只在全量跑（无任务过滤）时写 summary 文件，子集重跑
   只写 per-task JSON，孤立产物不再产生。语法验证通过（py_compile 级）。冻结维持。
+
+<!-- 新循环：Phase 2 已收割发布（npm 0.1.1 + github.com/hanzhangzzz/dsh-computer-use），
+     上一轮 19 commit 的日志见 git 历史。 -->
+
+- 2026-08-25 19:30（do-something #22，新循环 #1）：发布后收尾。收割已完成（master 合并 +
+     npm 三包 + org 仓库），README 安装节从"发布前待办"改为已发布事实（一条 npx plugin add 安
+     装 0.1.1、图像模型前提说明）；Planned phases 同步。0.1.1 的 provider 缺依赖坑已修（详见
+     master 提交 84ab4ab）。新循环的开放项仍由 docs/phase3-roadmap.md 触发制管理。
