@@ -128,3 +128,8 @@
   DO.md 约束无人类编辑），冻结维持。本轮实际动作是冻结分支卫生：还原 #15 可移植性验证时
   孤立重跑覆盖的两个 results 产物（背书数据保持全量套件一次跑通的原始时间戳语义）、删除同
   源的孤立 summary-tasks.json、gitignore __pycache__。分支干净冻结，继续等收割。
+- 2026-08-25 16:10（do-something #19，冻结例外）：路线图 #2 触发条件经时间线拆解确认满足，
+  解冻实施。223s 任务复盘：x.com 四次尝试各恰好 30s（= navigationTimeout），goto 等 load 事件
+  到超时是浪费主因；403 页 DOM 秒级可用。修复 = navigate 改 waitUntil domcontentloaded（与
+  click 附快照同语义）。验证：typecheck/build/12 单测 + go-docs 模型级任务全过。路线图 #2 标记
+  shipped，分支回到冻结（本例示范了触发制的工作方式：证据先行，触发满足才动手）。

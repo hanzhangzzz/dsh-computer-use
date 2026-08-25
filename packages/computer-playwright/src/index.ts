@@ -100,7 +100,11 @@ class PlaywrightProvider implements ComputerProvider {
 
   async navigate(url: string, signal?: AbortSignal): Promise<ComputerNavigation> {
     const page = await this.getPage(signal)
-    const response = await page.goto(url, { timeout: this.config.navigationTimeoutMs })
+    // domcontentloaded, not load: hostile external sites that stall after the
+    // document arrives would otherwise burn the full navigation timeout per
+    // attempt (measured: 4×30s on a blocked x.com link). The error page's DOM
+    // settles in seconds; interactive content loads after, as everywhere else.
+    const response = await page.goto(url, { timeout: this.config.navigationTimeoutMs, waitUntil: 'domcontentloaded' })
     if (response === null) {
       // A null response still leaves a loaded document (e.g. downloads,
       // same-document jumps); report the settled state.
