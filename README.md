@@ -82,6 +82,19 @@ Single calls are fine at a 128k window, but repeat snapshots of an unchanged hea
 
 Still open: element-level diffs for partially changed pages, and capping/paginating very large lists.
 
+## Attach to Electron apps (desktop control)
+
+`dsh-tool-computer@0.3+` can drive any Chromium-based desktop app, not just a launched browser: start the app with a CDP port and attach.
+
+```sh
+# WeChat devtools example (any Electron app works):
+open -a wechatwebdevtools --args --remote-debugging-port=9222
+```
+
+Then set `provider.cdpEndpoint: http://127.0.0.1:9222` on the plugin (a session overlay or your profile's user patch). The structure-first tools operate on the app's DOM — index-addressed clicks on real elements, no screen coordinates. Verified live against the WeChat devtools (project picker enumerated in 80ms; model-level snapshot + screenshot run confirmed in the session log).
+
+**Detach semantics (0.3.2+):** an attached app that closes or crashes is a terminal state — every later `computer_*` call fails with "report this to the user and wait; do not restart the application yourself". The host app's lifecycle is the user's, never the model's (this guidance was added after a real unattended incident; see DO.md 2026-08-25).
+
 ## Action surface
 
 `computer_navigate`, `computer_snapshot`, `computer_click`, `computer_type` (index-addressed fill with the post-input snapshot embedded), `computer_press_key` (added 2026-08-25; Enter-submit verified on a live Wikipedia search — four tool calls straight to the article), `computer_screenshot`. Snapshot enumeration now retries once on the navigation race that used to surface "Execution context was destroyed" as a tool error. Scroll and coordinate fallback remain open.
