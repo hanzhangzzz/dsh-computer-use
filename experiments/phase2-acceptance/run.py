@@ -3,12 +3,14 @@
 with the tracer overlay, capture stdout and the session log evidence, and
 score mechanical pass criteria. Serial execution (one Chrome at a time).
 
-Usage (from the deepseek-harness repo root):
-  python3 ../dsh-computer-use/experiments/phase2-acceptance/run.py
+Usage (from anywhere; the harness checkout is resolved from
+$DSH_HARNESS_ROOT or expected as this repo's sibling):
+  python3 experiments/phase2-acceptance/run.py
 
 Writes per-task JSON + a summary to results/ next to this script.
 """
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -17,8 +19,23 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent
 RESULTS = HERE / 'results'
 OVERLAY = HERE.parent / 'phase2-tracer' / 'cordis.patch.yml'
-DSH_ROOT = pathlib.Path('/Users/doing/Desktop/code/github/deepseek-harness')
-SESSIONS = pathlib.Path.home() / '.dsh/sessions/--Users-doing-Desktop-code-github-deepseek-harness--'
+
+
+def resolve_dsh_root() -> pathlib.Path:
+    root = os.environ.get('DSH_HARNESS_ROOT')
+    if root:
+        return pathlib.Path(root).resolve()
+    sibling = HERE.parent.parent.parent / 'deepseek-harness'
+    if (sibling / 'pnpm-workspace.yaml').is_file():
+        return sibling.resolve()
+    sys.exit('set $DSH_HARNESS_ROOT to the deepseek-harness checkout path')
+
+
+DSH_ROOT = resolve_dsh_root()
+# dsh keys session storage by the escaped cwd path: the leading slash and the
+# trailing segment each render as a doubled dash; mirror that derivation
+# instead of pinning this machine's layout.
+SESSIONS = pathlib.Path.home() / '.dsh/sessions' / ('--' + str(DSH_ROOT)[1:].replace('/', '-') + '--')
 
 
 def newest_session_dir() -> pathlib.Path:
