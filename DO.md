@@ -133,3 +133,6 @@
   到超时是浪费主因；403 页 DOM 秒级可用。修复 = navigate 改 waitUntil domcontentloaded（与
   click 附快照同语义）。验证：typecheck/build/12 单测 + go-docs 模型级任务全过。路线图 #2 标记
   shipped，分支回到冻结（本例示范了触发制的工作方式：证据先行，触发满足才动手）。
+- 2026-08-25 17:20（do-something #20）：收割检查——未收割、无新指令。stray summary 第二次
+  出现，按修生成器原则根因修复：run.py 只在全量跑（无任务过滤）时写 summary 文件，子集重跑
+  只写 per-task JSON，孤立产物不再产生。语法验证通过（py_compile 级）。冻结维持。

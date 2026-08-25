@@ -131,13 +131,19 @@ def main() -> None:
         results.append(result)
         (RESULTS / f'{task["id"]}.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
         print(f'   passed={result.get("passed")} checks={result.get("checks")}', flush=True)
-    summary = {
-        'total': len(results),
-        'passed': sum(1 for r in results if r.get('passed')),
-        'results': [{k: r[k] for k in ('id', 'passed', 'checks', 'elapsed_s')} for r in results],
-    }
-    (RESULTS / f'summary-{tasks_file.stem}.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
-    print(json.dumps(summary['results'], ensure_ascii=False, indent=2))
+    # Full runs (no task filter) own the summary file; filtered reruns write
+    # only per-task JSON so a spot check never dilutes the recorded full-suite
+    # endorsement with a one-task timestamp.
+    if only is None:
+        summary = {
+            'total': len(results),
+            'passed': sum(1 for r in results if r.get('passed')),
+            'results': [{k: r[k] for k in ('id', 'passed', 'checks', 'elapsed_s')} for r in results],
+        }
+        (RESULTS / f'summary-{tasks_file.stem}.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(json.dumps(summary['results'], ensure_ascii=False, indent=2))
+    else:
+        print(json.dumps(results, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':
