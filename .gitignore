@@ -1,2 +1,7 @@
+node_modules/
+lib/
+*.tsbuildinfo
+*.tgz
+__pycache__/
 # Playwright-MCP server-side artifacts (auto-saved snapshots/screenshots)
 experiments/*/.playwright-mcp/

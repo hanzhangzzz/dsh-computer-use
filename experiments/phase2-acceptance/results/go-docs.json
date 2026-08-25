@@ -1,0 +1,16 @@
+{
+  "id": "go-docs",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 16.4,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "已完成：\n\n1. 打开 https://go.dev/doc —— 加载为 \"Documentation - The Go Programming Language\"（最终地址 https://go.dev/doc/）\n2. 页面快照中点击 **\"Tutorial: Getting started\"** 链接\n3. 新页面 URL：**https://go.dev/doc/tutorial/getting-started**（页面标题：Tutorial: Get started with Go）\n"
+}

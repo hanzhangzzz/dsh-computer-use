@@ -1,0 +1,17 @@
+{
+  "id": "snapshot-index-stability",
+  "passed": true,
+  "checks": {
+    "tool": true,
+    "text_any": true
+  },
+  "elapsed_s": 14.8,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_snapshot"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "两个连续快照的结果如下（均来自本轮工具返回）：\n\n- **第一次 computer_snapshot** 返回：\n  - 页面标题：`Example Domain`\n  - URL：`https://example.com/`\n  - 可交互元素列表：`0: link \"Learn more\"`\n\n- **第二次 computer_snapshot** 返回：\n  - 页面标题与 URL 同上\n  - 结果标注为 `unchanged since snapshot #1: the page's interactive elements are identical; indices from that snapshot remain valid.`\n\n**结论：**\n1. **两次快照的元素索引一致** —— 第二次快照明确返回\"与快照 #1 相比未变化，交互元素完全相同，索引仍然有效\"。\n2. **链接的索引号为 `0`** —— 首次快照中唯一列出的可交互元素为 `link \"Learn more\"`，其索引是 `0`。\n"
+}

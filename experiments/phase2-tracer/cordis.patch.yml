@@ -1,0 +1,16 @@
+# Phase 2 tracer overlay: mount the three dsh-computer-use packages over
+# `dsh --profile headless`. The loader resolves plugin names against its
+# baseUrl (~/.dsh/profiles/<name>), not the repo cwd, so this local-dev
+# overlay pins absolute paths. Run from the deepseek-harness repo root:
+#   pnpm dsh --profile headless --patch <this-file> "<task>"
+# The agent model (vision) comes from $DSH_HOME/settings.yaml.
+
+- insert:
+    - id: computer
+      name: /Users/doing/Desktop/code/github/dsh-computer-use/packages/computer/lib/index.js
+
+    - id: computer-playwright
+      name: /Users/doing/Desktop/code/github/dsh-computer-use/packages/computer-playwright/lib/index.js
+
+    - id: tool-computer
+      name: /Users/doing/Desktop/code/github/dsh-computer-use/packages/tool-computer/lib/index.js

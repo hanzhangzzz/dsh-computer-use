@@ -1,0 +1,37 @@
+{
+  "name": "dsh-computer",
+  "version": "0.1.0",
+  "description": "Computer use capability Service Definition for DeepSeek Harness: the ctx.computer seam providers register into",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "computer-use",
+    "browser-automation"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib/index.d.ts",
+    "lib/index.js",
+    "lib/types.d.ts",
+    "lib/types.js"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT",
+  "author": "huajuan404"
+}

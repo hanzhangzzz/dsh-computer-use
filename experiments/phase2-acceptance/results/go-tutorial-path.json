@@ -1,0 +1,20 @@
+{
+  "id": "go-tutorial-path",
+  "passed": true,
+  "checks": {
+    "url_contains": true,
+    "min_clicks": true
+  },
+  "elapsed_s": 79.8,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_click",
+    "computer_click",
+    "computer_screenshot"
+  ],
+  "image_blocks": 2,
+  "exit": 0,
+  "output_tail": "完成。操作过程与结果如下：\n\n1. 打开 https://go.dev/doc/ ，在页面 \"Getting Started\" 卡片中点击 **Tutorial: Getting started**（该卡片标题本身不是链接，可点击的第一项即此）。\n2. 到达教程页后，点击页面左侧目录中的 **Tutorial: Get started with Go**（该链接指向的就是当前教程页本身）。\n\n**最终页面 URL：** https://go.dev/doc/tutorial/getting-started（页面标题：Tutorial: Get started with Go）\n\n**页面列出的第一个步骤：Prerequisites（先决条件）**，大意是：在开始前需要准备好三样东西——\n- 一定的编程经验（本教程代码简单，但懂函数概念会更好）；\n- 一个写代码的工具（如免费的 VSCode、付费的 GoLand，或免费的 Vim）；\n- 一个命令行终端（Linux/macOS 用任意终端，Windows 用 PowerShell 或 cmd）。\n"
+}

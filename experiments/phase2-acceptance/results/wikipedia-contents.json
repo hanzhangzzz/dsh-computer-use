@@ -1,0 +1,20 @@
+{
+  "id": "wikipedia-contents",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 26.7,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click",
+    "computer_click",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_click"
+  ],
+  "image_blocks": 1,
+  "exit": 0,
+  "output_tail": "已完成。点击 \"Contents\" 链接后，新页面标题为：\n\n**Wikipedia:Contents - Wikipedia**\n\n（URL：https://en.wikipedia.org/wiki/Wikipedia:Contents ，即 \"Contents\" 页面，维基百科的内容目录页。）\n\n过程说明：首次直接点击时该链接位于折叠的侧边栏中不可见，于是我点击 \"Main menu\" 按钮展开侧边栏后再点击 \"Contents\"，成功跳转。\n"
+}

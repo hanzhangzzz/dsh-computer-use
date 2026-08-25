@@ -1,0 +1,21 @@
+{
+  "id": "httpbin-form-submit",
+  "passed": true,
+  "checks": {
+    "tool": true,
+    "text_any": true
+  },
+  "elapsed_s": 41.5,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_screenshot",
+    "computer_type",
+    "computer_type",
+    "computer_click",
+    "computer_screenshot"
+  ],
+  "image_blocks": 2,
+  "exit": 0,
+  "output_tail": "任务完成 ✅\n\n操作流程:\n1. 打开 `https://httpbin.org/forms/post`\n2. 在 **Customer name** 输入框填入 `Alice`\n3. 在 **E-mail address** 输入框填入 `Bob@x.com`\n4. 点击 **Submit order** 按钮提交表单\n\n响应 JSON（位于 `https://httpbin.org/post`）中的 `form` 对象显示：\n\n```json\n\"form\": {\n    \"comments\": \"\",\n    \"custemail\": \"Bob@x.com\",\n    \"custname\": \"Alice\",\n    \"custtel\": \"\",\n    \"delivery\": \"\"\n}\n```\n\n**`custname` 字段的值为 `\"Alice\"`**\n"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "iana-back-link",
+  "passed": true,
+  "checks": {
+    "url_contains": true
+  },
+  "elapsed_s": 13.9,
+  "tool_calls": [
+    "computer_navigate",
+    "computer_snapshot",
+    "computer_click"
+  ],
+  "image_blocks": 0,
+  "exit": 0,
+  "output_tail": "点击了 **Instructions and Guides** 圆角按钮，落点 URL 为：\n\n**https://www.iana.org/help**\n\n页面标题为 “Instructions and Guides”，是 IANA 的指导与指南（help）页面，包含 Root Zone 变更流程、ccTLD 委派/转移、密钥仪式等各类指南的链接列表。\n"
+}
