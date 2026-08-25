@@ -4,7 +4,7 @@
   "checks": {
     "url_contains": true
   },
-  "elapsed_s": 15.0,
+  "elapsed_s": 16.4,
   "tool_calls": [
     "computer_navigate",
     "computer_snapshot",
@@ -12,5 +12,5 @@
   ],
   "image_blocks": 0,
   "exit": 0,
-  "output_tail": "已打开新页面：\n\n**新页面 URL：https://go.dev/doc/tutorial/getting-started**\n\n操作过程：\n1. `computer_navigate` 打开 https://go.dev/doc/（重定向到 https://go.dev/doc/，标题 \"Documentation - The Go Programming Language\"）\n2. `computer_snapshot` 确认页面上的 \"Tutorial: Getting started\" 链接\n3. `computer_click`（索引 62）点击该链接，跳转到 https://go.dev/doc/tutorial/getting-started\n"
+  "output_tail": "已完成：\n\n1. 打开 https://go.dev/doc —— 加载为 \"Documentation - The Go Programming Language\"（最终地址 https://go.dev/doc/）\n2. 页面快照中点击 **\"Tutorial: Getting started\"** 链接\n3. 新页面 URL：**https://go.dev/doc/tutorial/getting-started**（页面标题：Tutorial: Get started with Go）\n"
 }

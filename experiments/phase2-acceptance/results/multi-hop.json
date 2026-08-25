@@ -4,15 +4,14 @@
   "checks": {
     "url_contains": true
   },
-  "elapsed_s": 17.2,
+  "elapsed_s": 16.9,
   "tool_calls": [
     "computer_navigate",
     "computer_snapshot",
     "computer_click",
-    "computer_snapshot",
     "computer_click"
   ],
   "image_blocks": 0,
   "exit": 0,
-  "output_tail": "完成。最终 URL 是 **https://www.iana.org/about**\n\n流程回顾：\n1. 打开 https://example.com（Example Domain）\n2. 点击链接 \"Learn more\" → 进入 IANA 页面 https://www.iana.org/help/example-domains\n3. 在该页面 snapshot 中点击页脚链接 \"About Us\" → 跳转至 **https://www.iana.org/about**\n"
+  "output_tail": "完成。流程如下：\n\n1. 打开 https://example.com → 加载成功（Example Domain）\n2. snapshot 后点击 \"Learn more\" 链接 → 跳转到 IANA 的例域页面 https://www.iana.org/help/example-domains\n3. 在该页面 snapshot，点击页脚 \"About Us\" 链接 → 跳转到 https://www.iana.org/about\n\n**最终 URL：https://www.iana.org/about**（页面标题为 \"About us\"）\n"
 }

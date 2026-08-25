@@ -56,6 +56,7 @@ Remaining before this phase closes: packaging (npm publish + relative-path patch
 `experiments/phase2-acceptance/` runs ten real-browser tasks through the assembled plugin and scores mechanical criteria from the session log (tool calls, click URLs, image blocks) plus output text. Clean-run results (summary in `results/summary.json`):
 
 - 10/10 tasks completed the intended action; every real click/snapshot/navigate in every run was correct, including multi-hop (example.com → IANA → footer About) and a hostile-403 landing reported honestly.
+- Re-run in full on the final 11-commit state (2026-08-25, after `computer_type`/`computer_press_key`/race-retry landed): 10/10 again, and zero "Execution context was destroyed" occurrences across all ten session logs.
 - Median elapsed ~16s per task (headless Chrome + vision model).
 - Structure-first held throughout: no task needed coordinates; every click came from a snapshot index.
 

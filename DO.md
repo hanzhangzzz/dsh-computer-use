@@ -95,3 +95,8 @@
   + 4 个 parse）导出并补 render.spec.ts（10 测试，钉死模型可见文本与拒绝路径，2ms）——修掉
   "改坏 render 只有模型级才能发现"的回归缺口；③vitest include 兼容 .test/.spec（首次跑
   render.spec 未被收集，Test Files 只有 1 暴露的）。验证：12/12 全绿。
+- 2026-08-25 09:20（do-something #12）：最终状态全量验收背书。识别缺口：上次全量验收在 4 个
+  功能 commit 之前（type/press_key/unchanged/click 附快照只有单测+单任务验证）。全量重跑
+  10 任务：10/10 全过，且 10 个 session log 逐一核验 0 次 "Execution context was destroyed"
+  （上轮教训的 log 级核验成为固定动作）。11 commit 的最终状态现在有完整验收背书，README 已
+  记录。分支收割就绪：merge 即接受，删除即否决。

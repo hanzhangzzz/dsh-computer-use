@@ -4,11 +4,11 @@
   "checks": {
     "error_handled": true
   },
-  "elapsed_s": 11.2,
+  "elapsed_s": 12.4,
   "tool_calls": [
     "computer_navigate"
   ],
   "image_blocks": 0,
   "exit": 0,
-  "output_tail": "执行结果如下，未做任何重试：\n\n**打开网址时发生错误：** `page.goto: net::ERR_CONNECTION_CLOSED`\n\n**详情：**\n- **URL：** `https://this-domain-does-not-exist-zzz941.com/`\n- **错误信息：** `net::ERR_CONNECTION_CLOSED`\n- **调用日志：** `navigating to \"https://this-domain-does-not-exist-zzz941.com/\", waiting until \"load\"`\n\n**说明：** 浏览器尝试访问该域名时，连接在页面加载完成前被对方关闭（connection closed），未能加载出任何页面。这与预期一致——这是一个不存在的域名，DNS 解析或 TCP 连接建立阶段即失败，浏览器没有呈现错误页内容，而是直接在导航阶段抛出了连接关闭的异常。\n"
+  "output_tail": " `computer_navigate` → `https://this-domain-does-not-exist-zzz941.com`\n\n**结果**: 导航立即失败，没有重试。\n\n**错误内容**:\n```\nError: page.goto: net::ERR_CONNECTION_CLOSED at https://this-domain-does-not-exist-zzz941.com/\nCall log:\n  - navigating to \"https://this-domain-does-not-exist-zzz941.com/\", waiting until \"load\"\n```\n\n**说明**:\n- 错误类型是 Chromium 的网络层错误 `net::ERR_CONNECTION_CLOSED`，即连接在建立过程中被对端关闭/无法建立。对于一个实际不存在的域名，DNS 解析失败或服务器拒绝连接都会归结为这类网络层错误。\n- 浏览器没有加载出任何页面内容，也没有拿到 HTTP 状态码（如 404/502），因为根本没有可响应的服务器——域名本身不存在。\n- 按你的要求，我没有进行任何重试（限制为不超过一次）。\n\n**结论**: 打开不存在的域名会得到 `net::ERR_CONNECTION_CLOSED` 错误，页面无法加载，这是预期的网络连接失败。\n"
 }
