@@ -25,6 +25,17 @@ export const name = 'tool-computer'
 /** Tools, prompt sections, and the durable image store; the computer seam is mounted by this plugin itself. */
 export const inject = ['tools', 'systemPrompt', 'attachments']
 
+/**
+ * The seam service this plugin mounted in {@link apply}. Read through
+ * `ctx.get` (not the property proxy — postmortem 0001: proxies serve
+ * declared injections only) and fail loud if it somehow vanished.
+ */
+function seam(ctx: Context): ComputerRuntime {
+  const service = ctx.get('computer')
+  if (service === undefined) throw new Error('the computer seam is not mounted')
+  return service
+}
+
 /** Default cooperative tool-call timeout budget (ms). */
 export const DEFAULT_COMPUTER_TOOL_TIMEOUT_MS = 60_000
 
@@ -118,7 +129,7 @@ export function apply(ctx: Context, config: Config): void {
     isConcurrencySafe: () => false,
     async execute(args, exec) {
       const { url } = parseNavigateArgs(args)
-      const nav = await ctx.computer.navigate(url, exec.signal)
+      const nav = await seam(ctx).navigate(url, exec.signal)
       return { url: nav.url, title: nav.title }
     },
   }))
@@ -155,7 +166,7 @@ export function apply(ctx: Context, config: Config): void {
     timeoutMs,
     isConcurrencySafe: () => false,
     async execute(_args, exec) {
-      const snap = await ctx.computer.snapshot(exec.signal)
+      const snap = await seam(ctx).snapshot(exec.signal)
       return {
         url: snap.url,
         title: snap.title,
@@ -187,7 +198,7 @@ export function apply(ctx: Context, config: Config): void {
     isConcurrencySafe: () => false,
     async execute(args, exec) {
       const { index } = parseClickArgs(args)
-      const result = await ctx.computer.click(index, exec.signal)
+      const result = await seam(ctx).click(index, exec.signal)
       const after = result.after
       return {
         clicked: result.clicked,
@@ -225,7 +236,7 @@ export function apply(ctx: Context, config: Config): void {
     isConcurrencySafe: () => false,
     async execute(args, exec) {
       const { index, text } = parseTypeArgs(args)
-      const result = await ctx.computer.type(index, text, exec.signal)
+      const result = await seam(ctx).type(index, text, exec.signal)
       const after = result.after
       return {
         filled: result.filled,
@@ -261,7 +272,7 @@ export function apply(ctx: Context, config: Config): void {
     isConcurrencySafe: () => false,
     async execute(args, exec) {
       const { key } = parseKeyPressArgs(args)
-      const result = await ctx.computer.pressKey(key, exec.signal)
+      const result = await seam(ctx).pressKey(key, exec.signal)
       const after = result.after
       return {
         key: result.key,
@@ -297,7 +308,7 @@ export function apply(ctx: Context, config: Config): void {
       timeoutMs,
       isConcurrencySafe: () => false,
       async execute(_args, exec) {
-        const shot = await ctx.computer.screenshot(exec.signal)
+        const shot = await seam(ctx).screenshot(exec.signal)
         const attachments = ctx.get('attachments')
         if (attachments === undefined) throw new Error('no attachment store is mounted')
         const [ref] = await attachments.saveImages([{ data: shot.data, mediaType: shot.mediaType }])
