@@ -68,6 +68,8 @@ class PlaywrightProvider implements ComputerProvider {
   private page: Page | undefined
   /** Fingerprint of the last full snapshot, for unchanged-page detection. */
   private lastSnapshot: { url: string; fingerprint: string; seq: number } | undefined
+  /** Set when an attached app disconnects; later calls fail with guidance. */
+  private detached = false
 
   constructor(private readonly ctx: Context, private readonly config: Required<Config>) {}
 
@@ -105,12 +107,29 @@ class PlaywrightProvider implements ComputerProvider {
       this.ctx.effect(function* () {
         yield () => void browser.close()
       }, 'computer-playwright.launch()')
+    } else {
+      // A detached attach is a terminal state by design: the host app owns
+      // its lifecycle, so the model must report and wait, never restart it
+      // (unattended "rescue" attempts are how the incident of 2026-08-25
+      // started). Fail loud with that guidance on every later call.
+      browser.on('disconnected', () => {
+        this.detached = true
+        this.page = undefined
+      })
     }
     this.page = page
     return page
   }
 
+  /** Guard every entry point against a detached attachment. */
+  private requireAttached(): void {
+    if (this.detached) {
+      throw new Error('the attached application has disconnected (it was closed or crashed); report this to the user and wait — do not restart the application yourself')
+    }
+  }
+
   async navigate(url: string, signal?: AbortSignal): Promise<ComputerNavigation> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     // domcontentloaded, not load: hostile external sites that stall after the
     // document arrives would otherwise burn the full navigation timeout per
@@ -129,6 +148,7 @@ class PlaywrightProvider implements ComputerProvider {
   }
 
   async snapshot(signal?: AbortSignal): Promise<ComputerSnapshot> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     const handles = await interactiveHandles(page)
     const elements: ComputerElement[] = []
@@ -149,6 +169,7 @@ class PlaywrightProvider implements ComputerProvider {
   }
 
   async click(index: number, signal?: AbortSignal): Promise<ComputerClickResult> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     const handles = await interactiveHandles(page)
     const handle = handles[index]
@@ -166,6 +187,7 @@ class PlaywrightProvider implements ComputerProvider {
   }
 
   async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     const handles = await interactiveHandles(page)
     const handle = handles[index]
@@ -179,6 +201,7 @@ class PlaywrightProvider implements ComputerProvider {
   }
 
   async pressKey(key: string, signal?: AbortSignal): Promise<ComputerKeyPressResult> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     await page.keyboard.press(key)
     await page.waitForLoadState('domcontentloaded', { timeout: 3_000 }).catch(() => {})
@@ -188,6 +211,7 @@ class PlaywrightProvider implements ComputerProvider {
   }
 
   async screenshot(signal?: AbortSignal): Promise<ComputerScreenshot> {
+    this.requireAttached()
     const page = await this.getPage(signal)
     const data = await page.screenshot({ type: 'png' })
     return {
