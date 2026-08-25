@@ -2,6 +2,10 @@
 
 Computer use capability for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), packaged as an installable plugin (same distribution model as dsh-diagram: standalone npm package + `cordis.patch.yml` patch-layer bundle).
 
+## Development prerequisites (read before cloning)
+
+This repo develops against a local checkout of the harness: root `devDependencies` use `link:../deepseek-harness/...` for `@deepseek-ai/cordis`, `@deepseek-ai/schemastery`, and the `dsh-tools`/`dsh-llm`/`dsh-attachment`/`dsh-system-prompt` packages. Clone the two repos side by side (any parent directory) or `pnpm install` will fail on the links. The tracer/acceptance overlays under `experiments/` pin absolute plugin paths for this machine — after a publish they are replaced by the package-name patch in `packages/tool-computer/cordis.patch.yml`, which is the portable form.
+
 ## Status: Phase 1 complete — loop validated
 
 The whole design gates on one unverified number: how accurately `deepseek-v4-flash-vision-exp` localizes GUI elements at its ~640k-pixel image budget. No public evidence exists (no OSWorld entry, nothing in the official docs), so we measured it ourselves on ScreenSpot-v2 (200 samples, 2026-08-24, results in `experiments/screenspot-grounding/results/`):

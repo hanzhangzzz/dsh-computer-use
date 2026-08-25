@@ -89,3 +89,9 @@
   模型级 Wikipedia 搜索 Enter 路径重跑，log 0 次竞态报错，四步直达词条（navigate→snapshot
   →type{19}→press_key{Enter}）。教训：模型自愈会把基础设施缺陷藏成"偶尔多一步"——log 级
   核验（grep 报错串）必须在每次模型级验证里做。动作面余量：scroll、坐标兜底。
+- 2026-08-25 08:10（do-something #11）：收割就绪度修复（自查发现三缺陷全修）。①README 增
+  "Development prerequisites"：link: 依赖要求两仓并排克隆、experiments overlay 是本机绝对
+  路径形态（可移植形态是 tool-computer 的包名 patch）；②tool-computer 纯函数（4 个 render
+  + 4 个 parse）导出并补 render.spec.ts（10 测试，钉死模型可见文本与拒绝路径，2ms）——修掉
+  "改坏 render 只有模型级才能发现"的回归缺口；③vitest include 兼容 .test/.spec（首次跑
+  render.spec 未被收集，Test Files 只有 1 暴露的）。验证：12/12 全绿。

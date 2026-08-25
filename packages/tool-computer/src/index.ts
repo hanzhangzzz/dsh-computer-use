@@ -1,10 +1,11 @@
 /**
- * Model-facing `computer_snapshot`, `computer_click`, and `computer_screenshot`
- * over `ctx.computer`. This package owns schemas, prompt guidance, and
- * presentation, never concrete providers. Structure-first: the workflow the
- * tools teach is snapshot → click by index → screenshot to verify; the
- * screenshot description forbids code-based image analysis because the image
- * is delivered to the model directly (measured lesson E6, Phase 1).
+ * Model-facing computer tools over `ctx.computer`: `computer_navigate`,
+ * `computer_snapshot`, `computer_click`, `computer_type`,
+ * `computer_press_key`, and `computer_screenshot`. This package owns schemas,
+ * prompt guidance, and presentation, never concrete providers. Structure-first:
+ * the workflow the tools teach is snapshot → act by index → screenshot to
+ * verify; the screenshot description forbids code-based image analysis because
+ * the image is delivered to the model directly (measured lesson E6, Phase 1).
  * @module dsh-tool-computer
  */
 
@@ -299,7 +300,7 @@ export function apply(ctx: Context, config: Config): void {
 }
 
 /** Narrow validated navigate args. */
-function parseNavigateArgs(args: unknown): { url: string } {
+export function parseNavigateArgs(args: unknown): { url: string } {
   const value = args as { url?: unknown }
   if (typeof value.url !== 'string' || !/^https?:\/\//.test(value.url)) {
     throw new Error('computer_navigate: url must be an http(s) URL string')
@@ -308,7 +309,7 @@ function parseNavigateArgs(args: unknown): { url: string } {
 }
 
 /** Narrow validated click args. */
-function parseClickArgs(args: unknown): { index: number } {
+export function parseClickArgs(args: unknown): { index: number } {
   const value = args as { index?: unknown }
   if (typeof value.index !== 'number' || !Number.isInteger(value.index) || value.index < 0) {
     throw new Error('computer_click: index must be a non-negative integer from computer_snapshot')
@@ -317,7 +318,7 @@ function parseClickArgs(args: unknown): { index: number } {
 }
 
 /** Narrow validated type args. */
-function parseTypeArgs(args: unknown): { index: number; text: string } {
+export function parseTypeArgs(args: unknown): { index: number; text: string } {
   const value = args as { index?: unknown; text?: unknown }
   if (typeof value.index !== 'number' || !Number.isInteger(value.index) || value.index < 0) {
     throw new Error('computer_type: index must be a non-negative integer from the latest snapshot')
@@ -329,7 +330,7 @@ function parseTypeArgs(args: unknown): { index: number; text: string } {
 }
 
 /** Narrow validated key-press args. */
-function parseKeyPressArgs(args: unknown): { key: string } {
+export function parseKeyPressArgs(args: unknown): { key: string } {
   const value = args as { key?: unknown }
   if (typeof value.key !== 'string' || value.key.length === 0 || value.key.length > 32) {
     throw new Error('computer_press_key: key must be a short non-empty string (e.g. "Enter")')
@@ -338,7 +339,7 @@ function parseKeyPressArgs(args: unknown): { key: string } {
 }
 
 /** Lossy display of a key-press result. */
-function formatKeyPress(value: JsonValue): string {
+export function formatKeyPress(value: JsonValue): string {
   const press = value as { key: string; after: { unchangedSince?: number } }
   const after = press.after.unchangedSince !== undefined
     ? `unchanged since snapshot #${press.after.unchangedSince} (prior indices remain valid)`
@@ -347,7 +348,7 @@ function formatKeyPress(value: JsonValue): string {
 }
 
 /** Lossy display of a type result: what was filled plus the post-input view. */
-function formatType(value: JsonValue): string {
+export function formatType(value: JsonValue): string {
   const typed = value as { filled: string; text: string; after: { unchangedSince?: number } }
   const after = typed.after.unchangedSince !== undefined
     ? `unchanged since snapshot #${typed.after.unchangedSince} (prior indices remain valid)`
@@ -356,7 +357,7 @@ function formatType(value: JsonValue): string {
 }
 
 /** Lossy display of a snapshot value for model-facing text. */
-function formatSnapshot(value: JsonValue): string {
+export function formatSnapshot(value: JsonValue): string {
   const snap = value as { url: string; title: string; elements: Array<{ index: number; role: string; name: string }>; unchangedSince?: number }
   if (snap.unchangedSince !== undefined) {
     return [
@@ -380,7 +381,7 @@ function stringify(value: JsonValue): { clicked: string; url: string } {
 }
 
 /** Lossy display of a click result: what was clicked plus the post-click view. */
-function formatClick(value: JsonValue): string {
+export function formatClick(value: JsonValue): string {
   const click = value as { clicked: string; url: string; after: { url: string; title: string; elements: Array<{ index: number; role: string; name: string }>; unchangedSince?: number } }
   const after = click.after.unchangedSince !== undefined
     ? `unchanged since snapshot #${click.after.unchangedSince} (prior indices remain valid)`
