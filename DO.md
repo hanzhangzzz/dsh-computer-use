@@ -166,3 +166,6 @@
   disconnected 置终态，后续所有 computer_* 调用报"attached app disconnected — report and
   wait, do not restart"，用工具反馈引导模型停手。验证：typecheck/12 单测/build 全绿；真实
   断连场景的行为验证列入在场清单（无人值守约束下不跑模型任务）。launch 模式不受影响。
+- 2026-08-26 01:15（do-something 新循环 #5）：README 补 Attach to Electron apps 节（0.3.x
+  桌面控制能力的用户文档缺口）：启动命令、cdpEndpoint 配置、断连语义（含事件出处指向 DO.md）。
+  纯文档轮，无模型任务。
