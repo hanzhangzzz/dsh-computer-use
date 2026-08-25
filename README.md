@@ -94,7 +94,7 @@ Human steps left before publish: pick the npm account and GitHub remote (huajuan
 
 ## Planned phases
 
-- **Phase 2** — the plugin proper: a `computer` capability seam (Service Definition + provider + tool Consumer) with screenshot/click/type/scroll/key actions, E2B Desktop as the first provider, approval wired into dsh's interaction seam.
-- **Phase 3** — structure-first second provider (accessibility/DOM element index, pixel fallback), demos, OSWorld sampling.
+- **Phase 2** — delivered on `do/main` (15 commits): the `computer` capability seam, Playwright provider, tool Consumer, acceptance evidence, packaging. Awaiting harvest.
+- **Phase 3** — activation-triggered per [docs/phase3-roadmap.md](docs/phase3-roadmap.md): every open item (scroll, coordinate fallback, element diff, pagination, approval, E2B Desktop, publish) carries its measured evidence, activation signal, and cost; nothing is built before its trigger fires.
 
 Design inputs and the full investigation (Codex architecture analysis, ecosystem survey, dsh readiness audit) live in the project discussion; conclusions get distilled into this README as they solidify.
