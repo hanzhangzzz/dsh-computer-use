@@ -11,10 +11,6 @@
     "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "dsh-computer": ["./packages/computer/src/index.ts"]
-    }
+    "forceConsistentCasingInFileNames": true
   }
 }

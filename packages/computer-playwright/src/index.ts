@@ -20,8 +20,7 @@ import type {
   ComputerScreenshot,
   ComputerSnapshot,
   ComputerTypeResult,
-} from 'dsh-computer'
-import type {} from 'dsh-computer'
+} from '../../computer/src/index.ts'
 
 /** Selector for elements the snapshot exposes as interactive. */
 const INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, [role], [onclick], [contenteditable="true"]'

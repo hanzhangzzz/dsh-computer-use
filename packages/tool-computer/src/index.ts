@@ -15,29 +15,33 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-tools'
 import type { ContentBlock } from '@deepseek-ai/dsh-llm'
 import type { ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
-import type {} from 'dsh-computer'
+import ComputerRuntime from '../../computer/src/index.ts'
+import * as computerPlaywright from '../../computer-playwright/src/index.ts'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 
 /** Cordis plugin name used by loader diagnostics. */
 export const name = 'tool-computer'
 
-/** Tools, the computer seam, prompt sections, and the durable image store. */
-export const inject = ['tools', 'computer', 'systemPrompt', 'attachments']
+/** Tools, prompt sections, and the durable image store; the computer seam is mounted by this plugin itself. */
+export const inject = ['tools', 'systemPrompt', 'attachments']
 
 /** Default cooperative tool-call timeout budget (ms). */
 export const DEFAULT_COMPUTER_TOOL_TIMEOUT_MS = 60_000
 
-/** Plugin config: per-tool budgets and the screenshot output toggle. */
+/** Plugin config: per-tool budgets, the screenshot toggle, and provider settings. */
 export interface Config {
   /** Cooperative timeout budget (ms) per computer tool call. Defaults to 60000. */
   timeoutMs?: number
   /** Register `computer_screenshot`. Defaults to true. */
   screenshot?: boolean
+  /** Settings for the bundled Playwright provider (headless Chrome by default). */
+  readonly provider?: computerPlaywright.Config
 }
 
 export const Config: z<Config> = z.object({
   timeoutMs: z.number().default(DEFAULT_COMPUTER_TOOL_TIMEOUT_MS),
   screenshot: z.boolean().default(true),
+  provider: computerPlaywright.Config,
 })
 
 /** JSON Schema for one canonical snapshot value, shared by click/type outputs. */
@@ -82,6 +86,10 @@ const WORKFLOW_PROMPT = [
  * the effect-based registries, so plugin dispose unregisters everything.
  */
 export function apply(ctx: Context, config: Config): void {
+  // One published plugin, three composed roles: the seam service, the bundled
+  // Playwright provider, and the model-facing tools below.
+  void ctx.plugin(ComputerRuntime)
+  void ctx.plugin(computerPlaywright, config.provider ?? {})
   const timeoutMs = config.timeoutMs ?? DEFAULT_COMPUTER_TOOL_TIMEOUT_MS
   ctx.systemPrompt.section({
     name: 'tools:computer',

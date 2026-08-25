@@ -1,7 +1,7 @@
 {
   "name": "dsh-tool-computer",
-  "version": "0.1.1",
-  "description": "Model-facing computer_* tools over ctx.computer for DeepSeek Harness",
+  "version": "0.2.0",
+  "description": "Computer use plugin for DeepSeek Harness: one plugin composing the computer seam, a Playwright provider, and the computer_* tools",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -25,12 +25,7 @@
     "lib/index.js"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.1",
-    "dsh-computer": "^0.1.0"
-  },
-  "dependencies": {
-    "dsh-computer": "workspace:*",
-    "dsh-computer-playwright": "^0.1.0"
+    "@deepseek-ai/cordis": "4.0.1"
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"

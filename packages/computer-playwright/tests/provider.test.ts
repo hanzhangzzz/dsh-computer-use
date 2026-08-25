@@ -7,7 +7,7 @@
  */
 import { describe, expect, test } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import ComputerRuntime from 'dsh-computer'
+import ComputerRuntime from '../../computer/src/index.ts'
 import * as computerPlaywright from '../src/index.ts'
 
 async function mounted(): Promise<Context> {
