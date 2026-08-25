@@ -40,5 +40,12 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzhangzzz/dsh-computer-use.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hanzhangzzz/dsh-computer-use/issues"
   }
 }

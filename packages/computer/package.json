@@ -33,5 +33,12 @@
     "node": "^22.19.0 || >=24.0.0"
   },
   "license": "MIT",
-  "author": "huajuan404"
+  "author": "huajuan404",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzhangzzz/dsh-computer-use.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hanzhangzzz/dsh-computer-use/issues"
+  }
 }
