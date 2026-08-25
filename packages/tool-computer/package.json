@@ -1,6 +1,6 @@
 {
   "name": "dsh-tool-computer",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Computer use plugin for DeepSeek Harness: one plugin composing the computer seam, a Playwright provider, and the computer_* tools",
   "keywords": [
     "deepseek-harness",

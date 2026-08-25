@@ -27,6 +27,8 @@ const INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, [role], [oncli
 
 /** Plugin config: which Chrome to drive and at what viewport. */
 export interface Config {
+  /** CDP endpoint to attach to (e.g. http://127.0.0.1:9222). When set, the provider attaches to an already-running Chromium-based app (any Electron app with remote debugging on) instead of launching Chrome. */
+  cdpEndpoint?: string
   /** Chrome channel passed to playwright-core; defaults to `chrome`. */
   channel?: string
   /** Headless launch; defaults to true. */
@@ -42,6 +44,7 @@ export interface Config {
 }
 
 export const Config: z<Config> = z.object({
+  cdpEndpoint: z.string().default(''),
   channel: z.string().default('chrome'),
   headless: z.boolean().default(true),
   viewportWidth: z.number().default(1280),
@@ -69,30 +72,40 @@ class PlaywrightProvider implements ComputerProvider {
   constructor(private readonly ctx: Context, private readonly config: Required<Config>) {}
 
   available(): boolean {
-    // playwright-core launches lazily; the provider is usable whenever the
-    // plugin is mounted. Launch failures surface at first use, loudly.
+    // playwright-core launches or attaches lazily; the provider is usable
+    // whenever the plugin is mounted. Failures surface at first use, loudly.
     return true
   }
 
-  /** The single page, launched on first use. */
+  /** The single page, launched or attached on first use. */
   private async getPage(signal?: AbortSignal): Promise<Page> {
     if (this.page !== undefined) return this.page
-    const browser: Browser = await chromium.launch({
-      channel: this.config.channel,
-      headless: this.config.headless,
-    })
+    const attach = this.config.cdpEndpoint !== ''
+    const browser: Browser = attach
+      // Attach to an already-running Chromium-based app (Electron with remote
+      // debugging). Closing an attached browser is not ours to do; disposal
+      // only detaches.
+      ? await chromium.connectOverCDP(this.config.cdpEndpoint)
+      : await chromium.launch({
+        channel: this.config.channel,
+        headless: this.config.headless,
+      })
     throwIfAborted(signal)
-    const context = await browser.newContext({
-      viewport: { width: this.config.viewportWidth, height: this.config.viewportHeight },
-    })
-    const page = await context.newPage()
+    const context = attach
+      // An attached app already owns its contexts; adopt the first with pages.
+      ? (browser.contexts().find(c => c.pages().length > 0) ?? await browser.newContext())
+      : await browser.newContext({
+        viewport: { width: this.config.viewportWidth, height: this.config.viewportHeight },
+      })
+    const page = attach ? (context.pages()[0] ?? await context.newPage()) : await context.newPage()
     page.setDefaultNavigationTimeout(this.config.navigationTimeoutMs)
     page.setDefaultTimeout(this.config.actionTimeoutMs)
-    // Browser and context die with the page's browser; closing the browser
-    // closes both. Registered once for the first page only.
-    this.ctx.effect(function* () {
-      yield () => void browser.close()
-    }, 'computer-playwright.launch()')
+    if (!attach) {
+      // The launched browser dies with the effect; an attached one stays.
+      this.ctx.effect(function* () {
+        yield () => void browser.close()
+      }, 'computer-playwright.launch()')
+    }
     this.page = page
     return page
   }
@@ -263,6 +276,7 @@ async function describeElement(handle: import('playwright-core').ElementHandle<H
 /** Register the provider into `ctx.computer`. */
 export function apply(ctx: Context, config: Config): void {
   const resolved: Required<Config> = {
+    cdpEndpoint: config.cdpEndpoint ?? '',
     channel: config.channel ?? 'chrome',
     headless: config.headless ?? true,
     viewportWidth: config.viewportWidth ?? 1280,
