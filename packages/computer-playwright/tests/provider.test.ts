@@ -101,6 +101,34 @@ describe('attach detach semantics (0.3.2 guard)', () => {
   })
 })
 
+describe('screenshot coordinate space', () => {
+  test('an attached host at a non-default size and scale reports its real CSS pixels', async () => {
+    // The bug this pins: attach mode adopts the host application's context and
+    // never applies viewportWidth/viewportHeight, so reporting the config was
+    // reporting a number related to nothing. A device scale factor above 1
+    // additionally made the raw PNG twice the click coordinate space. Both must
+    // collapse to one number, or every coordinate the model reads off the image
+    // is wrong by an unknowable factor.
+    const { chromium } = await import('playwright-core')
+    const host = await chromium.launch({
+      channel: 'chrome',
+      headless: true,
+      args: ['--remote-debugging-port=9224', '--window-size=900,600', '--force-device-scale-factor=2'],
+    })
+    const ctx = new Context()
+    await ctx.plugin(ComputerRuntime)
+    await ctx.plugin(computerPlaywright, { cdpEndpoint: 'http://127.0.0.1:9224' })
+    await ctx.computer.navigate('https://example.com')
+
+    const shot = await ctx.computer.screenshot()
+    const pngWidth = shot.data.readUInt32BE(16)
+    const pngHeight = shot.data.readUInt32BE(20)
+    expect([shot.width, shot.height]).toEqual([pngWidth, pngHeight])
+    expect([shot.width, shot.height]).not.toEqual([1280, 800])
+    await host.close()
+  })
+})
+
 describe('coordinate fallback (clickAt)', () => {
   test('clicks viewport coordinates that hit the example.com link', async () => {
     const ctx = await mounted()

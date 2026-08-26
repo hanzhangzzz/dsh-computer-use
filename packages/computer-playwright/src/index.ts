@@ -189,11 +189,26 @@ class PlaywrightProvider implements ComputerProvider {
   async clickAt(x: number, y: number, signal?: AbortSignal): Promise<ComputerClickResult> {
     this.requireAttached()
     const page = await this.getPage(signal)
+    // `page.mouse` dispatches through CDP into the renderer as a real mouse
+    // event sequence (move/down/up), so synthetic-event frameworks and hover
+    // affordances behave as they do for a user, and the system cursor never
+    // moves. Its coordinate space is CSS pixels — the same space screenshot()
+    // now reports, which is what makes a coordinate read off the image valid.
+    // Name what the coordinates actually hit so the caller can tell a miss
+    // from a no-op click; hit-testing does not move or activate anything.
+    const hit = await page.evaluate(({ x, y }) => {
+      const el = document.elementFromPoint(x, y)
+      if (!(el instanceof HTMLElement)) return null
+      return `${el.tagName.toLowerCase()} "${(el.textContent ?? '').trim().slice(0, 60)}"`
+    }, { x, y })
+    if (hit === null) {
+      throw new Error(`computer_click: no element at viewport coordinates (${x}, ${y}); the viewport is ${await viewportSize(page)} CSS pixels — take a fresh screenshot and read the coordinates off it`)
+    }
     await page.mouse.click(x, y)
     await page.waitForLoadState('domcontentloaded', { timeout: 3_000 }).catch(() => {})
     await page.waitForTimeout(300)
     const after = await this.snapshot(signal)
-    return { clicked: `viewport coordinates (${x}, ${y})`, url: page.url(), after }
+    return { clicked: `${hit} at viewport coordinates (${x}, ${y})`, url: page.url(), after }
   }
 
   async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
@@ -223,13 +238,15 @@ class PlaywrightProvider implements ComputerProvider {
   async screenshot(signal?: AbortSignal): Promise<ComputerScreenshot> {
     this.requireAttached()
     const page = await this.getPage(signal)
-    const data = await page.screenshot({ type: 'png' })
-    return {
-      data,
-      mediaType: 'image/png',
-      width: this.config.viewportWidth,
-      height: this.config.viewportHeight,
-    }
+    // `scale: 'css'` makes one image pixel one CSS pixel, so a coordinate read
+    // off this image is directly usable by clickAt. Without it a Retina or
+    // attached host renders at devicePixelRatio and every coordinate the model
+    // derives is off by that factor (measured 2× on the WeChat devtools host).
+    const data = await page.screenshot({ type: 'png', scale: 'css' })
+    // Report the image's own dimensions, never the configured viewport: attach
+    // mode adopts the host application's context and never applies that config.
+    const [width, height] = pngSize(data)
+    return { data, mediaType: 'image/png', width, height }
   }
 
   async close(): Promise<void> {
@@ -242,6 +259,22 @@ class PlaywrightProvider implements ComputerProvider {
 /** Fail fast on cancellation between async steps. */
 function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) throw new Error('the computer call was canceled')
+}
+
+/**
+ * Pixel dimensions of a PNG, read from the IHDR chunk that a valid PNG always
+ * carries at a fixed offset.
+ * @param data Complete PNG bytes as produced by `page.screenshot`.
+ * @returns `[width, height]` in image pixels.
+ */
+function pngSize(data: Buffer): [number, number] {
+  return [data.readUInt32BE(16), data.readUInt32BE(20)]
+}
+
+/** `WxH` CSS-pixel viewport of a page, for coordinate error messages. */
+async function viewportSize(page: Page): Promise<string> {
+  const [width, height] = await page.evaluate(() => [window.innerWidth, window.innerHeight])
+  return `${width}x${height}`
 }
 
 /**
