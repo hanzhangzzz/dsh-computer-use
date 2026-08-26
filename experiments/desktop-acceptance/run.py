@@ -161,6 +161,18 @@ def case_press_by_index(helper: Helper) -> Outcome:
     Two presses and an equals, so the witness is arithmetic rather than a
     single digit that could echo a stale value.
     """
+    # Clear first. A case that assumes the calculator starts empty is a case
+    # that fails whenever anything ran before it -- which is what happened when
+    # a unit test began leaving "77" on the display. State a case depends on,
+    # it should establish.
+    snapshot = helper.call("snapshot", bundleId=CALCULATOR)["result"]
+    for clear_label in ("全部清除", "清除", "AC", "C"):
+        target = find(snapshot["elements"], clear_label)
+        if target is not None:
+            helper.call("press", bundleId=CALCULATOR, index=target["index"],
+                        expectRole=target["role"], expectName=target["name"])
+            break
+
     before = display_text(helper)
     steps = []
     for label in ["7", "乘", "6", "等于"]:

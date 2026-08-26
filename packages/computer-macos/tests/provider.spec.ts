@@ -59,6 +59,34 @@ describe.skipIf(TARGET === '' || process.platform !== 'darwin')('macOS provider 
     expect(again.elements).toEqual([])
   }, 60_000)
 
+  test('the window\'s displayed content reaches the model, and a content change is not collapsed away', async () => {
+    const seam = await seamWithProvider()
+    await seam.focus(`macos:${TARGET}`)
+
+    const first = await seam.snapshot()
+    // Without this the model can press a calculator's keys and never read its
+    // answer: enumeration returns controls only.
+    expect(first.text).toBeDefined()
+    expect(first.text!.length).toBeGreaterThan(0)
+
+    // The critical case for the collapse. Pressing the same digit twice leaves
+    // every control byte-identical while the readout changes, so a fingerprint
+    // taken over elements alone reports "unchanged" at the moment the action
+    // produced its result.
+    const digit = first.elements.find(el => el.name === '7')
+    if (digit === undefined) return // a different application
+    // Read the post-click snapshot the click itself returns. Taking a separate
+    // one would see a state nothing had changed since and collapse it, which
+    // is the feature working, not the bug under test.
+    const after = (await seam.click(digit.index)).after
+    const later = (await seam.click(digit.index)).after
+
+    expect(after.text).toBeDefined()
+    expect(later.text).toBeDefined()
+    expect(later.text).not.toEqual(after.text)
+    expect(later.unchangedSince).toBeUndefined()
+  }, 90_000)
+
   test('a denied application cannot be focused, and the refusal explains itself', async () => {
     const seam = await seamWithProvider()
     await expect(seam.focus('macos:com.apple.Terminal')).rejects.toThrow(/arbitrary commands/)

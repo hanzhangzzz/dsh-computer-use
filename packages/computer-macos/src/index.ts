@@ -227,15 +227,29 @@ class MacosProvider implements ComputerProvider {
       name: el.name,
       ...el.rect === undefined ? {} : { rect: el.rect },
     }))
-    // Same unchanged-page collapse as the browser provider: a repeated
-    // snapshot of an identical window costs its full token price otherwise.
-    const fingerprint = projected.map(el => `${el.role}:${el.name}`).join('\n')
+    const text = (result.text ?? []) as string[]
+
+    // Same unchanged-surface collapse as the browser provider, but fingerprinted
+    // over the text as well as the controls. Over controls alone it reports "no
+    // change" at the exact moment an action produces its result: a calculator's
+    // keys are identical before and after, so pressing 7 twice moves the display
+    // from 7 to 77 while the element list stays byte-for-byte the same. The
+    // model would be told nothing happened.
+    const fingerprint = [
+      ...projected.map(el => `${el.role}:${el.name}`),
+      ...text,
+    ].join('\n')
     const last = this.lastFingerprint
     if (last !== undefined && last.bundleId === bundleId && last.fingerprint === fingerprint) {
       return { url: `app:${bundleId}`, title, elements: [], unchangedSince: last.seq }
     }
     this.lastFingerprint = { bundleId, fingerprint, seq: (last?.seq ?? 0) + 1 }
-    return { url: `app:${bundleId}`, title, elements: projected }
+    return {
+      url: `app:${bundleId}`,
+      title,
+      elements: projected,
+      ...text.length === 0 ? {} : { text },
+    }
   }
 
   /** The identity the caller believed it was acting on, sent along for checking. */

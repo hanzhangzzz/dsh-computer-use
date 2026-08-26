@@ -72,6 +72,7 @@ const SNAPSHOT_VALUE_PROPERTIES = {
       },
     },
   },
+  text: { type: 'array', items: { type: 'string' } },
   unchangedSince: { type: 'integer' },
 } as const
 
@@ -158,6 +159,7 @@ export function apply(ctx: Context, config: Config): void {
               },
             },
           },
+          text: { type: 'array', items: { type: 'string' } },
           unchangedSince: { type: 'integer' },
         },
       },
@@ -171,6 +173,7 @@ export function apply(ctx: Context, config: Config): void {
         url: snap.url,
         title: snap.title,
         elements: [...snap.elements],
+        ...snap.text !== undefined ? { text: [...snap.text] } : {},
         ...snap.unchangedSince !== undefined ? { unchangedSince: snap.unchangedSince } : {},
       }
     },
@@ -211,6 +214,7 @@ export function apply(ctx: Context, config: Config): void {
           url: after.url,
           title: after.title,
           elements: [...after.elements],
+          ...after.text !== undefined ? { text: [...after.text] } : {},
           ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
         },
       }
@@ -249,6 +253,7 @@ export function apply(ctx: Context, config: Config): void {
           url: after.url,
           title: after.title,
           elements: [...after.elements],
+          ...after.text !== undefined ? { text: [...after.text] } : {},
           ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
         },
       }
@@ -284,6 +289,7 @@ export function apply(ctx: Context, config: Config): void {
           url: after.url,
           title: after.title,
           elements: [...after.elements],
+          ...after.text !== undefined ? { text: [...after.text] } : {},
           ...after.unchangedSince !== undefined ? { unchangedSince: after.unchangedSince } : {},
         },
       }
@@ -484,16 +490,27 @@ export function formatType(value: JsonValue): string {
 
 /** Lossy display of a snapshot value for model-facing text. */
 export function formatSnapshot(value: JsonValue): string {
-  const snap = value as { url: string; title: string; elements: Array<{ index: number; role: string; name: string }>; unchangedSince?: number }
+  const snap = value as {
+    url: string
+    title: string
+    elements: Array<{ index: number; role: string; name: string }>
+    text?: string[]
+    unchangedSince?: number
+  }
   if (snap.unchangedSince !== undefined) {
     return [
       `# ${snap.title}`,
       snap.url,
       '',
-      `unchanged since snapshot #${snap.unchangedSince}: the page's interactive elements are identical; indices from that snapshot remain valid.`,
+      `unchanged since snapshot #${snap.unchangedSince}: the surface is identical, text included; indices from that snapshot remain valid.`,
     ].join('\n')
   }
   const lines = [`# ${snap.title}`, snap.url, '']
+  // Content before controls: on a desktop window this is the only way to read
+  // what the application is showing, and it is usually what an action was for.
+  if (snap.text !== undefined && snap.text.length > 0) {
+    lines.push('showing: ' + snap.text.join(' | '), '')
+  }
   for (const el of snap.elements) {
     const label = el.name === '' ? '' : ` "${el.name}"`
     lines.push(`${el.index}: ${el.role}${label}`)

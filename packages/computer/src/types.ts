@@ -26,9 +26,24 @@ export interface ComputerSnapshot {
   /** Interactive elements in DOM order; the model addresses these by index. */
   readonly elements: readonly ComputerElement[]
   /**
-   * Sequence number of the first snapshot this page state is identical to;
-   * present (with empty `elements`) when the provider recognizes an unchanged
-   * page. Indices from that snapshot remain valid.
+   * What the surface is displaying, in reading order — labels, values,
+   * readouts. Omitted by providers whose element names already carry the
+   * page's text, which is the browser case.
+   *
+   * A desktop window is the case that needs it. Enumerating only actionable
+   * elements leaves a model able to press a calculator's keys and unable to
+   * read its answer, which is the difference between acting and completing a
+   * task.
+   */
+  readonly text?: readonly string[]
+  /**
+   * Sequence number of the first snapshot this state is identical to; present
+   * (with empty `elements`) when the provider recognizes an unchanged surface.
+   * Indices from that snapshot remain valid.
+   *
+   * "Unchanged" must account for {@link text}. A calculator's buttons are the
+   * same before and after it computes an answer, so a fingerprint taken over
+   * elements alone reports no change at the exact moment the result appears.
    */
   readonly unchangedSince?: number
 }
