@@ -1,0 +1,701 @@
+_aha_cua_call_tool
+_aha_cua_call_tool_async
+_aha_cua_cancel_tool
+_aha_cua_create_tool_call_obj
+_aha_cua_destroy_tool_call_obj
+_aha_cua_free_string
+_aha_cua_get_app_info
+_aha_cua_get_app_windows
+_aha_cua_set_log_callback
+_aha_cua_set_log_config
+_aha_cua_set_telemetry_callback
+_aha_cua_set_tool_property
+_aha_cua_version
+aha_cua::(anonymous namespace)::app_state_is_accessible(int, unsigned int)
+aha_cua::(anonymous namespace)::callback_with_result(std::__1::function<void (unsigned long long, aha_cua::ToolCallResult)>&, unsigned long long, aha_cua::ToolCallResult)
+aha_cua::(anonymous namespace)::kAllowedSigners
+aha_cua::(anonymous namespace)::os_status_string(int)
+aha_cua::(anonymous namespace)::parse_bool_property(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::(anonymous namespace)::parse_ui_tree_max_depth(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::(anonymous namespace)::resolve_target_window_context(aha_cua::desktop::AppStateService&, int, unsigned int, std::__1::optional<aha_cua::(anonymous namespace)::TargetWindowContext>&, std::__1::stop_token const&)
+aha_cua::(anonymous namespace)::telemetry_callback
+aha_cua::(anonymous namespace)::telemetry_mutex_
+aha_cua::AppStateExecutor::AppStateExecutor(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>, std::__1::shared_ptr<aha_cua::desktop::SkyLightWrapper>, std::__1::shared_ptr<aha_cua::ToolCallConfig>)
+aha_cua::AppStateExecutor::build_app_state_result(int, unsigned int, bool, std::__1::stop_token, std::__1::optional<aha_cua::Point>, std::__1::optional<aha_cua::ToolCallOptions>, std::__1::optional<aha_cua::desktop::AppStateSnapshot>)
+aha_cua::AppStateExecutor::click_app(aha_cua::ClickAppParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::drag_on_app(aha_cua::DragOnAppParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::get_app_state(aha_cua::GetAppStateParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::list_apps(std::__1::stop_token)
+aha_cua::AppStateExecutor::perform_action_on_app(aha_cua::PerformActionOnAppParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::press_key(aha_cua::AppPressKeyParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::scroll_app(aha_cua::ScrollAppParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::select_text(aha_cua::AppSelectTextParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::set_value(aha_cua::AppSetValueParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutor::support_methods() const
+aha_cua::AppStateExecutor::type_text(aha_cua::AppTypeTextParameters const&, std::__1::stop_token)
+aha_cua::AppStateExecutorFactory::create_tool_executor()
+aha_cua::AppToolExecutor::app_is_running(aha_cua::AppIsRunningParameters const&)
+aha_cua::AppToolExecutor::app_launch(aha_cua::AppLaunchParameters const&, std::__1::stop_token)
+aha_cua::AppToolExecutor::app_list(std::__1::stop_token)
+aha_cua::AppToolExecutor::app_resize(aha_cua::AppResizeParameters const&)
+aha_cua::AppToolExecutor::app_terminate(aha_cua::AppTermParameters const&)
+aha_cua::AppToolExecutor::support_methods() const
+aha_cua::AppToolExecutorFactory::create_tool_executor()
+aha_cua::base64_decode_binary(std::__1::basic_string_view<char, std::__1::char_traits<char>>, bool*)
+aha_cua::base64_decode(std::__1::basic_string_view<char, std::__1::char_traits<char>>, bool*)
+aha_cua::base64_encode_binary(std::__1::span<unsigned char, 18446744073709551615ul>)
+aha_cua::base64_encode(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::check_loader_signature()
+aha_cua::desktop::(anonymous namespace)::app_path_for_bundle_id(NSString*)
+aha_cua::desktop::(anonymous namespace)::bounds_match(aha_cua::Rect const&, CGRect const&)
+aha_cua::desktop::(anonymous namespace)::capture_image_with_filter(SCContentFilter*, SCStreamConfiguration*, fml::CFRef<CGImage*>&)
+aha_cua::desktop::(anonymous namespace)::cg_bounds_for_overlay_window(NSWindow*)
+aha_cua::desktop::(anonymous namespace)::cg_bounds_for_screen(NSScreen*)
+aha_cua::desktop::(anonymous namespace)::cg_window_intersects_display(int, unsigned int, CGRect const&)
+aha_cua::desktop::(anonymous namespace)::common_ancestors_deepest_first(__AXUIElement const*, __AXUIElement const*, __AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::common_attributes()::attributes
+aha_cua::desktop::(anonymous namespace)::copy_app_windows(__AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::copy_cg_window_infos(unsigned int)
+aha_cua::desktop::(anonymous namespace)::copy_text_for_selection(__AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::create_mouse_event(NSEventType, CGPoint, long, unsigned int)
+aha_cua::desktop::(anonymous namespace)::find_page_scroll_button_in_tree(__AXUIElement const*, __CFString const*, unsigned int)
+aha_cua::desktop::(anonymous namespace)::find_unique_match(NSString*, aha_cua::desktop::TextSelectionRequest const&, aha_cua::desktop::(anonymous namespace)::TextMatch&)
+aha_cua::desktop::(anonymous namespace)::format_error_code(aha_cua::OperationResult const&)
+aha_cua::desktop::(anonymous namespace)::format_file_time(std::__1::chrono::time_point<std::__1::chrono::system_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000l>>>)
+aha_cua::desktop::(anonymous namespace)::get_app_info_from_bundle_path(NSString*, aha_cua::desktop::(anonymous namespace)::AppBundleLoadOptions)
+aha_cua::desktop::(anonymous namespace)::get_element_description(fml::CFRef<__AXUIElement const*>)
+aha_cua::desktop::(anonymous namespace)::get_element_description(fml::CFRef<__AXUIElement const*>)::desktop_icon_level
+aha_cua::desktop::(anonymous namespace)::get_running_app_info(std::__1::stop_token)
+aha_cua::desktop::(anonymous namespace)::get_space_location(aha_cua::desktop::SkyLightWrapper&, unsigned long long)
+aha_cua::desktop::(anonymous namespace)::get_window_first_space(aha_cua::desktop::SkyLightWrapper&, unsigned int)
+aha_cua::desktop::(anonymous namespace)::is_ax_window(__AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::is_desktop_context_menu_layer(int)::popup_menu_lower_bound
+aha_cua::desktop::(anonymous namespace)::is_desktop_context_menu_layer(int)::popup_menu_upper_bound
+aha_cua::desktop::(anonymous namespace)::is_desktop_window_layer(int)::desktop_window_lower_bound
+aha_cua::desktop::(anonymous namespace)::is_desktop_window_layer(int)::desktop_window_upper_bound
+aha_cua::desktop::(anonymous namespace)::is_modifier_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::kModifierKeyNames
+aha_cua::desktop::(anonymous namespace)::is_usable_bundle_name(NSString*, NSString*)
+aha_cua::desktop::(anonymous namespace)::kNestedAppWhitelist
+aha_cua::desktop::(anonymous namespace)::make_fallback_result(aha_cua::OperationResult, aha_cua::OperationResult)
+aha_cua::desktop::(anonymous namespace)::make_scroll_event_delta(aha_cua::desktop::(anonymous namespace)::ElementDescription const&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double)
+aha_cua::desktop::(anonymous namespace)::make_synthetic_focus_transition_event(aha_cua::desktop::(anonymous namespace)::CPSFocusSubtype)
+aha_cua::desktop::(anonymous namespace)::next_event_number()::event_number
+aha_cua::desktop::(anonymous namespace)::parent_chain(__AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::path_attribute_to_string(ghc::filesystem::path const&, bool)
+aha_cua::desktop::(anonymous namespace)::play_visual_click_feedback(unsigned int, std::__1::shared_ptr<aha_cua::desktop::AgentCursor> const&)
+aha_cua::desktop::(anonymous namespace)::prepare_visual_cursor_for_click(std::__1::shared_ptr<aha_cua::desktop::AgentCursor> const&, int, unsigned int, CGPoint const&)
+aha_cua::desktop::(anonymous namespace)::resolve_private_api()::function
+aha_cua::desktop::(anonymous namespace)::restore_focused_window_z_order_once(aha_cua::desktop::(anonymous namespace)::FocusedWindowSnapshot const&)::$_0::operator()() const
+aha_cua::desktop::(anonymous namespace)::restore_minimized_window_preserving_focus(__AXUIElement const*, aha_cua::desktop::(anonymous namespace)::FocusedWindowSnapshot const&)
+aha_cua::desktop::(anonymous namespace)::role_equals(__AXUIElement const*, __CFString const*)
+aha_cua::desktop::(anonymous namespace)::runtime_not_ready_result()
+aha_cua::desktop::(anonymous namespace)::SCREEN_CAPTURE_KIT_UNAVAILABLE_MESSAGE
+aha_cua::desktop::(anonymous namespace)::SCREEN_CAPTURE_PERMISSION_DENIED_MESSAGE
+aha_cua::desktop::(anonymous namespace)::set_selected_text_range(__AXUIElement const*, CFRange)
+aha_cua::desktop::(anonymous namespace)::should_expose_cg_window(__CFDictionary const*)
+aha_cua::desktop::(anonymous namespace)::snapshot_for_display(SCDisplay*, fml::CFRef<CGImage*>&)
+aha_cua::desktop::(anonymous namespace)::synthetic_ax_window_handle(__AXUIElement const*)
+aha_cua::desktop::(anonymous namespace)::try_ax_click(fml::CFRef<__AXUIElement const*>, aha_cua::desktop::MouseButton, unsigned int)
+aha_cua::desktop::(anonymous namespace)::try_set_text_marker_range(__AXUIElement const*, CFRange)
+aha_cua::desktop::(anonymous namespace)::window_info_bounds(__CFDictionary const*, CGRect&)
+aha_cua::desktop::(anonymous namespace)::window_info_id(__CFDictionary const*)
+aha_cua::desktop::(anonymous namespace)::window_info_layer(__CFDictionary const*)
+aha_cua::desktop::(anonymous namespace)::window_info_pid(__CFDictionary const*)
+aha_cua::desktop::(anonymous namespace)::WindowSpaceResolution::operator=(aha_cua::desktop::(anonymous namespace)::WindowSpaceResolution const&)
+aha_cua::desktop::AccessibilityActivator::create()
+aha_cua::desktop::AccessibilityActivatorImplement::AccessibilityActivatorImplement()
+aha_cua::desktop::AccessibilityActivatorImplement::activate_ax_and_register_observer(int, fml::CFRef<__AXObserver*>&)
+aha_cua::desktop::AccessibilityActivatorImplement::activate_ax_and_register_observer(int, fml::CFRef<__AXObserver*>&)::'lambda'(__AXObserver*, __AXUIElement const*, __CFString const*, __CFDictionary const*, void*)::__invoke(__AXObserver*, __AXUIElement const*, __CFString const*, __CFDictionary const*, void*)
+aha_cua::desktop::AccessibilityActivatorImplement::activate_if_needed(int)
+aha_cua::desktop::AccessibilityActivatorImplement::handle_process_terminated(int)
+aha_cua::desktop::AccessibilityActivatorImplement::init()
+aha_cua::desktop::AccessibilityActivatorImplement::init() (.cold.1)
+aha_cua::desktop::AccessibilityActivatorImplement::InnerObserver::InnerObserver(fml::RefPtr<fml::TaskRunner>, std::__1::weak_ptr<aha_cua::desktop::AccessibilityActivatorImplement>)
+aha_cua::desktop::AccessibilityActivatorImplement::InnerObserver::InnerObserver(fml::RefPtr<fml::TaskRunner>, std::__1::weak_ptr<aha_cua::desktop::AccessibilityActivatorImplement>) (.cold.1)
+aha_cua::desktop::agent_focus::FocusGuard::FocusGuard()
+aha_cua::desktop::agent_focus::FocusGuard::restore(std::__1::unique_ptr<aha_cua::desktop::agent_focus::FocusGuard::FocusContext, std::__1::default_delete<aha_cua::desktop::agent_focus::FocusGuard::FocusContext>>, bool)
+aha_cua::desktop::agent_focus::FocusGuard::suppress(int, __AXUIElement const*)
+aha_cua::desktop::agent_focus::ScopedFocusGuard::reset()
+aha_cua::desktop::agent_focus::ScopedFocusGuard::restore(bool)
+aha_cua::desktop::agent_focus::ScopedFocusGuard::ScopedFocusGuard(aha_cua::desktop::agent_focus::FocusGuard&, int, __AXUIElement const*)
+aha_cua::desktop::agent_focus::SyntheticAppFocusEnforcer::prevent_activation(int, __AXUIElement const*, __AXUIElement const*) const
+aha_cua::desktop::agent_focus::SyntheticAppFocusEnforcer::read_bool(__AXUIElement const*, __CFString const*, bool&)
+aha_cua::desktop::agent_focus::SyntheticAppFocusEnforcer::reenable_activation(aha_cua::desktop::agent_focus::FocusState const&) const
+aha_cua::desktop::agent_focus::SyntheticAppFocusEnforcer::write_bool(__AXUIElement const*, __CFString const*, bool)
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::begin_suppression(int, NSRunningApplication*)
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::end_suppression(unsigned long long, bool)
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::handle_activation(NSNotification*)
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::install_observer()
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::note_restore_finished()
+aha_cua::desktop::agent_focus::SystemFocusStealPreventer::SystemFocusStealPreventer()
+aha_cua::desktop::AgentCursor::AgentCursor()
+aha_cua::desktop::AgentCursor::apply_config(aha_cua::desktop::AgentCursorConfig const&)
+aha_cua::desktop::AgentCursor::async_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::AgentCursor::begin_drag()
+aha_cua::desktop::AgentCursor::cancel_animation()
+aha_cua::desktop::AgentCursor::config() const
+aha_cua::desktop::AgentCursor::copy_screenshot_with_visual_cursor(CGImage*, unsigned int, aha_cua::Point, double) const
+aha_cua::desktop::AgentCursor::end_drag()
+aha_cua::desktop::AgentCursor::finish_click(int)
+aha_cua::desktop::AgentCursor::hide()
+aha_cua::desktop::AgentCursor::is_enabled() const
+aha_cua::desktop::AgentCursor::is_runtime_ready() const
+aha_cua::desktop::AgentCursor::pin_above(int, std::__1::optional<unsigned int>)
+aha_cua::desktop::AgentCursor::play_click_press(int)
+aha_cua::desktop::AgentCursor::reset_timer()
+aha_cua::desktop::AgentCursor::set_cursor_animation_enabled(bool)
+aha_cua::desktop::AgentCursor::set_enabled(bool)
+aha_cua::desktop::AgentCursor::set_interrupted(bool)
+aha_cua::desktop::AgentCursor::set_speed_level(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::desktop::AgentCursor::set_user_intervention_callback(std::__1::function<void ()>)
+aha_cua::desktop::AgentCursor::show_focus_rect(std::__1::optional<aha_cua::Rect>)
+aha_cua::desktop::AgentCursor::show()
+aha_cua::desktop::AgentCursor::shutdown()
+aha_cua::desktop::AgentCursor::snapshot() const
+aha_cua::desktop::AgentCursor::stop_timer()
+aha_cua::desktop::AgentCursor::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::AgentCursorDarwin::apply_config(aha_cua::desktop::AgentCursorConfig const&)
+aha_cua::desktop::AgentCursorDarwin::async_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::AgentCursorDarwin::begin_drag_on_main()
+aha_cua::desktop::AgentCursorDarwin::begin_drag()
+aha_cua::desktop::AgentCursorDarwin::cancel_animation()
+aha_cua::desktop::AgentCursorDarwin::cancel_async_animation_on_main(bool)
+aha_cua::desktop::AgentCursorDarwin::copy_screenshot_with_visual_cursor(CGImage*, unsigned int, aha_cua::Point, double) const
+aha_cua::desktop::AgentCursorDarwin::end_drag_on_main()
+aha_cua::desktop::AgentCursorDarwin::end_drag()
+aha_cua::desktop::AgentCursorDarwin::ensure_activation_observer_on_main()
+aha_cua::desktop::AgentCursorDarwin::ensure_overlay_on_main()
+aha_cua::desktop::AgentCursorDarwin::ensure_screen_parameters_observer_on_main()
+aha_cua::desktop::AgentCursorDarwin::event_tap_callback(__CGEventTapProxy*, CGEventType, __CGEvent*, void*)
+aha_cua::desktop::AgentCursorDarwin::finish_click(int)
+aha_cua::desktop::AgentCursorDarwin::handle_event_tap(CGEventType, __CGEvent*)
+aha_cua::desktop::AgentCursorDarwin::hide_on_main()
+aha_cua::desktop::AgentCursorDarwin::hide()
+aha_cua::desktop::AgentCursorDarwin::is_runtime_ready() const
+aha_cua::desktop::AgentCursorDarwin::pin_above_on_main(int, std::__1::optional<unsigned int>)
+aha_cua::desktop::AgentCursorDarwin::pin_above(int, std::__1::optional<unsigned int>)
+aha_cua::desktop::AgentCursorDarwin::play_click_press(int)
+aha_cua::desktop::AgentCursorDarwin::play_click_press(int)::$_0::operator()() const
+aha_cua::desktop::AgentCursorDarwin::play_click_ripple_on_main()
+aha_cua::desktop::AgentCursorDarwin::reapply_pin_above_on_main()
+aha_cua::desktop::AgentCursorDarwin::refresh_overlay_geometry_on_main(std::__1::optional<aha_cua::Point>)
+aha_cua::desktop::AgentCursorDarwin::run_user_intervention_monitor()
+aha_cua::desktop::AgentCursorDarwin::set_enabled(bool)
+aha_cua::desktop::AgentCursorDarwin::set_interrupted(bool)
+aha_cua::desktop::AgentCursorDarwin::set_interrupted(bool)::$_0::operator()() const
+aha_cua::desktop::AgentCursorDarwin::set_user_intervention_callback(std::__1::function<void ()>)
+aha_cua::desktop::AgentCursorDarwin::show_focus_rect(std::__1::optional<aha_cua::Rect>)
+aha_cua::desktop::AgentCursorDarwin::show_on_main()
+aha_cua::desktop::AgentCursorDarwin::show()
+aha_cua::desktop::AgentCursorDarwin::shutdown()
+aha_cua::desktop::AgentCursorDarwin::snapshot() const
+aha_cua::desktop::AgentCursorDarwin::start_active_wobble_on_main()
+aha_cua::desktop::AgentCursorDarwin::start_async_animation_on_main(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::AgentCursorDarwin::start_continuous_repin_on_main()
+aha_cua::desktop::AgentCursorDarwin::start_user_intervention_monitor()
+aha_cua::desktop::AgentCursorDarwin::stop_active_wobble_on_main()
+aha_cua::desktop::AgentCursorDarwin::stop_continuous_repin_on_main()
+aha_cua::desktop::AgentCursorDarwin::stop_user_intervention_monitor()
+aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::AgentCursorDarwin::tear_down_activation_observer_on_main()
+aha_cua::desktop::AgentCursorDarwin::tear_down_screen_parameters_observer_on_main()
+aha_cua::desktop::AgentCursorDarwin::tick_async_animation_on_main()
+aha_cua::desktop::AgentCursorDarwin::update_cursor_image_on_main()
+aha_cua::desktop::AgentCursorDarwin::update_cursor_layers_on_main(aha_cua::desktop::AgentCursorSnapshot const&)
+aha_cua::desktop::AgentCursorDarwin::update_cursor_style_on_main()
+aha_cua::desktop::AgentCursorDarwin::update_drag_trail_on_main(aha_cua::desktop::AgentCursorSnapshot const&)
+aha_cua::desktop::AgentCursorDarwin::update_focus_layers_on_main(std::__1::optional<aha_cua::Rect>)
+aha_cua::desktop::AgentCursorDarwin::update_position_on_main(aha_cua::Point, bool)
+aha_cua::desktop::AgentCursorDarwin::update_screenshot_cursor_image_locked()
+aha_cua::desktop::app_has_accessible_window(int, unsigned int)
+aha_cua::desktop::AppQueryService::AppQueryService()
+aha_cua::desktop::AppStateService::AppStateService()
+aha_cua::desktop::AppStateService::lookup(int, unsigned int, fml::CFRef<__AXUIElement const*>&, unsigned int&, std::__1::stop_token)
+aha_cua::desktop::AppStateServiceImpl::AppStateServiceImpl(std::__1::shared_ptr<aha_cua::desktop::AccessibilityActivator>)
+aha_cua::desktop::AppStateServiceImpl::lookup(int, unsigned int, fml::CFRef<__AXUIElement const*>&, unsigned int&, std::__1::stop_token)
+aha_cua::desktop::AppStateSnapshot::operator=(aha_cua::desktop::AppStateSnapshot&&)
+aha_cua::desktop::ax_elements_from_array(__CFArray const*)
+aha_cua::desktop::ax_get_action_names(__AXUIElement const*, AXError*)
+aha_cua::desktop::ax_get_attribute_as_json(__AXUIElement const*, __CFString const*, AXError*)
+aha_cua::desktop::ax_get_attribute(__AXUIElement const*, __CFString const*, AXError*)
+aha_cua::desktop::ax_get_ax_value_attribute(__AXUIElement const*, __CFString const*, AXError*)
+aha_cua::desktop::ax_get_bool_attribute(__AXUIElement const*, __CFString const*, AXError*)
+aha_cua::desktop::ax_get_children(__AXUIElement const*, AXError*)
+aha_cua::desktop::ax_get_rect(__AXUIElement const*, CGRect&)
+aha_cua::desktop::ax_get_string_attribute(__AXUIElement const*, __CFString const*, AXError*)
+aha_cua::desktop::ax_get_windows(__AXUIElement const*, AXError*)
+aha_cua::desktop::ax_is_attribute_settable(__AXUIElement const*, __CFString const*)
+aha_cua::desktop::ax_perform_action(__AXUIElement const*, __CFString const*, bool)
+aha_cua::desktop::CGCaptureService::snapshot_screen(unsigned int, fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::CGCaptureService::snapshot_screen(unsigned int, fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::CGCaptureService::snapshot_whole_screen(fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::CGCaptureService::snapshot_whole_screen(fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::CGCaptureService::snapshot_window(unsigned int, aha_cua::desktop::WindowCaptureMode, fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::CGCaptureService::snapshot_window(unsigned int, aha_cua::desktop::WindowCaptureMode, fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::CommonAttributeValues::CommonAttributeValues(__AXUIElement const*)
+aha_cua::desktop::CommonAttributeValues::get_bool(aha_cua::desktop::CommonAttribute) const
+aha_cua::desktop::CommonAttributeValues::get_json(aha_cua::desktop::CommonAttribute) const
+aha_cua::desktop::CommonAttributeValues::get_rect(__AXUIElement const*, CGRect&) const
+aha_cua::desktop::CommonAttributeValues::get_string(aha_cua::desktop::CommonAttribute, AXError*) const
+aha_cua::desktop::CommonAttributeValues::get(aha_cua::desktop::CommonAttribute, AXError*) const
+aha_cua::desktop::create_agent_cursor_backend()
+aha_cua::desktop::crop_image(CGImage*, CGRect const&, fml::CFRef<CGImage*>&)
+aha_cua::desktop::darwin_select_text(__AXUIElement const*, aha_cua::desktop::TextSelectionRequest const&, std::__1::stop_token)
+aha_cua::desktop::detect_encoding(std::__1::basic_string_view<char, std::__1::char_traits<char>>, aha_cua::desktop::EncodingDetectResult&)
+aha_cua::desktop::FileContent::to_string() const
+aha_cua::desktop::FileRecords::to_string_psv() const
+aha_cua::desktop::FileSystemService::FileSystemService()
+aha_cua::desktop::FileSystemService::FileSystemService(aha_cua::desktop::FileSystemService&&)
+aha_cua::desktop::FileSystemService::get_file_info(aha_cua::desktop::GetFileInfoRequest const&, aha_cua::desktop::FileRecord&) const
+aha_cua::desktop::FileSystemService::move_file(aha_cua::desktop::MoveFileRequest const&) const
+aha_cua::desktop::FileSystemService::operator=(aha_cua::desktop::FileSystemService&&)
+aha_cua::desktop::FileSystemService::read_file(aha_cua::desktop::ReadFileRequest const&, aha_cua::desktop::FileContent&) const
+aha_cua::desktop::FileSystemService::search_files(aha_cua::desktop::SearchFilesRequest const&, aha_cua::desktop::FileRecords&) const
+aha_cua::desktop::FileSystemServiceImpl::get_file_info(aha_cua::desktop::GetFileInfoRequest const&, aha_cua::desktop::FileRecord&) const
+aha_cua::desktop::FileSystemServiceImpl::move_file(aha_cua::desktop::MoveFileRequest const&) const
+aha_cua::desktop::FileSystemServiceImpl::read_file(aha_cua::desktop::ReadFileRequest const&, aha_cua::desktop::FileContent&) const
+aha_cua::desktop::FileSystemServiceImpl::search_files(aha_cua::desktop::SearchFilesRequest const&, aha_cua::desktop::FileRecords&) const
+aha_cua::desktop::format_as(aha_cua::desktop::MouseButton)
+aha_cua::desktop::get_cf_type_description(void const*)
+aha_cua::desktop::get_window_info(unsigned int)
+aha_cua::desktop::input::DragGestureRunner::animate_visual_cursor_to(CGPoint, aha_cua::desktop::AgentCursorConfig const&)
+aha_cua::desktop::input::DragGestureRunner::DragGestureRunner(aha_cua::desktop::SkyLightEventPoster&, std::__1::shared_ptr<aha_cua::desktop::AgentCursor>)
+aha_cua::desktop::input::DragGestureRunner::finish_visual_cursor(bool, bool, aha_cua::desktop::AgentCursorConfig const&)
+aha_cua::desktop::input::DragGestureRunner::prepare_visual_cursor(aha_cua::desktop::input::DragGestureRequest const&, aha_cua::desktop::AgentCursorConfig const&)
+aha_cua::desktop::input::DragGestureRunner::run(aha_cua::desktop::input::DragGestureRequest const&)
+aha_cua::desktop::InputService::click_element_with_position(fml::CFRef<__AXUIElement const*>, aha_cua::Point, aha_cua::desktop::MouseButton, unsigned int)
+aha_cua::desktop::InputService::click_element_with_position(fml::CFRef<__AXUIElement const*>, aha_cua::Point, aha_cua::desktop::MouseButton, unsigned int) (.cold.1)
+aha_cua::desktop::InputService::click_element(fml::CFRef<__AXUIElement const*>, aha_cua::desktop::MouseButton, unsigned int)
+aha_cua::desktop::InputService::click_element(fml::CFRef<__AXUIElement const*>, aha_cua::desktop::MouseButton, unsigned int) (.cold.1)
+aha_cua::desktop::InputService::drag_in_element(fml::CFRef<__AXUIElement const*>, aha_cua::Point, aha_cua::Point)
+aha_cua::desktop::InputService::drag_in_element(fml::CFRef<__AXUIElement const*>, aha_cua::Point, aha_cua::Point) (.cold.1)
+aha_cua::desktop::InputService::InputService(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>, std::__1::shared_ptr<aha_cua::desktop::SkyLightEventPoster>)
+aha_cua::desktop::InputService::scroll_element_with_position(fml::CFRef<__AXUIElement const*>, aha_cua::Point, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double)
+aha_cua::desktop::InputService::scroll_element_with_position(fml::CFRef<__AXUIElement const*>, aha_cua::Point, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double) (.cold.1)
+aha_cua::desktop::InputService::scroll_element_with_position(fml::CFRef<__AXUIElement const*>, aha_cua::Point, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double) (.cold.2)
+aha_cua::desktop::InputService::scroll_element(fml::CFRef<__AXUIElement const*>, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double)
+aha_cua::desktop::InputService::scroll_element(fml::CFRef<__AXUIElement const*>, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double) (.cold.1)
+aha_cua::desktop::InputService::scroll_element(fml::CFRef<__AXUIElement const*>, std::__1::basic_string_view<char, std::__1::char_traits<char>>, double) (.cold.2)
+aha_cua::desktop::is_screen_locked()
+aha_cua::desktop::is_valid_rect(CGRect)
+aha_cua::desktop::KeyboardInput::clear_text_field()
+aha_cua::desktop::KeyboardInput::get_virtual_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::desktop::KeyboardInput::get_virtual_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::LETTER_KEYS
+aha_cua::desktop::KeyboardInput::get_virtual_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::NAMED_KEYS
+aha_cua::desktop::KeyboardInput::KeyboardInput(std::__1::shared_ptr<aha_cua::desktop::SkyLightEventPoster>)
+aha_cua::desktop::KeyboardInput::send_platform_key_events_sequentially(std::__1::span<aha_cua::desktop::KeyboardInput::PlatformKeyEvent const, 18446744073709551615ul>, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::KeyboardInput::type_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::desktop::ListAppService::arm_refresh_timer()
+aha_cua::desktop::ListAppService::create_if_needed()
+aha_cua::desktop::ListAppService::create_if_needed()::instance
+aha_cua::desktop::ListAppService::create_if_needed()::instance_mutex
+aha_cua::desktop::ListAppService::handle_refresh_timer()
+aha_cua::desktop::ListAppService::ListAppService()
+aha_cua::desktop::ListAppService::request_refresh()
+aha_cua::desktop::MouseInput::click_at(aha_cua::Point, aha_cua::desktop::MouseButton, int)
+aha_cua::desktop::MouseInput::get_cursor_pos(aha_cua::Point&)
+aha_cua::desktop::MouseInput::MouseInput(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>)
+aha_cua::desktop::MouseInput::move_smooth(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::MouseInput::perform_move(aha_cua::Point, bool)
+aha_cua::desktop::MouseInput::send_mouse_down(aha_cua::desktop::MouseButton)
+aha_cua::desktop::MouseInput::send_mouse_up(aha_cua::desktop::MouseButton)
+aha_cua::desktop::MouseInput::send_mouse_wheel(bool, int)
+aha_cua::desktop::MouseInput::set_cursor_pos(aha_cua::Point)
+aha_cua::desktop::PlatformAppInfo::operator=(aha_cua::desktop::PlatformAppInfo const&)
+aha_cua::desktop::RefreshScheduler::begin_refresh(std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>)
+aha_cua::desktop::RefreshScheduler::finish_refresh(std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>, bool, std::__1::optional<std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>>)
+aha_cua::desktop::RefreshScheduler::invalidate(std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>, bool)
+aha_cua::desktop::RefreshScheduler::minimum_deadline() const
+aha_cua::desktop::RefreshScheduler::next_deadline() const
+aha_cua::desktop::RefreshScheduler::schedule_initial(std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>)
+aha_cua::desktop::ReplacePreview::operator=(aha_cua::desktop::ReplacePreview&&)
+aha_cua::desktop::ReplacePreview::to_summary_text() const
+aha_cua::desktop::restore_minimized_app_window_if_needed(int, unsigned int)
+aha_cua::desktop::SCCaptureService::SCCaptureService()
+aha_cua::desktop::SCCaptureService::snapshot_screen(unsigned int, fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::SCCaptureService::snapshot_whole_screen(fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::SCCaptureService::snapshot_window(unsigned int, aha_cua::desktop::WindowCaptureMode, fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::ScopedAgentCursorDrag::end()
+aha_cua::desktop::ScopedAgentCursorDrag::operator=(aha_cua::desktop::ScopedAgentCursorDrag&&)
+aha_cua::desktop::ScopedAgentCursorDrag::ScopedAgentCursorDrag(aha_cua::desktop::ScopedAgentCursorDrag&&)
+aha_cua::desktop::ScopedAgentCursorDrag::ScopedAgentCursorDrag(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>)
+aha_cua::desktop::ScopedAgentCursorDrag::ScopedAgentCursorDrag(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>) (.cold.1)
+aha_cua::desktop::ScopedAgentCursorDrag::wait_animation_deadline(std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::ScreenshotScale::scale_vision(fml::CFRef<CGImage*>&, aha_cua::desktop::ScaleVisionInfo&)
+aha_cua::desktop::ScreenshotService::capture_screenshot_for_desktop(fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::ScreenshotService::capture_screenshot_for_desktop(fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::ScreenshotService::capture_screenshot_for_desktop(fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.2)
+aha_cua::desktop::ScreenshotService::capture_screenshot_for_desktop(fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.3)
+aha_cua::desktop::ScreenshotService::capture_screenshot_from_screen(fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::ScreenshotService::capture_screenshot_from_screen(unsigned long, fml::CFRef<CGImage*>&, std::__1::stop_token)
+aha_cua::desktop::ScreenshotService::capture_screenshot_from_screen(unsigned long, fml::CFRef<CGImage*>&, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::ScreenshotService::capture_screenshot_from_window(unsigned long, fml::CFRef<CGImage*>&, aha_cua::desktop::WindowCaptureMode, std::__1::stop_token)
+aha_cua::desktop::ScreenshotService::capture_screenshot_from_window(unsigned long, fml::CFRef<CGImage*>&, aha_cua::desktop::WindowCaptureMode, std::__1::stop_token) (.cold.1)
+aha_cua::desktop::ScreenshotService::ScreenshotService()
+aha_cua::desktop::SkyLightEventPoster::activate_without_raise(int, unsigned int)
+aha_cua::desktop::SkyLightEventPoster::mouse_click_on_window(int, unsigned int, CGRect, CGPoint, aha_cua::desktop::MouseButton, unsigned int)
+aha_cua::desktop::SkyLightEventPoster::mouse_drag_on_window(int, unsigned int, CGRect, CGPoint, CGPoint, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+aha_cua::desktop::SkyLightEventPoster::post_event_record_to_pid(int, __CGEvent*)
+aha_cua::desktop::SkyLightEventPoster::post_key_event(int, int, bool, unsigned long long)
+aha_cua::desktop::SkyLightEventPoster::post_mouse_move_to_window(int, unsigned int, CGPoint, CGPoint)
+aha_cua::desktop::SkyLightEventPoster::post_scroll_frame(fml::CFRef<__CGEventSource*> const&, int, unsigned int, CGPoint, CGPoint, long long, double, double)
+aha_cua::desktop::SkyLightEventPoster::post_to_pid(int, __CGEvent*, bool)
+aha_cua::desktop::SkyLightEventPoster::prepare_synthetic_focus_event_for_delivery(__CGEvent*, int, unsigned int, CGRect const*)
+aha_cua::desktop::SkyLightEventPoster::scroll_on_window(int, unsigned int, CGRect, CGPoint, bool, int)
+aha_cua::desktop::SkyLightEventPoster::set_synthetic_focus_activation_mouse_event_fields(__CGEvent*)
+aha_cua::desktop::SkyLightEventPoster::set_synthetic_focus_integer_field(__CGEvent*, unsigned int, long long)
+aha_cua::desktop::SkyLightEventPoster::SkyLightEventPoster(std::__1::shared_ptr<aha_cua::desktop::SkyLightWrapper>)
+aha_cua::desktop::SkyLightEventPoster::stamp_mouse_event(__CGEvent*, int, CGPoint, CGPoint, long long, CGMouseButton, std::__1::optional<unsigned int>)
+aha_cua::desktop::SkyLightEventPoster::stamp_window_event(__CGEvent*, int, CGPoint, std::__1::optional<unsigned int>)
+aha_cua::desktop::SkyLightEventPoster::synthetic_focus_acquire(int, unsigned int, CGRect const*)
+aha_cua::desktop::SkyLightEventPoster::synthetic_focus_release(int)
+aha_cua::desktop::SkyLightEventPoster::type_text_to_pid(int, std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::stop_token const&)
+aha_cua::desktop::SkyLightSpaceManager::make_app_window_space_visible(int, unsigned int)
+aha_cua::desktop::SkyLightSpaceManager::make_app_window_space_visible(int, unsigned int)::$_0::operator()() const
+aha_cua::desktop::SkyLightSpaceManager::SkyLightSpaceManager(std::__1::shared_ptr<aha_cua::desktop::SkyLightWrapper>)
+aha_cua::desktop::SkyLightWrapper::SkyLightWrapper()
+aha_cua::desktop::SkyLightWrapper::SLEventSetAuthenticationMessage(__CGEvent*, objc_object*)
+aha_cua::desktop::VisualTreeElement::accelerator_key() const
+aha_cua::desktop::VisualTreeElement::accessibility_id() const
+aha_cua::desktop::VisualTreeElement::can_maximize() const
+aha_cua::desktop::VisualTreeElement::can_minimize() const
+aha_cua::desktop::VisualTreeElement::children() const
+aha_cua::desktop::VisualTreeElement::class_name() const
+aha_cua::desktop::VisualTreeElement::id() const
+aha_cua::desktop::VisualTreeElement::is_enabled() const
+aha_cua::desktop::VisualTreeElement::is_focused() const
+aha_cua::desktop::VisualTreeElement::is_informative_element() const
+aha_cua::desktop::VisualTreeElement::is_interactive_element() const
+aha_cua::desktop::VisualTreeElement::is_keyboard_focusable() const
+aha_cua::desktop::VisualTreeElement::is_off_screen() const
+aha_cua::desktop::VisualTreeElement::is_password() const
+aha_cua::desktop::VisualTreeElement::is_text_element() const
+aha_cua::desktop::VisualTreeElement::is_valid() const
+aha_cua::desktop::VisualTreeElement::name() const
+aha_cua::desktop::VisualTreeElement::operator=(aha_cua::desktop::VisualTreeElement&&)
+aha_cua::desktop::VisualTreeElement::parent() const
+aha_cua::desktop::VisualTreeElement::perform_action(std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::basic_string_view<char, std::__1::char_traits<char>>) const
+aha_cua::desktop::VisualTreeElement::process_id() const
+aha_cua::desktop::VisualTreeElement::rect() const
+aha_cua::desktop::VisualTreeElement::reset()
+aha_cua::desktop::VisualTreeElement::scroll_info() const
+aha_cua::desktop::VisualTreeElement::supports_action(std::__1::basic_string_view<char, std::__1::char_traits<char>>) const
+aha_cua::desktop::VisualTreeElement::text() const
+aha_cua::desktop::VisualTreeElement::top_level() const
+aha_cua::desktop::VisualTreeElement::type() const
+aha_cua::desktop::VisualTreeElement::VisualTreeElement()
+aha_cua::desktop::VisualTreeElement::VisualTreeElement(aha_cua::desktop::VisualTreeElement&&)
+aha_cua::desktop::VisualTreeElement::VisualTreeElement(std::__1::unique_ptr<aha_cua::desktop::VisualTreeElementImpl, std::__1::default_delete<aha_cua::desktop::VisualTreeElementImpl>>)
+aha_cua::desktop::VisualTreeElement::walk(aha_cua::desktop::VisualTreeElement const&, std::__1::function<aha_cua::desktop::VisualTreeElement::WalkOperation (aha_cua::desktop::VisualTreeElement const&)> const&)
+aha_cua::desktop::VisualTreeElement::window_handle() const
+aha_cua::desktop::VisualTreeElementImpl::accelerator_key() const
+aha_cua::desktop::VisualTreeElementImpl::accessibility_id() const
+aha_cua::desktop::VisualTreeElementImpl::add_to_selection() const
+aha_cua::desktop::VisualTreeElementImpl::can_maximize() const
+aha_cua::desktop::VisualTreeElementImpl::can_minimize() const
+aha_cua::desktop::VisualTreeElementImpl::children() const
+aha_cua::desktop::VisualTreeElementImpl::class_name() const
+aha_cua::desktop::VisualTreeElementImpl::collapse() const
+aha_cua::desktop::VisualTreeElementImpl::create(fml::CFRef<__AXUIElement const*>)
+aha_cua::desktop::VisualTreeElementImpl::expand() const
+aha_cua::desktop::VisualTreeElementImpl::get_role() const
+aha_cua::desktop::VisualTreeElementImpl::id() const
+aha_cua::desktop::VisualTreeElementImpl::invoke() const
+aha_cua::desktop::VisualTreeElementImpl::is_enabled() const
+aha_cua::desktop::VisualTreeElementImpl::is_focused() const
+aha_cua::desktop::VisualTreeElementImpl::is_informative_element() const
+aha_cua::desktop::VisualTreeElementImpl::is_interactive_element() const
+aha_cua::desktop::VisualTreeElementImpl::is_keyboard_focusable() const
+aha_cua::desktop::VisualTreeElementImpl::is_off_screen() const
+aha_cua::desktop::VisualTreeElementImpl::is_password() const
+aha_cua::desktop::VisualTreeElementImpl::is_text_element() const
+aha_cua::desktop::VisualTreeElementImpl::name() const
+aha_cua::desktop::VisualTreeElementImpl::operator=(aha_cua::desktop::VisualTreeElementImpl&&)
+aha_cua::desktop::VisualTreeElementImpl::parent() const
+aha_cua::desktop::VisualTreeElementImpl::perform_action(std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::basic_string_view<char, std::__1::char_traits<char>>) const
+aha_cua::desktop::VisualTreeElementImpl::process_id() const
+aha_cua::desktop::VisualTreeElementImpl::rect() const
+aha_cua::desktop::VisualTreeElementImpl::remove_from_selection() const
+aha_cua::desktop::VisualTreeElementImpl::scroll_info() const
+aha_cua::desktop::VisualTreeElementImpl::scroll_into_view() const
+aha_cua::desktop::VisualTreeElementImpl::select() const
+aha_cua::desktop::VisualTreeElementImpl::set_focus() const
+aha_cua::desktop::VisualTreeElementImpl::set_range_value(double) const
+aha_cua::desktop::VisualTreeElementImpl::supports_action(std::__1::basic_string_view<char, std::__1::char_traits<char>>) const
+aha_cua::desktop::VisualTreeElementImpl::text() const
+aha_cua::desktop::VisualTreeElementImpl::toggle() const
+aha_cua::desktop::VisualTreeElementImpl::top_level() const
+aha_cua::desktop::VisualTreeElementImpl::type() const
+aha_cua::desktop::VisualTreeElementImpl::VisualTreeElementImpl(aha_cua::desktop::VisualTreeElementImpl&&)
+aha_cua::desktop::VisualTreeElementImpl::window_handle() const
+aha_cua::desktop::VisualTreeService::get_element_at_point(int, int) const
+aha_cua::desktop::VisualTreeService::get_element_from_window_handle(void*) const
+aha_cua::desktop::VisualTreeService::get_root_element() const
+aha_cua::desktop::VisualTreeService::operator=(aha_cua::desktop::VisualTreeService&&)
+aha_cua::desktop::VisualTreeService::VisualTreeService()
+aha_cua::desktop::VisualTreeService::VisualTreeService(aha_cua::desktop::VisualTreeService&&)
+aha_cua::desktop::VisualTreeServiceImpl::get_element_at_point(int, int) const
+aha_cua::desktop::VisualTreeServiceImpl::get_element_from_window_handle(void*) const
+aha_cua::desktop::VisualTreeServiceImpl::get_root_element() const
+aha_cua::desktop::Window::bring_window_to_top()
+aha_cua::desktop::Window::can_activate() const
+aha_cua::desktop::Window::class_name() const
+aha_cua::desktop::Window::is_browser() const
+aha_cua::desktop::Window::is_desktop() const
+aha_cua::desktop::Window::is_maximized() const
+aha_cua::desktop::Window::is_minimized() const
+aha_cua::desktop::Window::is_valid() const
+aha_cua::desktop::Window::is_visible() const
+aha_cua::desktop::Window::native_handle() const
+aha_cua::desktop::Window::operator=(aha_cua::desktop::Window&&)
+aha_cua::desktop::Window::rect() const
+aha_cua::desktop::Window::set_rect(aha_cua::Rect const&) const
+aha_cua::desktop::Window::title() const
+aha_cua::desktop::Window::window_pid() const
+aha_cua::desktop::Window::window_process_name() const
+aha_cua::desktop::Window::Window()
+aha_cua::desktop::Window::Window(aha_cua::desktop::Window&&)
+aha_cua::desktop::Window::Window(std::__1::unique_ptr<aha_cua::desktop::WindowImpl, std::__1::default_delete<aha_cua::desktop::WindowImpl>>)
+aha_cua::desktop::WindowImpl::bring_window_to_top()
+aha_cua::desktop::WindowImpl::can_activate() const
+aha_cua::desktop::WindowImpl::class_name() const
+aha_cua::desktop::WindowImpl::create(fml::CFRef<__AXUIElement const*>, fml::CFRef<__CFDictionary const*>)
+aha_cua::desktop::WindowImpl::create(unsigned int, fml::CFRef<__AXUIElement const*>, fml::CFRef<__CFDictionary const*>)
+aha_cua::desktop::WindowImpl::create(unsigned int, fml::CFRef<__CFDictionary const*>)
+aha_cua::desktop::WindowImpl::is_desktop() const
+aha_cua::desktop::WindowImpl::is_maximized() const
+aha_cua::desktop::WindowImpl::is_minimized() const
+aha_cua::desktop::WindowImpl::is_visible() const
+aha_cua::desktop::WindowImpl::rect() const
+aha_cua::desktop::WindowImpl::set_rect(aha_cua::Rect const&) const
+aha_cua::desktop::WindowImpl::set_rect(aha_cua::Rect const&) const (.cold.1)
+aha_cua::desktop::WindowImpl::title() const
+aha_cua::desktop::WindowImpl::window_info() const
+aha_cua::desktop::WindowImpl::window_pid() const
+aha_cua::desktop::WindowImpl::window_process_name() const
+aha_cua::desktop::WindowImpl::WindowImpl()
+aha_cua::desktop::WindowService::get_active_window() const
+aha_cua::desktop::WindowService::get_all_top_level_window() const
+aha_cua::desktop::WindowService::get_top_level_window_for_pid(unsigned int) const
+aha_cua::desktop::WindowService::get_window(unsigned long long) const
+aha_cua::desktop::WindowService::WindowService()
+aha_cua::desktop::WindowServiceImpl::get_active_window() const
+aha_cua::desktop::WindowServiceImpl::get_all_top_level_window() const
+aha_cua::desktop::WindowServiceImpl::get_top_level_window_for_pid(unsigned int) const
+aha_cua::desktop::WindowServiceImpl::get_window(void*) const
+aha_cua::desktop::WindowServiceImpl::WindowServiceImpl()
+aha_cua::FileToolExecutor::fs_create_dir(aha_cua::CreateDirParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_delete(aha_cua::DeleteFilesParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_get_info(aha_cua::GetFileInfoParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_move(aha_cua::MoveFileParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_read(aha_cua::ReadFileParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_replace_content(aha_cua::ReplaceFileContentParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_search_content(aha_cua::SearchContentParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_search_files(aha_cua::SearchFilesParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::fs_write(aha_cua::WriteFileParameters const&, std::__1::stop_token)
+aha_cua::FileToolExecutor::support_methods() const
+aha_cua::FileToolExecutorFactory::create_tool_executor()
+aha_cua::format_as(aha_cua::OperationResult const&)
+aha_cua::format_as(aha_cua::Point const&)
+aha_cua::format_error_code(std::__1::error_code const&)
+aha_cua::humanize_bytes(unsigned long long)
+aha_cua::humanize_bytes(unsigned long long)::units
+aha_cua::is_root_path(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::MouseToolExecutor::mouse_click(aha_cua::MouseClickParameters const&)
+aha_cua::MouseToolExecutor::mouse_get_position()
+aha_cua::MouseToolExecutor::mouse_move_smooth(aha_cua::MouseMoveSmoothParameters const&)
+aha_cua::MouseToolExecutor::mouse_move(aha_cua::MouseMoveParameters const&)
+aha_cua::MouseToolExecutor::mouse_scroll(aha_cua::MouseScrollParameters const&)
+aha_cua::MouseToolExecutor::MouseToolExecutor(std::__1::shared_ptr<aha_cua::desktop::AgentCursor>)
+aha_cua::MouseToolExecutor::support_methods() const
+aha_cua::MouseToolExecutorFactory::create_tool_executor()
+aha_cua::OperationResult::category(AhaCuaOperationResultCategory)
+aha_cua::OperationResult::code(int)
+aha_cua::OperationResult::from_ns_error(NSError*)
+aha_cua::OperationResult::OperationResult()
+aha_cua::OperationResult::OperationResult(aha_cua::OperationResult const&)
+aha_cua::OperationResult::OperationResult(AhaCuaOperationResultCategory, int)
+aha_cua::report_telemetry(char const*, char const*)
+aha_cua::sanitize_utf8(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::ScreenshotExecutor::screenshot_screen(aha_cua::ScreenshotScreenParameters const&, std::__1::stop_token)
+aha_cua::ScreenshotExecutor::screenshot_window(aha_cua::ScreenshotWindowParameters const&, std::__1::stop_token)
+aha_cua::ScreenshotExecutor::support_methods() const
+aha_cua::ScreenshotExecutor::support_methods() const (.cold.1)
+aha_cua::ScreenshotExecutorFactory::create_tool_executor()
+aha_cua::set_telemetry_callback(void (*)(char const*, char const*))
+aha_cua::Thread::get_task_runner() const
+aha_cua::Thread::on_current_thread() const
+aha_cua::Thread::on_current_thread() const (.cold.1)
+aha_cua::Thread::post_task(std::__1::function<void ()> const&) const
+aha_cua::Thread::post_task(std::__1::function<void ()> const&) const (.cold.1)
+aha_cua::Thread::run_now_or_post_task(std::__1::function<void ()> const&) const
+aha_cua::Thread::run_now_or_post_task(std::__1::function<void ()> const&) const (.cold.1)
+aha_cua::to_cf_string(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::to_lower_ascii_inplace(std::__1::span<char, 18446744073709551615ul>)
+aha_cua::to_lower_ascii(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::to_std_string(__CFString const*)
+aha_cua::to_std_string(NSString*)
+aha_cua::to_upper_ascii_inplace(std::__1::span<char, 18446744073709551615ul>)
+aha_cua::to_upper_ascii(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::ToolCallObj::cancel_tool(unsigned long long)
+aha_cua::ToolCallObj::ensure_user_intervention_monitor()
+aha_cua::ToolCallObj::handle_user_intervention()
+aha_cua::ToolCallObj::init_tool_executors()
+aha_cua::ToolCallObj::init_work_threads()
+aha_cua::ToolCallObj::resume_after_user_intervention(unsigned long long)
+aha_cua::ToolCallObj::TaskContext::call_once(aha_cua::ToolCallResult)
+aha_cua::ToolCallObj::TaskContext::cancel()
+aha_cua::ToolCallObj::ToolCallObj()
+aha_cua::ToolCallObj::ToolContext::ToolContext(std::__1::shared_ptr<aha_cua::ToolExecutorFactory>, fml::RefPtr<fml::TaskRunner>)
+aha_cua::ToolCallResult::from_error(aha_cua::ToolCallResult::Error)
+aha_cua::ToolCallResult::from_operation_result(aha_cua::OperationResult const&)
+aha_cua::trim_whitespace_ascii_inplace(std::__1::basic_string_view<char, std::__1::char_traits<char>>&)
+aha_cua::trim_whitespace_ascii(std::__1::basic_string_view<char, std::__1::char_traits<char>>)
+aha_cua::truncate_utf8(std::__1::basic_string_view<char, std::__1::char_traits<char>>, unsigned long)
+aha_cua::WaitToolExecutor::support_methods() const
+aha_cua::WaitToolExecutor::wait(aha_cua::WaitParameters const&, std::__1::stop_token)
+aha_cua::WindowInfo::from_window(aha_cua::desktop::Window const&)
+aha_cua::WindowToolExecutor::support_methods() const
+aha_cua::WindowToolExecutor::support_methods() const (.cold.1)
+aha_cua::WindowToolExecutor::window_activate(aha_cua::WindowActivateParameters const&)
+aha_cua::WindowToolExecutor::window_active()
+aha_cua::WindowToolExecutor::window_list()
+aha_cua::write_bytes_to_file_utf8(std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::span<unsigned char const, 18446744073709551615ul>, bool)
+guard variable for aha_cua::desktop::(anonymous namespace)::common_attributes()::attributes
+guard variable for aha_cua::desktop::(anonymous namespace)::get_element_description(fml::CFRef<__AXUIElement const*>)::desktop_icon_level
+guard variable for aha_cua::desktop::(anonymous namespace)::is_desktop_context_menu_layer(int)::popup_menu_lower_bound
+guard variable for aha_cua::desktop::(anonymous namespace)::is_desktop_context_menu_layer(int)::popup_menu_upper_bound
+guard variable for aha_cua::desktop::(anonymous namespace)::is_desktop_window_layer(int)::desktop_window_lower_bound
+guard variable for aha_cua::desktop::(anonymous namespace)::is_desktop_window_layer(int)::desktop_window_upper_bound
+guard variable for aha_cua::desktop::(anonymous namespace)::is_modifier_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::kModifierKeyNames
+guard variable for aha_cua::desktop::(anonymous namespace)::resolve_private_api()::function
+guard variable for aha_cua::desktop::KeyboardInput::get_virtual_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::LETTER_KEYS
+guard variable for aha_cua::desktop::KeyboardInput::get_virtual_key(std::__1::basic_string_view<char, std::__1::char_traits<char>>)::NAMED_KEYS
+guard variable for aha_cua::desktop::ListAppService::create_if_needed()::instance
+guard variable for aha_cua::desktop::ListAppService::create_if_needed()::instance_mutex
+invocation function for block in aha_cua::desktop::(anonymous namespace)::capture_image_with_filter(SCContentFilter*, SCStreamConfiguration*, fml::CFRef<CGImage*>&)
+invocation function for block in aha_cua::desktop::(anonymous namespace)::restore_focused_window_z_order_once(aha_cua::desktop::(anonymous namespace)::FocusedWindowSnapshot const&)
+invocation function for block in aha_cua::desktop::AccessibilityActivatorImplement::InnerObserver::InnerObserver(fml::RefPtr<fml::TaskRunner>, std::__1::weak_ptr<aha_cua::desktop::AccessibilityActivatorImplement>)
+invocation function for block in aha_cua::desktop::agent_focus::SystemFocusStealPreventer::handle_activation(NSNotification*)
+invocation function for block in aha_cua::desktop::agent_focus::SystemFocusStealPreventer::install_observer()
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::end_drag_on_main()
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::ensure_activation_observer_on_main()
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::ensure_screen_parameters_observer_on_main()
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::play_click_ripple_on_main()
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::start_async_animation_on_main(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)
+invocation function for block in aha_cua::desktop::AgentCursorDarwin::start_continuous_repin_on_main()
+invocation function for block in aha_cua::desktop::ListAppService::ListAppService()
+invocation function for block in aha_cua::desktop::ListAppService::request_refresh()
+invocation function for block in aha_cua::desktop::SCCaptureService::snapshot_screen(unsigned int, fml::CFRef<CGImage*>&, std::__1::stop_token)
+invocation function for block in aha_cua::desktop::SCCaptureService::snapshot_whole_screen(fml::CFRef<CGImage*>&, std::__1::stop_token)
+invocation function for block in aha_cua::desktop::SCCaptureService::snapshot_window(unsigned int, aha_cua::desktop::WindowCaptureMode, fml::CFRef<CGImage*>&, std::__1::stop_token)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::apply_config(aha_cua::desktop::AgentCursorConfig const&)::$_0>(aha_cua::desktop::AgentCursorDarwin::apply_config(aha_cua::desktop::AgentCursorConfig const&)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::async_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_0>(aha_cua::desktop::AgentCursorDarwin::async_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::begin_drag()::$_0>(aha_cua::desktop::AgentCursorDarwin::begin_drag()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::cancel_animation()::$_0>(aha_cua::desktop::AgentCursorDarwin::cancel_animation()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::end_drag()::$_0>(aha_cua::desktop::AgentCursorDarwin::end_drag()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::hide()::$_0>(aha_cua::desktop::AgentCursorDarwin::hide()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::pin_above(int, std::__1::optional<unsigned int>)::$_0>(aha_cua::desktop::AgentCursorDarwin::pin_above(int, std::__1::optional<unsigned int>)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::play_click_press(int)::$_0>(aha_cua::desktop::AgentCursorDarwin::play_click_press(int)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::set_enabled(bool)::$_0>(aha_cua::desktop::AgentCursorDarwin::set_enabled(bool)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::set_interrupted(bool)::$_0>(aha_cua::desktop::AgentCursorDarwin::set_interrupted(bool)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::show_focus_rect(std::__1::optional<aha_cua::Rect>)::$_0>(aha_cua::desktop::AgentCursorDarwin::show_focus_rect(std::__1::optional<aha_cua::Rect>)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::show()::$_0>(aha_cua::desktop::AgentCursorDarwin::show()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::shutdown()::$_0>(aha_cua::desktop::AgentCursorDarwin::shutdown()::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_0>(aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_0&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_1>(aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_1&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_2>(aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_2&&)
+invocation function for block in decltype(fp()) aha_cua::desktop::(anonymous namespace)::run_on_main_sync<aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_3>(aha_cua::desktop::AgentCursorDarwin::sync_animate(aha_cua::Point, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000l>>)::$_3&&)
+std::__1::enable_if<is_move_constructible<aha_cua::desktop::PlatformAppInfo>::value && is_move_assignable<aha_cua::desktop::PlatformAppInfo>::value, void>::type std::__1::swap[abi:ne180100]<aha_cua::desktop::PlatformAppInfo>(aha_cua::desktop::PlatformAppInfo&, aha_cua::desktop::PlatformAppInfo&)
+std::__1::future<aha_cua::desktop::(anonymous namespace)::CaptureResult>::get()
+std::__1::optional<aha_cua::desktop::AppStateSnapshot>& std::__1::optional<aha_cua::desktop::AppStateSnapshot>::operator=[abi:ne180100]<aha_cua::desktop::AppStateSnapshot, void>(aha_cua::desktop::AppStateSnapshot&&)
+std::__1::optional<aha_cua::desktop::PlatformAppInfo>& std::__1::optional<aha_cua::desktop::PlatformAppInfo>::operator=[abi:ne180100]<aha_cua::desktop::PlatformAppInfo, void>(aha_cua::desktop::PlatformAppInfo&&)
+std::__1::promise<aha_cua::desktop::(anonymous namespace)::CaptureResult>::set_value(aha_cua::desktop::(anonymous namespace)::CaptureResult&&)
+std::__1::shared_ptr<aha_cua::ToolCallObj::TaskContext> std::__1::make_shared[abi:ne180100]<aha_cua::ToolCallObj::TaskContext, unsigned long long const&, std::__1::function<void (unsigned long long, aha_cua::ToolCallResult)>, void>(unsigned long long const&, std::__1::function<void (unsigned long long, aha_cua::ToolCallResult)>&&)
+typeinfo for aha_cua_call_tool_async::$_0
+typeinfo for aha_cua::AppStateExecutor
+typeinfo for aha_cua::AppStateExecutorFactory
+typeinfo for aha_cua::AppToolExecutor
+typeinfo for aha_cua::AppToolExecutorFactory
+typeinfo for aha_cua::desktop::AccessibilityActivator
+typeinfo for aha_cua::desktop::AccessibilityActivatorImplement
+typeinfo for aha_cua::desktop::AccessibilityActivatorImplement::activate_if_needed(int)::'lambda'()
+typeinfo for aha_cua::desktop::AccessibilityActivatorImplement::handle_process_terminated(int)::'lambda'()
+typeinfo for aha_cua::desktop::AccessibilityActivatorImplement::init()::'lambda'()
+typeinfo for aha_cua::desktop::AccessibilityActivatorImplement::InnerObserver::InnerObserver(fml::RefPtr<fml::TaskRunner>, std::__1::weak_ptr<aha_cua::desktop::AccessibilityActivatorImplement>)::'block-literal'::'lambda'()
+typeinfo for aha_cua::desktop::AgentCursorBackend
+typeinfo for aha_cua::desktop::AgentCursorDarwin
+typeinfo for aha_cua::FileToolExecutor
+typeinfo for aha_cua::FileToolExecutorFactory
+typeinfo for aha_cua::MouseToolExecutor
+typeinfo for aha_cua::MouseToolExecutorFactory
+typeinfo for aha_cua::ScreenshotExecutor
+typeinfo for aha_cua::ScreenshotExecutorFactory
+typeinfo for aha_cua::ToolCallObj::cancel_tool(unsigned long long)::$_0
+typeinfo for aha_cua::ToolCallObj::ensure_user_intervention_monitor()::$_0
+typeinfo for aha_cua::ToolCallObj::ensure_user_intervention_monitor()::$_0::operator()() const::'lambda'()
+typeinfo for aha_cua::ToolCallObj::handle_user_intervention()::$_0
+typeinfo for aha_cua::ToolCallObj::ToolContext::ToolContext(std::__1::shared_ptr<aha_cua::ToolExecutorFactory>, fml::RefPtr<fml::TaskRunner>)::$_0
+typeinfo for aha_cua::ToolExecutor
+typeinfo for aha_cua::ToolExecutorFactory
+typeinfo for aha_cua::WaitToolExecutor
+typeinfo for aha_cua::WindowToolExecutor
+typeinfo for std::__1::enable_shared_from_this<aha_cua::desktop::AccessibilityActivatorImplement>
+typeinfo name for aha_cua_call_tool_async::$_0
+typeinfo name for aha_cua::AppStateExecutor
+typeinfo name for aha_cua::AppStateExecutorFactory
+typeinfo name for aha_cua::AppToolExecutor
+typeinfo name for aha_cua::AppToolExecutorFactory
+typeinfo name for aha_cua::desktop::AccessibilityActivator
+typeinfo name for aha_cua::desktop::AccessibilityActivatorImplement
+typeinfo name for aha_cua::desktop::AccessibilityActivatorImplement::activate_if_needed(int)::'lambda'()
+typeinfo name for aha_cua::desktop::AccessibilityActivatorImplement::handle_process_terminated(int)::'lambda'()
+typeinfo name for aha_cua::desktop::AccessibilityActivatorImplement::init()::'lambda'()
+typeinfo name for aha_cua::desktop::AccessibilityActivatorImplement::InnerObserver::InnerObserver(fml::RefPtr<fml::TaskRunner>, std::__1::weak_ptr<aha_cua::desktop::AccessibilityActivatorImplement>)::'block-literal'::'lambda'()
+typeinfo name for aha_cua::desktop::AgentCursorBackend
+typeinfo name for aha_cua::desktop::AgentCursorDarwin
+typeinfo name for aha_cua::FileToolExecutor
+typeinfo name for aha_cua::FileToolExecutorFactory
+typeinfo name for aha_cua::MouseToolExecutor
+typeinfo name for aha_cua::MouseToolExecutorFactory
+typeinfo name for aha_cua::ScreenshotExecutor
+typeinfo name for aha_cua::ScreenshotExecutorFactory
+typeinfo name for aha_cua::ToolCallObj::cancel_tool(unsigned long long)::$_0
+typeinfo name for aha_cua::ToolCallObj::ensure_user_intervention_monitor()::$_0
+typeinfo name for aha_cua::ToolCallObj::ensure_user_intervention_monitor()::$_0::operator()() const::'lambda'()
+typeinfo name for aha_cua::ToolCallObj::handle_user_intervention()::$_0
+typeinfo name for aha_cua::ToolCallObj::ToolContext::ToolContext(std::__1::shared_ptr<aha_cua::ToolExecutorFactory>, fml::RefPtr<fml::TaskRunner>)::$_0
+typeinfo name for aha_cua::ToolExecutor
+typeinfo name for aha_cua::ToolExecutorFactory
+typeinfo name for aha_cua::WaitToolExecutor
+typeinfo name for aha_cua::WindowToolExecutor
+typeinfo name for std::__1::enable_shared_from_this<aha_cua::desktop::AccessibilityActivatorImplement>
+typeinfo name for std::__1::shared_ptr<aha_cua::desktop::ListAppService>::__shared_ptr_default_delete<aha_cua::desktop::ListAppService, aha_cua::desktop::ListAppService>
+void fmt::v12::detail::value<fmt::v12::context>::format_custom<aha_cua::desktop::MouseButton>(void*, fmt::v12::parse_context<char>&, fmt::v12::context&)
+void fmt::v12::detail::value<fmt::v12::context>::format_custom<aha_cua::OperationResult>(void*, fmt::v12::parse_context<char>&, fmt::v12::context&)
+void fmt::v12::detail::value<fmt::v12::context>::format_custom<aha_cua::Point>(void*, fmt::v12::parse_context<char>&, fmt::v12::context&)
+void spdlog::logger::log_<aha_cua::desktop::MouseButton&, unsigned int&, aha_cua::Point&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::desktop::MouseButton&, unsigned int&, aha_cua::Point&)
+void spdlog::logger::log_<aha_cua::desktop::MouseButton&, unsigned int&, CGPoint const&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::desktop::MouseButton&, unsigned int&, CGPoint const&)
+void spdlog::logger::log_<aha_cua::desktop::MouseButton&, unsigned int&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::desktop::MouseButton&, unsigned int&)
+void spdlog::logger::log_<aha_cua::OperationResult const&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::OperationResult const&)
+void spdlog::logger::log_<aha_cua::OperationResult&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::OperationResult&)
+void spdlog::logger::log_<aha_cua::Point&, aha_cua::Point&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, aha_cua::Point&, aha_cua::Point&)
+void spdlog::logger::log_<int&, unsigned int&, CGRect&, CGPoint&, CGPoint const&, aha_cua::desktop::MouseButton&, unsigned int&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, int&, unsigned int&, CGRect&, CGPoint&, CGPoint const&, aha_cua::desktop::MouseButton&, unsigned int&)
+void spdlog::logger::log_<unsigned int const&, aha_cua::OperationResult const&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, unsigned int const&, aha_cua::OperationResult const&)
+void spdlog::logger::log_<unsigned int, aha_cua::OperationResult&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, unsigned int&&, aha_cua::OperationResult&)
+void spdlog::logger::log_<unsigned int, unsigned int const&, aha_cua::OperationResult&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, unsigned int&&, unsigned int const&, aha_cua::OperationResult&)
+void spdlog::logger::log_<unsigned int&, aha_cua::desktop::MouseButton&>(spdlog::source_loc, spdlog::level::level_enum, fmt::v12::basic_string_view<char>, unsigned int&, aha_cua::desktop::MouseButton&)
+vtable for aha_cua::AppStateExecutor
+vtable for aha_cua::AppStateExecutorFactory
+vtable for aha_cua::AppToolExecutor
+vtable for aha_cua::AppToolExecutorFactory
+vtable for aha_cua::desktop::AccessibilityActivatorImplement
+vtable for aha_cua::desktop::AgentCursorDarwin
+vtable for aha_cua::FileToolExecutor
+vtable for aha_cua::FileToolExecutorFactory
+vtable for aha_cua::MouseToolExecutor
+vtable for aha_cua::MouseToolExecutorFactory
+vtable for aha_cua::ScreenshotExecutor
+vtable for aha_cua::ScreenshotExecutorFactory
+vtable for aha_cua::WaitToolExecutor
+vtable for aha_cua::WindowToolExecutor
