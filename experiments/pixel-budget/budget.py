@@ -10,12 +10,25 @@ and downscales isotropically to fit:
 
 That reduction is invisible in the tool output, so it is easy to reason about
 grounding as if the model saw the screenshot at capture resolution. It does
-not. On a 4K display a 20px button lands on the model's retina at 5.6px, which
-is below what any general vision model localizes reliably -- and it explains
-why the Phase 0 ScreenSpot run scored worst on desktop platforms
-(macOS 60.9%, Windows 52.0%) and best on mobile (Android 75.8%).
+not: on a 4K display a 20px button lands on the model's retina at 5.6px.
 
-Design consequence: capture per window, never the full screen.
+What this does NOT explain -- a correction worth recording, because the
+tempting causal story is wrong. The Phase 0 per-platform scores are not driven
+by downscaling:
+
+  - Windows samples are 960x540 (0.52M px), so scale = 1.000, no downscaling
+    at all -- and Windows scored WORST of all platforms at 52.0%.
+  - shop and tool samples are both 2560x1440, identical scale 0.417, yet score
+    48.7% and 80.0% -- a 31-point spread at the same resolution.
+
+So the binding factor in the measured data is UI density and target size, not
+the pixel budget. The budget is a separate, additive risk that the Phase 0
+sample never exercised: nothing in ScreenSpot-v2 is as punishing as a 4K
+full-screen capture (scale 0.278).
+
+Design consequence, from both facts at once: capture per window, never the
+full screen -- and do not expect a per-window capture to rescue grounding on
+dense desktop UI, because density hurts independently.
 
 Run: python3 experiments/pixel-budget/budget.py
 """
