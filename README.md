@@ -68,6 +68,5 @@ python3 experiments/desktop-acceptance/run.py    # desktop capability acceptance
 | [docs/HANDOFF.md](docs/HANDOFF.md) | What to build next, the invariants, and how work is accepted |
 | [docs/EVIDENCE.md](docs/EVIDENCE.md) | Every measured conclusion, with how to reproduce it |
 | `AGENTS.md` | Repository layout and the invariants that are not visible in the code |
-| `DO.md` | Working log and incident post-mortems |
 
 Published as `dsh-tool-computer` (npm). Repository: hanzhangzzz/dsh-computer-use.

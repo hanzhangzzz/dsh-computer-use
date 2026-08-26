@@ -12,7 +12,6 @@ dsh-computer-use：DeepSeek Harness 的 computer use 插件。单发布包 `dsh-
   它的 `apply` 组装式挂载另两个角色（service + provider），**这是唯一发布入口**。
 - `experiments/` — 验收套件（`phase2-acceptance/run.py`，可移植）、tracer/wechat overlay、断连验证脚本。
 - `docs/` — 两份：`HANDOFF.md`（唯一施工依据）与 `EVIDENCE.md`（全部实测结论）。
-- `DO.md` — 循环工作日志与事件复盘（含 2026-08-25 安全事件，必读）。
 
 ## 关键约定（代码里看不出来的）
 
@@ -32,5 +31,5 @@ pnpm --filter dsh-tool-computer publish --access public --no-git-checks  # 发�
 
 ## 无人值守纪律
 
-DO.md 2026-08-25 事件后：无人值守（do-something 循环等）只做代码/文档/测试；
+2026-08-25 安全事件后（复盘见 docs/EVIDENCE.md）：无人值守（do-something 循环等）只做代码/文档/测试；
 模型任务（验收、演示、验证脚本）必须人在场。log 级核验是模型任务汇报的前置。
