@@ -290,6 +290,77 @@ export function apply(ctx: Context, config: Config): void {
     },
   }))
 
+  ctx.tools.register(defineTool({
+    name: 'computer_surfaces',
+    description: 'List everything you can drive right now: browser pages and desktop applications, each with a surface id. Call this first when a task names an application rather than a URL, then computer_focus the one you want.',
+    parameters: {},
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          surfaces: {
+            type: 'array',
+            required: true,
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                id: { type: 'string', required: true },
+                kind: { type: 'string', required: true },
+                title: { type: 'string', required: true },
+                locator: { type: 'string', required: true },
+              },
+            },
+          },
+          focused: { type: 'string' },
+        },
+      },
+      render: (_args, value) => [{ type: 'text', text: formatSurfaces(value) }],
+    },
+    timeoutMs,
+    isConcurrencySafe: () => false,
+    async execute(_args, exec) {
+      const seamValue = seam(ctx)
+      const found = await seamValue.surfaces(exec.signal)
+      return {
+        surfaces: found.map(s => ({ id: s.id, kind: s.kind, title: s.title, locator: s.locator })),
+        ...seamValue.focusedSurface !== undefined ? { focused: seamValue.focusedSurface } : {},
+      }
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'computer_focus',
+    description: 'Point every later computer_* action at one surface from computer_surfaces. Element indices belong to a surface: after focusing a different one, take a fresh computer_snapshot before clicking.',
+    parameters: {
+      surface: { type: 'string', required: true, description: 'A surface id from computer_surfaces, e.g. `playwright:page`.' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          id: { type: 'string', required: true },
+          kind: { type: 'string', required: true },
+          title: { type: 'string', required: true },
+          locator: { type: 'string', required: true },
+        },
+      },
+      render: (_args, value) => {
+        const s = value as { kind: string; title: string; locator: string }
+        return [{ type: 'text', text: `focused ${s.kind} "${s.title}" (${s.locator})` }]
+      },
+    },
+    timeoutMs,
+    isConcurrencySafe: () => false,
+    async execute(args, exec) {
+      const { surface } = parseFocusArgs(args)
+      const s = await seam(ctx).focus(surface, exec.signal)
+      return { id: s.id, kind: s.kind, title: s.title, locator: s.locator }
+    },
+  }))
+
   if (config.screenshot ?? true) {
     ctx.tools.register(defineTool({
       name: 'computer_screenshot',
@@ -362,6 +433,26 @@ export function parseTypeArgs(args: unknown): { index: number; text: string } {
     throw new Error('computer_type: text must be a string')
   }
   return { index: value.index, text: value.text }
+}
+
+/** Narrow validated focus args. */
+export function parseFocusArgs(args: unknown): { surface: string } {
+  const value = args as { surface?: unknown }
+  if (typeof value.surface !== 'string' || value.surface.length === 0) {
+    throw new Error('computer_focus: surface must be a non-empty surface id from computer_surfaces')
+  }
+  return { surface: value.surface }
+}
+
+/** Lossy display of the surface list; the model picks an id from this text. */
+export function formatSurfaces(value: JsonValue): string {
+  const listing = value as { surfaces: Array<{ id: string; kind: string; title: string; locator: string }>; focused?: string }
+  if (listing.surfaces.length === 0) return 'no surfaces available'
+  const lines = listing.surfaces.map((s) => {
+    const marker = s.id === listing.focused ? ' <- focused' : ''
+    return `${s.id} [${s.kind}] "${s.title}" ${s.locator}${marker}`
+  })
+  return lines.join('\n')
 }
 
 /** Narrow validated key-press args. */
