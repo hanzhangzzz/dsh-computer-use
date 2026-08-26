@@ -1,5 +1,7 @@
 # 桌面控制实施方案与任务拆分
 
+> 施工依据是 [HANDOFF.md](HANDOFF.md)；本文是它的详版，记录完整实验设计与三轮对抗审视。
+
 日期：2026-08-26。状态：待人类裁决。上级文档：docs/master-plan.md、docs/desktop-control-plan.md。
 
 目标（人类给定，本文一切服从它）：**获得所有 mac app 的操作能力，不打扰用户，agent 有独立的

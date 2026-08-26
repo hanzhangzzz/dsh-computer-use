@@ -1,5 +1,7 @@
 # 能力边界评估：dsh-computer-use 用 DeepSeek 视觉模型能做到什么程度
 
+> 浏览器侧能力评估。桌面部分见 [HANDOFF.md](HANDOFF.md)。
+
 日期：2026-08-26。产出方式：16 个 subagent 的并发调研（扫描开源/闭源实现 → 三视角裁决 →
 对抗式证伪 → 合成），叠加主 session 的本机实测与独立复核。
 
