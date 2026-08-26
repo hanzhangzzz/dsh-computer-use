@@ -200,12 +200,52 @@ var accessibilityEnabled = Set<pid_t>()
 func enableAccessibility(_ axApp: AXUIElement, _ pid: pid_t) {
   if accessibilityEnabled.contains(pid) { return }
   accessibilityEnabled.insert(pid)
-  guard AXUIElementSetAttributeValue(axApp, "AXManualAccessibility" as CFString, kCFBooleanTrue) == .success else {
-    // Native apps reject the attribute and need no such coaxing.
-    return
+  let accepted = AXUIElementSetAttributeValue(axApp, "AXManualAccessibility" as CFString, kCFBooleanTrue) == .success
+  // Native applications reject the attribute; they had a tree all along.
+  if !accepted { return }
+  waitForTreeToSettle(axApp)
+}
+
+/// Wait until the tree stops growing, rather than for a fixed interval.
+///
+/// Chromium builds the tree asynchronously, and a fixed one-second wait is not
+/// enough: sweeping every running application in one pass reported Kimi with 3
+/// actionable elements and Clash Verge with 3, while reading the same two
+/// again minutes later gave 57 and 55. The early reads were not wrong about
+/// the API, they were early — the tree was still being built.
+///
+/// A partial tree is worse than no tree, because it looks like an answer. The
+/// model would address indices in a list that is about to change underneath
+/// it, which is exactly the stale-index hazard the identity check exists to
+/// catch, arriving before the first snapshot rather than between two.
+func waitForTreeToSettle(_ axApp: AXUIElement, timeout: TimeInterval = 5.0) {
+  func actionableCount() -> Int {
+    guard let window = targetWindow(axApp) else { return 0 }
+    var count = 0
+    func visit(_ element: AXUIElement, _ depth: Int) {
+      if depth > 30 || count > 2000 { return }
+      if !actionNames(element).filter({ ACTIONABLE.contains($0) }).isEmpty { count += 1 }
+      for child in children(element) { visit(child, depth + 1) }
+    }
+    visit(window, 0)
+    return count
   }
-  // The tree is built asynchronously; reading immediately still sees nothing.
-  Thread.sleep(forTimeInterval: 1.0)
+
+  let deadline = Date().addingTimeInterval(timeout)
+  var previous = -1
+  var stableRounds = 0
+  while Date() < deadline {
+    Thread.sleep(forTimeInterval: 0.25)
+    let current = actionableCount()
+    // Two consecutive equal readings, and not the empty one it starts at.
+    if current == previous && current > 0 {
+      stableRounds += 1
+      if stableRounds >= 2 { return }
+    } else {
+      stableRounds = 0
+    }
+    previous = current
+  }
 }
 
 /// The window a snapshot describes. Prefers the app's focused window; falls
