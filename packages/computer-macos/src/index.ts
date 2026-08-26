@@ -264,12 +264,31 @@ class MacosProvider implements ComputerProvider {
     throw new Error('computer_navigate opens URLs in a browser; to drive an application use computer_surfaces then computer_focus')
   }
 
-  async clickAt(): Promise<ComputerClickResult> {
-    // Clicking a screen coordinate means synthesising a mouse event, which on
-    // macOS either moves the user's real cursor or needs a private API. Both
-    // break the promise that the agent and the user share the machine without
-    // fighting over it, so this provider has no coordinate path.
-    throw new Error('coordinate clicking is not available on the desktop: address elements by their computer_snapshot index instead')
+  /**
+   * Press whatever sits at a screen coordinate — without synthesising a mouse
+   * event.
+   *
+   * The point is hit-tested through the accessibility API and the element it
+   * resolves to is pressed the same way any indexed element is. That keeps the
+   * co-driving invariant, and it makes a coordinate click checkable before it
+   * happens, which a synthesised click can never be: the result says what the
+   * point resolved to, and a mismatch can be refused instead of discovered
+   * afterwards.
+   *
+   * Its limit is honest: a point over something the tree does not model — the
+   * inside of a canvas — resolves to the container and is refused, because
+   * pressing the container is not what was asked for.
+   */
+  async clickAt(x: number, y: number): Promise<ComputerClickResult> {
+    const bundleId = this.requireTarget()
+    const result = await this.helper.call('pressAt', { bundleId, x, y })
+    warnIfDisturbed(this.ctx, result)
+    const after = await this.snapshot()
+    return {
+      clicked: `${String(result.acted ?? `(${x}, ${y})`)} at (${x}, ${y})`,
+      url: `app:${bundleId}`,
+      after,
+    }
   }
 
   async pressKey(): Promise<ComputerKeyPressResult> {

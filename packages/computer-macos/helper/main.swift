@@ -197,6 +197,8 @@ struct Request: Decodable {
   struct Params: Decodable {
     let bundleId: String?
     let index: Int?
+    let x: Double?
+    let y: Double?
     let text: String?
     let key: String?
     let modifiers: [String]?
@@ -332,6 +334,85 @@ func handlePress(_ id: Int, _ params: Request.Params) {
   }
 }
 
+/// Walk up to the nearest ancestor that can actually be acted on. A hit test
+/// often lands on a label or an image inside the control rather than the
+/// control: pointing at "导入" returns the AXStaticText, whose only actions are
+/// AXShowMenu and AXScrollToVisible.
+func actionableAncestor(_ element: AXUIElement, within limit: Int = 6) -> AXUIElement? {
+  var current: AXUIElement? = element
+  var steps = 0
+  while let node = current, steps < limit {
+    if !actionNames(node).filter({ ACTIONABLE.contains($0) }).isEmpty { return node }
+    current = (attribute(node, kAXParentAttribute as String)).map { $0 as! AXUIElement }
+    steps += 1
+  }
+  return nil
+}
+
+/// Press whatever sits at a screen coordinate.
+///
+/// The coordinate is resolved through AXUIElementCopyElementAtPosition — a
+/// public hit test — and the resulting element is pressed through the same
+/// accessibility action as any other. Nothing is synthesised, so this keeps the
+/// promise the whole desktop path is built on: the user's cursor and focus are
+/// untouched.
+///
+/// It also makes a coordinate click checkable before it happens, which a
+/// synthesised mouse event can never be. The caller learns what the point
+/// resolved to, and may pass expectName to have a mismatch refused rather than
+/// discovered afterwards. That is the failure from 2026-08-26, where a blind
+/// coordinate click aimed at a nav item and hit the window's close button.
+func handlePressAt(_ id: Int, _ params: Request.Params) {
+  guard let bundleId = params.bundleId, let x = params.x, let y = params.y else {
+    return fail(id, "pressAt requires bundleId, x and y")
+  }
+  guard let app = runningApp(bundleId) else {
+    return fail(id, "application \(bundleId) is not running", code: "MACOS_APP_NOT_RUNNING")
+  }
+  let axApp = AXUIElementCreateApplication(app.processIdentifier)
+  enableAccessibility(axApp, app.processIdentifier)
+
+  var hit: AXUIElement?
+  let status = AXUIElementCopyElementAtPosition(axApp, Float(x), Float(y), &hit)
+  guard status == .success, let landed = hit else {
+    return fail(id, "nothing accessible at (\(Int(x)), \(Int(y))) in \(bundleId)", code: "MACOS_NO_ELEMENT_AT_POINT")
+  }
+  let landedRole = stringAttribute(landed, kAXRoleAttribute as String)
+  let landedName = accessibleName(landed)
+
+  guard let target = actionableAncestor(landed) else {
+    return fail(
+      id,
+      "(\(Int(x)), \(Int(y))) resolves to \(landedRole) \"\(landedName)\", which exposes no action; aim at a control or use an index from the snapshot",
+      code: "MACOS_NOT_ACTIONABLE",
+    )
+  }
+  let targetRole = stringAttribute(target, kAXRoleAttribute as String)
+  let targetName = accessibleName(target)
+  if let expected = params.expectName, expected != targetName {
+    return fail(
+      id,
+      "(\(Int(x)), \(Int(y))) resolves to \(targetRole) \"\(targetName)\", not \"\(expected)\"; nothing was pressed",
+      code: "MACOS_POINT_MISMATCH",
+    )
+  }
+
+  let before = Undisturbed.capture()
+  let pressed = AXUIElementPerformAction(target, kAXPressAction as CFString)
+  Thread.sleep(forTimeInterval: 0.25)
+  lastEnumeration[bundleId] = nil
+  let disturbed = before.check()
+  guard pressed == .success else {
+    return fail(id, "pressing \(targetRole) \"\(targetName)\" failed with AXError \(pressed.rawValue)", code: "MACOS_ACTION_FAILED")
+  }
+  respond(id, ["result": [
+    "acted": "\(targetRole) \"\(targetName)\"",
+    "resolvedFrom": "\(landedRole) \"\(landedName)\"",
+    "focusStolen": disturbed.focusStolen,
+    "cursorMoved": disturbed.cursorMoved,
+  ]])
+}
+
 func handleSetValue(_ id: Int, _ params: Request.Params) {
   guard let bundleId = params.bundleId, let index = params.index, let text = params.text else {
     return fail(id, "setValue requires bundleId, index and text")
@@ -374,7 +455,8 @@ while let line = readLine(strippingNewline: true) {
     continue
   }
   let params = request.params ?? Request.Params(
-    bundleId: nil, index: nil, text: nil, key: nil, modifiers: nil, expectRole: nil, expectName: nil,
+    bundleId: nil, index: nil, x: nil, y: nil, text: nil, key: nil, modifiers: nil,
+    expectRole: nil, expectName: nil,
   )
   switch request.method {
   case "permissions": handlePermissions(request.id)
@@ -383,6 +465,7 @@ while let line = readLine(strippingNewline: true) {
     guard let bundleId = params.bundleId else { fail(request.id, "snapshot requires bundleId"); break }
     handleSnapshot(request.id, bundleId)
   case "press": handlePress(request.id, params)
+  case "pressAt": handlePressAt(request.id, params)
   case "setValue": handleSetValue(request.id, params)
   default: fail(request.id, "unknown method \(request.method)", code: "MACOS_UNKNOWN_METHOD")
   }

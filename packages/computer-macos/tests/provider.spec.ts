@@ -15,6 +15,9 @@ import ComputerRuntime from '../../computer/src/index.ts'
 import * as macos from '../src/index.ts'
 
 const TARGET = process.env.MACOS_TARGET ?? ''
+/** Inert controls to aim at: switching a category filter changes nothing. */
+const SAFE_TARGETS = ['小程序', '小游戏', '多端应用', '代码片段', '公众号网页', '其他']
+
 const HELPER = join(dirname(fileURLToPath(import.meta.url)), '..', 'helper', 'dsh-computer-macos-helper')
 
 async function seamWithProvider() {
@@ -61,9 +64,27 @@ describe.skipIf(TARGET === '' || process.platform !== 'darwin')('macOS provider 
     await expect(seam.focus('macos:com.apple.Terminal')).rejects.toThrow(/arbitrary commands/)
   }, 30_000)
 
-  test('coordinate clicking is refused with the reason, not silently unsupported', async () => {
+  test('a coordinate resolves to a real element and reports which one', async () => {
     const seam = await seamWithProvider()
     await seam.focus(`macos:${TARGET}`)
-    await expect(seam.clickAt(10, 10)).rejects.toThrow(/address elements by their computer_snapshot index/)
+    const snap = await seam.snapshot()
+    // Aim at a category tab specifically. Picking "any named element" once
+    // landed on the import link and opened a file dialog, which is exactly the
+    // kind of side effect a test must not leave behind; switching a category
+    // filter is inert.
+    const tab = snap.elements.find(el => el.rect !== undefined && SAFE_TARGETS.includes(el.name))
+    if (tab === undefined) return // a different application, or a different screen
+    const rect = tab.rect!
+
+    const result = await seam.clickAt(rect.x + rect.width / 2, rect.y + rect.height / 2)
+    // The point is hit-tested rather than blindly clicked, so the outcome names
+    // what it landed on -- the check a synthesised mouse event cannot offer.
+    expect(result.clicked).toContain(tab.name)
+  }, 60_000)
+
+  test('a coordinate over nothing actionable is refused, not pressed anyway', async () => {
+    const seam = await seamWithProvider()
+    await seam.focus(`macos:${TARGET}`)
+    await expect(seam.clickAt(2, 2)).rejects.toThrow(/exposes no action|nothing accessible/)
   }, 30_000)
 })
