@@ -191,3 +191,11 @@
   达（React 合成事件 div 无语义标记），模型被迫瞎点未命名元素。路线图 #4（坐标兜底）触发，
   证据即本次 log。备选解法待评审：坐标兜底（E7 精度）vs snapshot 附 bounding box（Playwright-MCP
   的 --snapshot-boxes 先例，视觉-结构对齐）vs selector 扩充（噪音风险）。
+- 2026-08-26 12:00（do-something #13，roadmap #4 实施+真机）：坐标兜底落地（0.4.0）——
+  computer_click 双态参数（index 结构优先 / x+y 截图坐标兜底），工具描述教 verify-after-click，
+  provider clickAt 走 page.mouse 且受 detach 围栏保护。单测 15 项全绿（真实坐标点击 example.com
+  链接命中 + 互斥校验路径）。真机微信盲区验证：模型确认导航不在列表→截图定位小游戏图标
+  (28,143)→computer_click{x:28,y:145}→snapshot+截图双验证，bash×1 零越界；最后对比步因
+  DeepSeek API 流断未完成（外部故障，重试中任务被终止；snapshot "无变化"疑似折叠了两个分类页
+  相同的元素集——留待下轮确认点击是否真切换了页面）。工程教训：python str.replace 静默不匹配
+  两次造成假完成（typecheck 曾以旧代码通过）——批量替换后必须 grep 确认命中。
