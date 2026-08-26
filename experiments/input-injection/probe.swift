@@ -11,19 +11,26 @@
 ///
 ///   channel                          keyboard   mouse move   mouse click
 ///   CGEvent.postToPid (per process)  works      -            ignored
-///   CGEvent.post (global HID)        -          works        ignored
+///   CGEvent.post (global HID)        -          works        goes to the
+///                                                            topmost window
 ///   AXUIElementPerformAction         -          -            works
 ///
 /// The last row is why the desktop provider drives applications through
-/// accessibility actions. The middle row is the surprise: the cursor obeys a
-/// synthesised move, so the events are reaching the window server, yet a click
-/// posted at a verified-correct coordinate does not reach the application.
+/// accessibility actions: they reach a background window regardless of what is
+/// stacked on top of it.
 ///
-/// That leaves the "give up the cursor and click like a user" fallback
-/// unavailable too, at least from a process trusted this way. Whether a helper
-/// with its own Accessibility grant behaves differently is the open question,
-/// and it decides whether freeform drag needs a private API or only a
-/// properly-signed binary.
+/// CORRECTION to an earlier reading of this same probe. The global-HID click
+/// was first recorded as "ignored", which was wrong and worth keeping as a
+/// warning. The target application was behind another window, and a global
+/// event behaves exactly like a real mouse: it goes to whichever window is
+/// frontmost at that point, so the clicks were landing on the terminal sitting
+/// on top of the Calculator. `CGWindowListCopyWindowInfo` returns windows in
+/// front-to-back order and settles it in one call -- the check this probe now
+/// performs before drawing any conclusion.
+///
+/// So the honest reading is that the global channel works but is not
+/// background: using it means raising the target window and taking the user's
+/// screen, which is the thing the desktop path exists to avoid.
 ///
 /// Build and run (Calculator is the target; it is launched in the background):
 ///     swiftc -O probe.swift -o probe && ./probe
@@ -136,8 +143,9 @@ for type in [CGEventType.leftMouseDown, .leftMouseUp] {
 }
 report("mouse click via postToPid", before)
 
-// 3. Mouse click through the global HID stream — the channel that moves the
-//    real cursor, tried across every tap because the obvious one failed.
+// 3. Mouse click through the global HID stream. Report what is actually on
+//    top at that point first: without it a click that landed somewhere else
+//    reads as a click that vanished.
 for (tap, label) in [(CGEventTapLocation.cghidEventTap, "cghidEventTap"),
                      (.cgSessionEventTap, "cgSessionEventTap"),
                      (.cgAnnotatedSessionEventTap, "cgAnnotatedSessionEventTap")] {
@@ -153,7 +161,14 @@ for (tap, label) in [(CGEventTapLocation.cghidEventTap, "cghidEventTap"),
     usleep(120_000)
   }
   report("mouse click via post(\(label))", before)
-  print("      (cursor verified on target: \(cursorOnTarget))")
+  let stack = ((CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]]) ?? [])
+    .filter { info in
+      guard let b = info[kCGWindowBounds as String] as? [String: CGFloat],
+            (info[kCGWindowLayer as String] as? Int) == 0 else { return false }
+      return CGRect(x: b["X"]!, y: b["Y"]!, width: b["Width"]!, height: b["Height"]!).contains(point)
+    }
+    .compactMap { $0[kCGWindowOwnerName as String] as? String }
+  print("      (cursor on target: \(cursorOnTarget); window under that point, front to back: \(stack.prefix(3).joined(separator: " > ")))")
 }
 
 // 4. The accessibility action, for contrast. Take the cursor reading here
