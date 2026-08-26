@@ -3,7 +3,7 @@
     {
       "name": "wikipedia",
       "url": "https://en.wikipedia.org/wiki/Main_Page",
-      "baselineTotal": 346,
+      "baselineTotal": 345,
       "baselineInViewport": 134,
       "pointerExtra": 0,
       "pointerVisible": 0,
@@ -21,6 +21,10 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 0,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 0,
       "missRate": 0
     },
     {
@@ -44,6 +48,10 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 0,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 0,
       "missRate": 0
     },
     {
@@ -67,6 +75,10 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 0,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 17,
       "missRate": 0
     },
     {
@@ -90,13 +102,17 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 0,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 1,
       "missRate": 0
     },
     {
       "name": "mdn",
       "url": "https://developer.mozilla.org/en-US/",
       "baselineTotal": 170,
-      "baselineInViewport": 42,
+      "baselineInViewport": 49,
       "pointerExtra": 0,
       "pointerVisible": 0,
       "pointerNested": 0,
@@ -113,6 +129,10 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 23,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 0,
       "missRate": 0
     },
     {
@@ -136,9 +156,13 @@
         "kept": 0
       },
       "genuineTags": {},
+      "shadowExtra": 0,
+      "frameExtra": 0,
+      "frameCount": 0,
+      "customElements": 0,
       "missRate": 0
     }
   ],
-  "totalBaseline": 1309,
+  "totalBaseline": 1308,
   "totalNew": 0
 }

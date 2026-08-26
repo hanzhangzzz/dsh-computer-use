@@ -7,10 +7,21 @@
  * measured at 61.8% (ScreenSpot-v2, Phase 0). So this ratio decides whether
  * that 61.8% is a footnote or the binding constraint.
  *
- * Baseline mirrors the provider exactly (INTERACTIVE_SELECTOR plus the
- * aria-hidden and interlanguage-anchor filters). The candidate set adds
- * computed `cursor: pointer`, the CSS signal a developer gives a human to mean
- * "this is clickable" — the hypothesis behind roadmap #4 layer 1.
+ * CORRECTION, and the reason to distrust the first version of this file.
+ * It asked `document.querySelectorAll('*')` for its candidate universe, which
+ * is precisely the blind spot of the code under test: that call does not enter
+ * open shadow roots and does not cross into iframe documents. The measurement
+ * therefore shared the defect it was supposed to find and could only ever
+ * report zero. Verified on a page holding one light-DOM button, two buttons in
+ * an open shadow root and two in an iframe: the provider primitive enumerates
+ * 1 of 5, while the old script called the same page a 0% miss.
+ *
+ * This version walks open shadow roots explicitly and repeats the sweep per
+ * frame, so the two axes are reported separately:
+ *   - pointer-heuristic misses  (does the selector need widening?)
+ *   - shadow/iframe misses      (does the traversal need widening?)
+ * Closed shadow roots stay unreachable by construction; they are counted as
+ * unknown, not as zero.
  *
  * Run from the repo root (playwright-core must resolve):
  *     node experiments/enumeration-coverage/measure.mjs
@@ -176,6 +187,27 @@ function analyze(selector) {
   }
 }
 
+/**
+ * Counts selector matches reachable only by piercing open shadow roots — the
+ * traversal axis the provider's flat querySelectorAll cannot reach. Runs once
+ * per frame so iframe documents are counted too.
+ */
+function deepScan(selector) {
+  const flat = document.querySelectorAll(selector).length
+  let deep = 0
+  let closedRoots = 0
+  const walk = (root) => {
+    deep += root.querySelectorAll(selector).length
+    for (const el of root.querySelectorAll('*')) {
+      if (el.shadowRoot !== null) walk(el.shadowRoot)
+      // A closed root is invisible to any script; record that we cannot know.
+      else if (typeof el.attachShadow === 'function' && el.tagName.includes('-')) closedRoots++
+    }
+  }
+  walk(document)
+  return { flat, deep, shadowExtra: deep - flat, customElements: closedRoots }
+}
+
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const context = await browser.newContext({ viewport: { width: 1280, height: 2000 } })
 const page = await context.newPage()
@@ -187,6 +219,21 @@ for (const [name, url] of PAGES) {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 })
     await page.waitForTimeout(1500) // let SPA hydration settle
     const r = await page.evaluate(analyze, INTERACTIVE_SELECTOR)
+    // Traversal axis: shadow roots in the main document, plus every child frame.
+    const frames = page.frames()
+    let shadowExtra = 0, frameExtra = 0, customElements = 0
+    for (const [i, frame] of frames.entries()) {
+      try {
+        const d = await frame.evaluate(deepScan, INTERACTIVE_SELECTOR)
+        customElements += d.customElements
+        if (i === 0) shadowExtra += d.shadowExtra
+        else frameExtra += d.deep           // an entire frame is invisible to the provider
+      } catch { /* cross-origin frame: unreadable, counted below */ }
+    }
+    r.shadowExtra = shadowExtra
+    r.frameExtra = frameExtra
+    r.frameCount = frames.length - 1
+    r.customElements = customElements
     const missRate = r.baselineTotal + r.genuineNew === 0
       ? 0
       : r.genuineNew / (r.baselineTotal + r.genuineNew)
@@ -199,7 +246,7 @@ for (const [name, url] of PAGES) {
       + `GENUINELY-NEW=${String(r.genuineNew).padStart(3)}  miss=${(missRate * 100).toFixed(1)}%`,
     )
     console.log(`${' '.repeat(14)}拒绝原因: ${JSON.stringify(r.rejection)}`)
-    console.log(`${' '.repeat(14)}歧义包装元素: ${r.ambiguousWrappers} 个，吞掉 ${r.lostToAmbiguity} 个可见可点子元素`)
+    console.log(`${' '.repeat(14)}遍历盲区: shadow root 内 +${r.shadowExtra}，iframe 内 +${r.frameExtra}（${r.frameCount} 个子 frame），自定义元素 ${r.customElements} 个`)
     if (r.genuineNew > 0) console.log(`${' '.repeat(14)}new-by-tag: ${JSON.stringify(r.genuineTags)}`)
   } catch (error) {
     console.log(`${name.padEnd(12)} FAILED: ${String(error.message).split('\n')[0].slice(0, 90)}`)
@@ -218,8 +265,12 @@ console.log(`baseline 枚举总数 ${totalBaseline}，pointer 启发式新增真
 console.log(`整体漏枚举率(pointer 启发式口径) = ${(totalNew / (totalBaseline + totalNew) * 100).toFixed(1)}%`)
 const totalLost = ok.reduce((n, r) => n + r.lostToAmbiguity, 0)
 const totalWrappers = ok.reduce((n, r) => n + r.ambiguousWrappers, 0)
-console.log(`歧义包装：${totalWrappers} 个包装元素吞掉 ${totalLost} 个可见可点子元素`)
-console.log(`若按"子元素本应各自可寻址"计，覆盖漏洞 = ${(totalLost / (totalBaseline + totalLost) * 100).toFixed(1)}%`)
+const totalShadow = ok.reduce((n, r) => n + (r.shadowExtra ?? 0), 0)
+const totalFrame = ok.reduce((n, r) => n + (r.frameExtra ?? 0), 0)
+console.log(`遍历盲区合计：shadow root +${totalShadow}，iframe +${totalFrame}`)
+const trueTotal = totalBaseline + totalNew + totalShadow + totalFrame
+console.log(`真实漏枚举率 = ${((totalNew + totalShadow + totalFrame) / trueTotal * 100).toFixed(1)}%`)
+console.log(`  其中 选择器过窄 ${(totalNew / trueTotal * 100).toFixed(1)}% / 不穿 shadow ${(totalShadow / trueTotal * 100).toFixed(1)}% / 不进 iframe ${(totalFrame / trueTotal * 100).toFixed(1)}%`)
 
 mkdirSync(new URL('./results', import.meta.url), { recursive: true })
 writeFileSync(
