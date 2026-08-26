@@ -172,9 +172,29 @@ struct Undisturbed {
     )
   }
 
-  func check() -> (focusStolen: Bool, cursorMoved: Bool) {
+  /// Report whether this action disturbed the user.
+  ///
+  /// `cursorMoved` deliberately does not mean "the cursor is somewhere else".
+  /// It means "the cursor was dragged to where this action happened", which is
+  /// what a hijack looks like. The difference is not academic: comparing raw
+  /// positions failed three acceptance cases in a row while every action
+  /// succeeded, because the human was using the mouse at the time. A criterion
+  /// that fires on the user living their life cannot gate anything.
+  ///
+  /// An action that moves the cursor puts it on its own target. A human moving
+  /// the mouse goes somewhere unrelated. Passing the target rect distinguishes
+  /// the two; without one, only focus is judged, and the raw delta is reported
+  /// for information.
+  /// - Parameter target: screen rect this action acted on, when there is one.
+  func check(target: CGRect? = nil) -> (focusStolen: Bool, cursorMoved: Bool, cursorDelta: Bool) {
     let now = Undisturbed.capture()
-    return (frontmost != now.frontmost, cursor != now.cursor)
+    let stolen = frontmost != now.frontmost
+    let delta = cursor != now.cursor
+    guard let target else { return (stolen, false, delta) }
+    // NSEvent.mouseLocation is bottom-left origin; AX rects are top-left.
+    let height = NSScreen.screens.first?.frame.height ?? 0
+    let flipped = CGPoint(x: now.cursor.x, y: height - now.cursor.y)
+    return (stolen, delta && target.insetBy(dx: -4, dy: -4).contains(flipped), delta)
   }
 }
 
@@ -400,7 +420,7 @@ func handlePress(_ id: Int, _ params: Request.Params) {
     // Let the target repaint before the caller asks for the next snapshot.
     Thread.sleep(forTimeInterval: 0.25)
     lastEnumeration[bundleId] = nil
-    let disturbed = before.check()
+    let disturbed = before.check(target: node.rect)
     guard status == .success else {
       return fail(id, "\(action) on \(node.role) \"\(node.name)\" failed with AXError \(status.rawValue)", code: "MACOS_ACTION_FAILED")
     }
@@ -409,6 +429,7 @@ func handlePress(_ id: Int, _ params: Request.Params) {
       "action": action,
       "focusStolen": disturbed.focusStolen,
       "cursorMoved": disturbed.cursorMoved,
+      "cursorDelta": disturbed.cursorDelta,
     ]])
   }
 }
@@ -480,7 +501,7 @@ func handlePressAt(_ id: Int, _ params: Request.Params) {
   let pressed = AXUIElementPerformAction(target, kAXPressAction as CFString)
   Thread.sleep(forTimeInterval: 0.25)
   lastEnumeration[bundleId] = nil
-  let disturbed = before.check()
+  let disturbed = before.check(target: frame(target))
   guard pressed == .success else {
     return fail(id, "pressing \(targetRole) \"\(targetName)\" failed with AXError \(pressed.rawValue)", code: "MACOS_ACTION_FAILED")
   }
@@ -489,6 +510,7 @@ func handlePressAt(_ id: Int, _ params: Request.Params) {
     "resolvedFrom": "\(landedRole) \"\(landedName)\"",
     "focusStolen": disturbed.focusStolen,
     "cursorMoved": disturbed.cursorMoved,
+      "cursorDelta": disturbed.cursorDelta,
   ]])
 }
 
@@ -525,7 +547,7 @@ func handleAction(_ id: Int, _ params: Request.Params) {
     let status = AXUIElementPerformAction(node.element, action as CFString)
     Thread.sleep(forTimeInterval: 0.25)
     lastEnumeration[bundleId] = nil
-    let disturbed = before.check()
+    let disturbed = before.check(target: node.rect)
     guard status == .success else {
       return fail(id, "\(action) on \(node.role) \"\(node.name)\" failed with AXError \(status.rawValue)", code: "MACOS_ACTION_FAILED")
     }
@@ -534,6 +556,7 @@ func handleAction(_ id: Int, _ params: Request.Params) {
       "action": action,
       "focusStolen": disturbed.focusStolen,
       "cursorMoved": disturbed.cursorMoved,
+      "cursorDelta": disturbed.cursorDelta,
     ]])
   }
 }
@@ -577,12 +600,13 @@ func handleWindow(_ id: Int, _ params: Request.Params) {
   if let value = attribute(window, kAXSizeAttribute as String) {
     AXValueGetValue(value as! AXValue, .cgSize, &extent)
   }
-  let disturbed = before.check()
+  let disturbed = before.check(target: CGRect(origin: origin, size: extent))
   respond(id, ["result": [
     "title": stringAttribute(window, kAXTitleAttribute as String),
     "x": origin.x, "y": origin.y, "width": extent.width, "height": extent.height,
     "focusStolen": disturbed.focusStolen,
     "cursorMoved": disturbed.cursorMoved,
+      "cursorDelta": disturbed.cursorDelta,
   ]])
 }
 
@@ -598,7 +622,7 @@ func handleSetValue(_ id: Int, _ params: Request.Params) {
     let status = AXUIElementSetAttributeValue(node.element, kAXValueAttribute as CFString, text as CFTypeRef)
     Thread.sleep(forTimeInterval: 0.15)
     lastEnumeration[bundleId] = nil
-    let disturbed = before.check()
+    let disturbed = before.check(target: node.rect)
     guard status == .success else {
       return fail(id, "setting the value of \(node.role) \"\(node.name)\" failed with AXError \(status.rawValue)", code: "MACOS_ACTION_FAILED")
     }
@@ -607,6 +631,7 @@ func handleSetValue(_ id: Int, _ params: Request.Params) {
       "text": text,
       "focusStolen": disturbed.focusStolen,
       "cursorMoved": disturbed.cursorMoved,
+      "cursorDelta": disturbed.cursorDelta,
     ]])
   }
 }
