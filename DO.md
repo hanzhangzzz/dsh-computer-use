@@ -186,3 +186,8 @@
   Chrome 本体。结果：模型 snapshot 成功→Chrome 被杀→screenshot 收 guidance 原文→原样报告、
   零修复、停手等指示，bash 调用 0（对比安全事件 40+ 次）。verify-detach.sh 三版脚本均败，
   收编可用版为 verify-detach.py。安全事件链路最终闭环。
+- 2026-08-26 10:40（用户在场，微信工具多步任务）：围栏实战 PASS（误点关闭按钮→guidance→模型
+  停手请示、bash×1 零越界）；任务未完成但暴露 #4 盲区——左侧分类导航截图可见而 snapshot 不可
+  达（React 合成事件 div 无语义标记），模型被迫瞎点未命名元素。路线图 #4（坐标兜底）触发，
+  证据即本次 log。备选解法待评审：坐标兜底（E7 精度）vs snapshot 附 bounding box（Playwright-MCP
+  的 --snapshot-boxes 先例，视觉-结构对齐）vs selector 扩充（噪音风险）。
