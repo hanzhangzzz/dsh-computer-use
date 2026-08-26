@@ -199,6 +199,9 @@ struct Request: Decodable {
     let index: Int?
     let x: Double?
     let y: Double?
+    let width: Double?
+    let height: Double?
+    let action: String?
     let text: String?
     let key: String?
     let modifiers: [String]?
@@ -259,6 +262,10 @@ func handleSnapshot(_ id: Int, _ bundleId: String) {
       entry["rect"] = ["x": rect.origin.x, "y": rect.origin.y, "width": rect.size.width, "height": rect.size.height]
     }
     entry["editable"] = EDITABLE_ROLES.contains(node.role)
+    // Report the vocabulary this element actually offers: without it the model
+    // cannot know that a stepper takes AXIncrement or that a toolbar item
+    // publishes its own reorder action.
+    entry["actions"] = node.actions
     return entry
   }
   respond(id, ["result": [
@@ -413,6 +420,100 @@ func handlePressAt(_ id: Int, _ params: Request.Params) {
   ]])
 }
 
+/// Perform a named action on an enumerated element.
+///
+/// There is no drag action in the accessibility vocabulary — enumerating every
+/// action three real applications expose gives AXPress, AXShowMenu, AXPick,
+/// AXIncrement, AXDecrement, AXCancel, AXDelete, AXOpen, AXRaise, AXZoomWindow,
+/// AXScrollToVisible and the AXScroll*ByPage family, and nothing that drags.
+///
+/// What that vocabulary does contain is the outcome of many drags, exposed
+/// directly: a stepper offers AXIncrement instead of dragging its slider, a
+/// context menu offers AXShowMenu instead of a right-drag, and applications may
+/// publish their own — Finder's toolbar advertises 移到上一项 ("move to previous
+/// item"), which is a reorder without a pointer. This method is how the model
+/// reaches those, since the snapshot already reports each element's actions.
+func handleAction(_ id: Int, _ params: Request.Params) {
+  guard let bundleId = params.bundleId, let index = params.index, let action = params.action else {
+    return fail(id, "action requires bundleId, index and action")
+  }
+  switch resolve(bundleId, index, params.expectRole, params.expectName) {
+  case .failure(let message):
+    fail(id, message, code: "MACOS_STALE_INDEX")
+  case .success(let node):
+    let available = actionNames(node.element)
+    guard available.contains(action) else {
+      return fail(
+        id,
+        "\(node.role) \"\(node.name)\" offers \(available.joined(separator: ", ")); it has no \(action)",
+        code: "MACOS_NO_SUCH_ACTION",
+      )
+    }
+    let before = Undisturbed.capture()
+    let status = AXUIElementPerformAction(node.element, action as CFString)
+    Thread.sleep(forTimeInterval: 0.25)
+    lastEnumeration[bundleId] = nil
+    let disturbed = before.check()
+    guard status == .success else {
+      return fail(id, "\(action) on \(node.role) \"\(node.name)\" failed with AXError \(status.rawValue)", code: "MACOS_ACTION_FAILED")
+    }
+    respond(id, ["result": [
+      "acted": "\(node.role) \"\(node.name)\"",
+      "action": action,
+      "focusStolen": disturbed.focusStolen,
+      "cursorMoved": disturbed.cursorMoved,
+    ]])
+  }
+}
+
+/// Move or resize a window by writing its position and size.
+///
+/// This is the one drag that needs no pointer at all: AXPosition and AXSize are
+/// writable, so dragging a title bar and hauling a resize corner both reduce to
+/// setting an attribute. Verified moving a background window and putting it
+/// back with the cursor and focus untouched.
+func handleWindow(_ id: Int, _ params: Request.Params) {
+  guard let bundleId = params.bundleId else { return fail(id, "window requires bundleId") }
+  guard let app = runningApp(bundleId) else {
+    return fail(id, "application \(bundleId) is not running", code: "MACOS_APP_NOT_RUNNING")
+  }
+  let axApp = AXUIElementCreateApplication(app.processIdentifier)
+  guard let window = targetWindow(axApp) else {
+    return fail(id, "application \(bundleId) has no window", code: "MACOS_NO_WINDOW")
+  }
+  let before = Undisturbed.capture()
+  if let x = params.x, let y = params.y {
+    var point = CGPoint(x: x, y: y)
+    guard let value = AXValueCreate(.cgPoint, &point),
+          AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, value) == .success else {
+      return fail(id, "this window refused to move", code: "MACOS_ACTION_FAILED")
+    }
+  }
+  if let width = params.width, let height = params.height {
+    var size = CGSize(width: width, height: height)
+    guard let value = AXValueCreate(.cgSize, &size),
+          AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, value) == .success else {
+      return fail(id, "this window refused to resize", code: "MACOS_ACTION_FAILED")
+    }
+  }
+  Thread.sleep(forTimeInterval: 0.2)
+  var origin = CGPoint.zero
+  if let value = attribute(window, kAXPositionAttribute as String) {
+    AXValueGetValue(value as! AXValue, .cgPoint, &origin)
+  }
+  var extent = CGSize.zero
+  if let value = attribute(window, kAXSizeAttribute as String) {
+    AXValueGetValue(value as! AXValue, .cgSize, &extent)
+  }
+  let disturbed = before.check()
+  respond(id, ["result": [
+    "title": stringAttribute(window, kAXTitleAttribute as String),
+    "x": origin.x, "y": origin.y, "width": extent.width, "height": extent.height,
+    "focusStolen": disturbed.focusStolen,
+    "cursorMoved": disturbed.cursorMoved,
+  ]])
+}
+
 func handleSetValue(_ id: Int, _ params: Request.Params) {
   guard let bundleId = params.bundleId, let index = params.index, let text = params.text else {
     return fail(id, "setValue requires bundleId, index and text")
@@ -455,8 +556,8 @@ while let line = readLine(strippingNewline: true) {
     continue
   }
   let params = request.params ?? Request.Params(
-    bundleId: nil, index: nil, x: nil, y: nil, text: nil, key: nil, modifiers: nil,
-    expectRole: nil, expectName: nil,
+    bundleId: nil, index: nil, x: nil, y: nil, width: nil, height: nil, action: nil,
+    text: nil, key: nil, modifiers: nil, expectRole: nil, expectName: nil,
   )
   switch request.method {
   case "permissions": handlePermissions(request.id)
@@ -466,6 +567,8 @@ while let line = readLine(strippingNewline: true) {
     handleSnapshot(request.id, bundleId)
   case "press": handlePress(request.id, params)
   case "pressAt": handlePressAt(request.id, params)
+  case "action": handleAction(request.id, params)
+  case "window": handleWindow(request.id, params)
   case "setValue": handleSetValue(request.id, params)
   default: fail(request.id, "unknown method \(request.method)", code: "MACOS_UNKNOWN_METHOD")
   }
