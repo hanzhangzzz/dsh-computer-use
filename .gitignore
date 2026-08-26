@@ -10,3 +10,6 @@ experiments/macos-ax-probe/probe
 
 # Built helper binary; main.swift is the source of truth
 packages/computer-macos/helper/dsh-computer-macos-helper
+
+# Built input-injection probe
+experiments/input-injection/probe
