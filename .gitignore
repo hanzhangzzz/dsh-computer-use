@@ -16,3 +16,6 @@ experiments/input-injection/probe
 
 # Built SkyLight injection probe
 experiments/skylight-injection/probe
+
+# Built idle gate
+experiments/user-idle/idle

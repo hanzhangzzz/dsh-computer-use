@@ -60,6 +60,9 @@ python3 experiments/desktop-acceptance/run.py      # 9 个验收用例，应为 
 每个任务都写了验收标准。**验收标准就是我最终会跑的东西**，不满足就是没做完。
 无依赖的可以并行。
 
+**优先级不等于编号顺序**：T6 排在最前。它是唯一决定"这个目标能不能成立"的任务，
+其余都是在它成立的前提下才有意义。只有它被安全门禁挡住时，才退而做别的。
+
 ### T1 独立光标 overlay（无依赖）
 用 `NSWindow` 覆盖层画 agent 的光标，让用户看得见 agent 在点哪里。
 必须 `canBecomeKeyWindow=false`、`ignoresMouseEvents=true`，不参与命中测试。
@@ -83,12 +86,35 @@ helper 已有但 Node 侧没暴露：`action`、`window`、`text`。
 补：多应用切换、截图、光标、应用中途退出、输入框填写。
 **验收**：新用例遵守第二节第 1 条的判据写法；连跑四次结果一致（不稳定的套件不算数）。
 
-### T6 自由拖拽攻坚（无依赖，决定 T7）
-这是唯一没解决的能力缺口，也是唯一可能需要私有 API 的地方。背景与已排除的路径见
-`experiments/skylight-injection/probe.swift` 的注释，参照实现的 API 图谱在同目录
-`reference-api-map.txt`。
-**时间盒：三轮不通就转 B 路线，不要无限期逆向。**
-**验收**：拖拽用例——在目标应用里把一个元素拖到另一位置，读回应用状态确认，且不变量保持。
+### T6 后台指针注入（**最高优先级**，无依赖，决定整个目标是否成立）
+
+不是"再补一个能力"，是**承重的未知数**。目标里的三条——所有 mac app、不打扰、独立光标——
+前两条都卡在这里：AX 覆盖只有 61%，够不到的那批全是自绘 UI；自由拖拽 AX 根本没有对应动作。
+这条不通，T1–T5 做得再好也只是 61% 那部分的打磨。
+
+**已知的事实**（细节见 EVIDENCE.md）：SkyLight 符号在 macOS 26 全部存在且调用返回 0，
+但 12 种组合（3 焦点策略 × 4 坐标姿态）都没送达。参照实现的完整 API 图谱在
+`experiments/skylight-injection/reference-api-map.txt`，它暴露了三条我这版没有的东西：
+`stamp_mouse_event` 同时携带 global 与 window-local 两个点、
+`make_synthetic_focus_acquire_events` 构造的是**事件向量**而非单个事件、
+`SyntheticAppFocusEnforcer::prevent_activation` 是先**抑制目标激活**再发焦点事件——
+和我"把焦点推给目标"的思路正好相反。
+
+**下一步该试什么**（按这个顺序，每步都要能判定成败）：
+1. `prevent_activation` 写的是哪个 AX 属性——对候选属性逐个 read/write，
+   判据：设置后 `open -a` 拉起目标，`isActive` 仍为 false。
+2. focus-acquire 事件向量的构成——参照实现的入参含 `windowRect`，说明事件与窗口几何有关。
+3. `stamp_mouse_event` 需要设哪些整数字段——`set_synthetic_focus_integer_field` 按编号设，
+   可对 CGEventField 编号做二分。
+
+**安全前提**：这类实验会发激活记录、可能抢焦点，无人值守时必须先过
+`experiments/user-idle/idle 300`（用户 5 分钟没碰键鼠才放行）。门禁关着就换任务，不要绕开。
+
+**时间盒**：上面三步各三轮不通，就转 B 路线（独占模式：显式征得用户同意后短暂提升窗口，
+用公开 `CGEventPost` 完成，完成后还原）。不要无限期逆向。
+
+**验收**：后台按下计算器某个键，显示变化被读回确认，且 `focusStolen`/`cursorMoved` 均为 false。
+这一条过了，拖拽只是同一机制多发几个 `mouseDragged`。
 
 ### T7 感知缺口（无依赖）
 实测本机 18 个有窗口的应用里 11 个 AX 可用（61%）。剩下的（微信、Codex app、网易 UU）
