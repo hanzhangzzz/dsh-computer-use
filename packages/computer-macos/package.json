@@ -1,0 +1,49 @@
+{
+  "name": "dsh-computer-macos",
+  "version": "0.1.0",
+  "description": "macOS provider for the dsh computer use seam: drives native and Electron applications through the Accessibility API",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "computer-use",
+    "macos",
+    "accessibility"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib/index.d.ts",
+    "lib/index.js",
+    "lib/dsh-computer-macos-helper"
+  ],
+  "os": ["darwin"],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "dsh-computer": "^0.1.0"
+  },
+  "dependencies": {
+    "dsh-computer": "workspace:*"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "license": "MIT",
+  "author": "huajuan404",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzhangzzz/dsh-computer-use.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hanzhangzzz/dsh-computer-use/issues"
+  }
+}
