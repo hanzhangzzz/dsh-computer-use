@@ -1,7 +1,8 @@
-# Overlay: attach the computer tools to the WeChat devtools over CDP.
-# headless profile does not carry the npm-installed plugin, so entries pin
-# absolute paths to the built bundle (loader baseUrl is the profile dir).
-# The devtools must run with --remote-debugging-port=9222.
+# Overlay: attach the computer tools to a CDP host (any Chromium app).
+# headless has no plugin-installed entry, so this INSERTS one by absolute
+# path (the loader resolves names against the profile dir, not the cwd).
+# Point cdpEndpoint at your host. Verified against WeChat devtools (:9222)
+# and a plain Chrome stand-in (:9224).
 
 - insert:
     - id: tool-computer

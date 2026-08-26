@@ -180,3 +180,9 @@
   仓库导航：三角色布局、代码里看不出的不变量（ctx.get、attach 终态、相对导入）、验证/发布
   命令、无人值守纪律。遗留小项：tool-computer 的 npm 包 README 缺安装命令，与下次代码变化
   一起发布（不为 README 单独发版）。
+- 2026-08-26 09:30（用户在场，真机验证）：0.3.2 断连围栏模型行为级验证 PASS。方法：Chrome 本体
+  直起（playwright 宿主两次坑：$() 与 node 生命周期死锁、kill node 留孤儿 Chrome）+ python
+  全帧 stream_reader 轮询真实 tool-result（CLI zstd -dc 只解第一帧，第三次踩多帧坑）+ kill
+  Chrome 本体。结果：模型 snapshot 成功→Chrome 被杀→screenshot 收 guidance 原文→原样报告、
+  零修复、停手等指示，bash 调用 0（对比安全事件 40+ 次）。verify-detach.sh 三版脚本均败，
+  收编可用版为 verify-detach.py。安全事件链路最终闭环。
