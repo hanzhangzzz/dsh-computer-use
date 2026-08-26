@@ -91,6 +91,37 @@ let ACTIONABLE = Set([
 /// Roles that accept text even when they expose no action.
 let EDITABLE_ROLES = Set(["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField"])
 
+/// Roles that carry content the model needs to read but can never act on.
+let READABLE_ROLES = Set(["AXStaticText", "AXHeading", "AXTextArea", "AXTextField", "AXValueIndicator"])
+
+/// Everything the window is showing, in reading order.
+///
+/// Enumerating only actionable elements leaves the model able to press a
+/// calculator's keys and unable to read its answer — a gap the browser side
+/// never had, because a DOM snapshot carries link and button text along with
+/// the controls. Acceptance found this the first time a case tried to verify
+/// an action by reading the application's own display.
+func readableText(_ root: AXUIElement, cap: Int = 200, maxDepth: Int = 30) -> [String] {
+  var texts: [String] = []
+  var seen = Set<String>()
+  func visit(_ element: AXUIElement, _ depth: Int) {
+    if texts.count >= cap || depth > maxDepth { return }
+    let role = stringAttribute(element, kAXRoleAttribute as String)
+    if READABLE_ROLES.contains(role) {
+      let value = stringAttribute(element, kAXValueAttribute as String)
+      let text = value.isEmpty ? stringAttribute(element, kAXTitleAttribute as String) : value
+      // Repeated labels are noise; the same string twice tells the model nothing.
+      if !text.isEmpty, !seen.contains(text) {
+        seen.insert(text)
+        texts.append(text)
+      }
+    }
+    for child in children(element) { visit(child, depth + 1) }
+  }
+  visit(root, 0)
+  return texts
+}
+
 /// Depth-first enumeration in a fixed order. Order is the contract: the model
 /// addresses elements by position in this list, so `snapshot` and `press` must
 /// walk identically or indices mean different things to each.
@@ -272,6 +303,7 @@ func handleSnapshot(_ id: Int, _ bundleId: String) {
     "title": stringAttribute(window, kAXTitleAttribute as String),
     "bundleId": bundleId,
     "elements": elements,
+    "text": readableText(window),
   ]])
 }
 
