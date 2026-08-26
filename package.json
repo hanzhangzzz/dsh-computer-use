@@ -6,9 +6,10 @@
     "node": "^22.19.0 || >=24.0.0"
   },
   "scripts": {
-    "build": "tsdown --config packages/computer/tsdown.config.ts && tsdown --config packages/computer-playwright/tsdown.config.ts && tsdown --config packages/tool-computer/tsdown.config.ts",
+    "build": "tsdown --config packages/computer/tsdown.config.ts && tsdown --config packages/computer-playwright/tsdown.config.ts && tsdown --config packages/computer-macos/tsdown.config.ts && tsdown --config packages/tool-computer/tsdown.config.ts",
     "test": "vitest run",
-    "typecheck": "tsc -b packages/computer packages/computer-playwright packages/tool-computer"
+    "typecheck": "tsc -b packages/computer packages/computer-playwright packages/computer-macos packages/tool-computer",
+    "build:helper": "swiftc -O packages/computer-macos/helper/main.swift -o packages/computer-macos/helper/dsh-computer-macos-helper"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "link:../deepseek-harness/vendor/cordis",

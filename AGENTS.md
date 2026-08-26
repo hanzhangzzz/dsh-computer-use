@@ -11,7 +11,7 @@ dsh-computer-use：DeepSeek Harness 的 computer use 插件。单发布包 `dsh-
 - `packages/tool-computer/` — Consumer：`computer_*` 工具 + bundle manifest（`cordis.patch.yml` 单 entry）。
   它的 `apply` 组装式挂载另两个角色（service + provider），**这是唯一发布入口**。
 - `experiments/` — 验收套件（`phase2-acceptance/run.py`，可移植）、tracer/wechat overlay、断连验证脚本。
-- `docs/` — 设计评审、Phase 3 触发制路线图（新功能必须先看触发条件）。
+- `docs/` — 两份：`HANDOFF.md`（唯一施工依据）与 `EVIDENCE.md`（全部实测结论）。
 - `DO.md` — 循环工作日志与事件复盘（含 2026-08-25 安全事件，必读）。
 
 ## 关键约定（代码里看不出来的）

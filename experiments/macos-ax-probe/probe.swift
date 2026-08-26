@@ -1,5 +1,5 @@
 /// Reproducible probe for the macOS Accessibility path behind the planned
-/// desktop provider (docs/desktop-control-plan.md). It answers one question the
+/// desktop provider (docs/HANDOFF.md). It answers one question the
 /// whole plan rests on: can we read and *act on* a background application
 /// through public APIs only, without stealing focus or moving the user's cursor?
 ///

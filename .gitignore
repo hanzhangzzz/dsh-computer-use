@@ -7,3 +7,12 @@ __pycache__/
 experiments/*/.playwright-mcp/
 # Compiled probe binary; probe.swift is the source of truth (swiftc -O probe.swift -o probe)
 experiments/macos-ax-probe/probe
+
+# Built helper binary; main.swift is the source of truth
+packages/computer-macos/helper/dsh-computer-macos-helper
+
+# Built input-injection probe
+experiments/input-injection/probe
+
+# Built SkyLight injection probe
+experiments/skylight-injection/probe

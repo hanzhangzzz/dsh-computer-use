@@ -1,0 +1,96 @@
+{
+  "passed": 9,
+  "total": 9,
+  "cases": [
+    {
+      "name": "enumerate",
+      "passed": true,
+      "detail": "24 elements, digits found 10/10",
+      "checks": {
+        "elements_present": true,
+        "all_digits_named": true,
+        "geometry_present": true,
+        "actions_reported": true
+      }
+    },
+    {
+      "name": "press-by-index",
+      "passed": true,
+      "detail": "display '\\u200e5' -> '\\u200e7\\u200e×\\u200e6 | \\u200e42'; 7:focusStolen=False cursorMoved=False; 乘:focusStolen=False cursorMoved=False; 6:focusStolen=False cursorMoved=False; 等于:focusStolen=False cursorMoved=False",
+      "checks": {
+        "state_changed": true,
+        "result_is_42": true,
+        "never_disturbed": true
+      }
+    },
+    {
+      "name": "identity-guard",
+      "passed": true,
+      "detail": "element 4 is now AXButton \"7\", not \"this element does not exist\"; take a fresh snapshot",
+      "checks": {
+        "refused": true,
+        "named_the_mismatch": true,
+        "nothing_happened": true
+      }
+    },
+    {
+      "name": "coordinate-hit-test",
+      "passed": true,
+      "detail": "AXButton \"5\" from AXButton \"5\"; focusStolen=False cursorMoved=False",
+      "checks": {
+        "resolved_to_the_key": true,
+        "reported_what_it_hit": true,
+        "state_changed": true,
+        "never_disturbed": true
+      }
+    },
+    {
+      "name": "coordinate-mismatch",
+      "passed": true,
+      "detail": "(598, 686) resolves to AXButton \"5\", not \"9\"; nothing was pressed",
+      "checks": {
+        "refused": true,
+        "said_nothing_was_pressed": true,
+        "nothing_happened": true
+      }
+    },
+    {
+      "name": "electron-target",
+      "passed": true,
+      "detail": "13 elements, 9 named, window '项目列表'",
+      "checks": {
+        "tree_was_built": true,
+        "names_resolved": true,
+        "geometry_present": true
+      }
+    },
+    {
+      "name": "window-geometry",
+      "passed": true,
+      "detail": "(510,421) -> (630,481) -> (510,421); focusStolen=False cursorMoved=False",
+      "checks": {
+        "moved": true,
+        "restored": true,
+        "never_disturbed": true
+      }
+    },
+    {
+      "name": "stale-index",
+      "passed": true,
+      "detail": "no element at index 9999; take a fresh snapshot",
+      "checks": {
+        "refused": true,
+        "guided": true
+      }
+    },
+    {
+      "name": "missing-app",
+      "passed": true,
+      "detail": "application com.example.not.installed is not running",
+      "checks": {
+        "refused": true,
+        "correct_code": true
+      }
+    }
+  ]
+}
