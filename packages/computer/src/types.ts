@@ -96,6 +96,8 @@ export interface ComputerProvider {
   snapshot(signal?: AbortSignal): Promise<ComputerSnapshot>
   /** Click the element at {@link ComputerElement.index} from the last snapshot. */
   click(index: number, signal?: AbortSignal): Promise<ComputerClickResult>
+  /** Click raw viewport coordinates (CSS px, origin top-left) — the fallback for visible-but-unenumerated targets. */
+  clickAt(x: number, y: number, signal?: AbortSignal): Promise<ComputerClickResult>
   /** Type text into the element at {@link ComputerElement.index} from the last snapshot. */
   type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult>
   /** Press one keyboard key (e.g. `Enter`, `Escape`) on the focused element. */

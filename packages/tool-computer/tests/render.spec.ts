@@ -76,11 +76,16 @@ describe('arg parsers reject invalid input', () => {
     expect(() => parseNavigateArgs({ url: 42 })).toThrow(/http\(s\) URL/)
     expect(parseNavigateArgs({ url: 'https://x' })).toEqual({ url: 'https://x' })
   })
-  test('click requires a non-negative integer index', () => {
+  test('click takes exactly one of index or x+y', () => {
     expect(() => parseClickArgs({ index: -1 })).toThrow(/non-negative integer/)
     expect(() => parseClickArgs({ index: 1.5 })).toThrow(/non-negative integer/)
     expect(() => parseClickArgs({ index: '0' })).toThrow(/non-negative integer/)
     expect(parseClickArgs({ index: 0 })).toEqual({ index: 0 })
+    expect(parseClickArgs({ x: 640, y: 610 })).toEqual({ x: 640, y: 610 })
+    expect(() => parseClickArgs({ index: 0, x: 1 })).toThrow(/exactly one/)
+    expect(() => parseClickArgs({})).toThrow(/exactly one/)
+    expect(() => parseClickArgs({ x: 640 })).toThrow(/x and y must be/)
+    expect(() => parseClickArgs({ x: -1, y: 10 })).toThrow(/x and y must be/)
   })
   test('type requires a valid index and a string text', () => {
     expect(() => parseTypeArgs({ index: 0, text: 7 })).toThrow(/text must be a string/)

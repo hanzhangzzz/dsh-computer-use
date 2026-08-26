@@ -100,3 +100,17 @@ describe('attach detach semantics (0.3.2 guard)', () => {
     await expect(ctx.computer.screenshot()).rejects.toThrow(/report this to the user/)
   })
 })
+
+describe('coordinate fallback (clickAt)', () => {
+  test('clicks viewport coordinates that hit the example.com link', async () => {
+    const ctx = await mounted()
+    await ctx.computer.navigate('https://example.com')
+    const page = (ctx.computer as unknown as { snapshot: unknown }) // typing aid only
+    // example.com's centered content block sits at x≈256..1001, y≈125..214
+    // (measured in Phase 1 pixel analysis); the link occupies its last line
+    // at roughly (257..337, 204..214). Click its center.
+    const result = await ctx.computer.clickAt(297, 209)
+    expect(result.url).toContain('iana.org')
+    expect(result.after.url).toContain('iana.org')
+  })
+})

@@ -178,9 +178,11 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.tools.register(defineTool({
     name: 'computer_click',
-    description: 'Click the interactive element at the given index from the latest computer_snapshot. Returns what was clicked, where the page went, and the post-click snapshot (element indices for the next click; an "unchanged" marker means the prior indices remain valid).',
+    description: 'Click a target. Prefer `index` from the latest computer_snapshot (structure-first). Fall back to `x`+`y` viewport coordinates (CSS px, top-left origin, from the screenshot) only when the target is visible in the screenshot but absent from the snapshot — after a coordinate click, always verify with computer_snapshot or computer_screenshot before acting again.',
     parameters: {
-      index: { type: 'number', required: true, description: 'Element index from computer_snapshot.' },
+      index: { type: 'number', description: 'Element index from computer_snapshot (preferred).' },
+      x: { type: 'number', description: 'Viewport x (CSS px) for the coordinate fallback; requires y and excludes index.' },
+      y: { type: 'number', description: 'Viewport y (CSS px) for the coordinate fallback; requires x and excludes index.' },
     },
     output: {
       schema: {
@@ -197,8 +199,10 @@ export function apply(ctx: Context, config: Config): void {
     timeoutMs,
     isConcurrencySafe: () => false,
     async execute(args, exec) {
-      const { index } = parseClickArgs(args)
-      const result = await seam(ctx).click(index, exec.signal)
+      const target = parseClickArgs(args)
+      const result = target.index !== undefined
+        ? await seam(ctx).click(target.index, exec.signal)
+        : await seam(ctx).clickAt(target.x as number, target.y as number, exec.signal)
       const after = result.after
       return {
         clicked: result.clicked,
@@ -328,12 +332,24 @@ export function parseNavigateArgs(args: unknown): { url: string } {
 }
 
 /** Narrow validated click args. */
-export function parseClickArgs(args: unknown): { index: number } {
-  const value = args as { index?: unknown }
-  if (typeof value.index !== 'number' || !Number.isInteger(value.index) || value.index < 0) {
-    throw new Error('computer_click: index must be a non-negative integer from computer_snapshot')
+export function parseClickArgs(args: unknown): { index?: number; x?: number; y?: number } {
+  const value = args as { index?: unknown; x?: unknown; y?: unknown }
+  const hasIndex = value.index !== undefined
+  const hasXY = value.x !== undefined || value.y !== undefined
+  if (hasIndex === hasXY) {
+    throw new Error('computer_click: pass exactly one of index, or x plus y')
   }
-  return { index: value.index }
+  if (hasIndex) {
+    if (typeof value.index !== 'number' || !Number.isInteger(value.index) || value.index < 0) {
+      throw new Error('computer_click: index must be a non-negative integer from computer_snapshot')
+    }
+    return { index: value.index }
+  }
+  if (typeof value.x !== 'number' || typeof value.y !== 'number'
+    || !Number.isFinite(value.x) || !Number.isFinite(value.y) || value.x < 0 || value.y < 0) {
+    throw new Error('computer_click: x and y must be non-negative finite viewport coordinates')
+  }
+  return { x: value.x, y: value.y }
 }
 
 /** Narrow validated type args. */

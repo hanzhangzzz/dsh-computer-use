@@ -116,6 +116,11 @@ export class ComputerRuntime extends Service {
     return resolveProvider(this.providers, this.providerId).type(index, text, signal)
   }
 
+  /** @returns the coordinate-click outcome from the selected provider. */
+  async clickAt(x: number, y: number, signal?: AbortSignal): Promise<ComputerClickResult> {
+    return resolveProvider(this.providers, this.providerId).clickAt(x, y, signal)
+  }
+
   /** @returns the key-press outcome from the selected provider. */
   async pressKey(key: string, signal?: AbortSignal): Promise<ComputerKeyPressResult> {
     return resolveProvider(this.providers, this.providerId).pressKey(key, signal)

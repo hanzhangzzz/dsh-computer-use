@@ -186,6 +186,16 @@ class PlaywrightProvider implements ComputerProvider {
     return { clicked: described, url: page.url(), after }
   }
 
+  async clickAt(x: number, y: number, signal?: AbortSignal): Promise<ComputerClickResult> {
+    this.requireAttached()
+    const page = await this.getPage(signal)
+    await page.mouse.click(x, y)
+    await page.waitForLoadState('domcontentloaded', { timeout: 3_000 }).catch(() => {})
+    await page.waitForTimeout(300)
+    const after = await this.snapshot(signal)
+    return { clicked: `viewport coordinates (${x}, ${y})`, url: page.url(), after }
+  }
+
   async type(index: number, text: string, signal?: AbortSignal): Promise<ComputerTypeResult> {
     this.requireAttached()
     const page = await this.getPage(signal)
