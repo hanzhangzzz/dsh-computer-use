@@ -82,14 +82,47 @@ export interface ComputerKeyPressResult {
 }
 
 /**
- * A computer use provider: drives one interactive surface. Implementations
- * must forward cancellation into their underlying driver wherever feasible.
+ * One thing a provider can drive: a browser page, or a desktop application.
+ *
+ * Surfaces exist so a browser provider and a desktop provider can be mounted
+ * at once. Before this the seam refused that outright — two usable providers
+ * raised `COMPUTER_PROVIDER_AMBIGUOUS` — because "which one did you mean" had
+ * no answer. A surface id is that answer, and it keeps the original property
+ * the ambiguity error was protecting: selection never depends on registration
+ * order, because the caller names the target.
+ */
+export interface ComputerSurface {
+  /** `<providerId>:<local>`, e.g. `playwright:page`, `macos:com.apple.finder`. */
+  readonly id: string
+  /** `browser` for a web page, `app` for a desktop application. */
+  readonly kind: 'browser' | 'app'
+  /** Window or document title, for the model to recognise it by. */
+  readonly title: string
+  /** URL for a browser surface, bundle id for an application. */
+  readonly locator: string
+}
+
+/**
+ * A computer use provider: drives one or more interactive surfaces.
+ * Implementations must forward cancellation into their underlying driver
+ * wherever feasible.
+ *
+ * Action methods stay surface-free and act on whichever surface {@link focus}
+ * last selected. Providers that drive exactly one surface (the browser one)
+ * implement `focus` as a no-op.
  */
 export interface ComputerProvider {
-  /** Registry key; unique within the seam. */
+  /** Registry key; unique within the seam. Prefixes this provider's surface ids. */
   readonly id: string
   /** False while the backing surface cannot run (no browser, no sandbox). */
   available(): boolean
+  /** Every surface this provider can drive right now. */
+  surfaces(signal?: AbortSignal): Promise<readonly ComputerSurface[]>
+  /**
+   * Point subsequent actions at one of this provider's surfaces.
+   * @param surfaceId - an id from {@link surfaces}.
+   */
+  focus(surfaceId: string, signal?: AbortSignal): Promise<ComputerSurface>
   /** Load a URL and wait for settle. */
   navigate(url: string, signal?: AbortSignal): Promise<ComputerNavigation>
   /** Enumerate interactive elements with stable indices. */

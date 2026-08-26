@@ -19,6 +19,7 @@ import type {
   ComputerProvider,
   ComputerScreenshot,
   ComputerSnapshot,
+  ComputerSurface,
   ComputerTypeResult,
 } from '../../computer/src/index.ts'
 
@@ -62,6 +63,9 @@ export const inject = ['computer']
 /** Provider id this package registers under. */
 export const PROVIDER_ID = 'playwright'
 
+/** The single surface this provider drives; the seam routes on its prefix. */
+export const SURFACE_ID = `${PROVIDER_ID}:page`
+
 /** One live Chrome page behind the seam. */
 class PlaywrightProvider implements ComputerProvider {
   readonly id = PROVIDER_ID
@@ -77,6 +81,32 @@ class PlaywrightProvider implements ComputerProvider {
     // playwright-core launches or attaches lazily; the provider is usable
     // whenever the plugin is mounted. Failures surface at first use, loudly.
     return true
+  }
+
+  /**
+   * This provider drives exactly one page, so it reports exactly one surface.
+   * Enumerating it must not launch a browser — listing surfaces is how a caller
+   * decides whether to use this provider at all, and paying a Chrome start-up
+   * to answer that would make the listing useless on a machine that only wants
+   * the desktop provider.
+   */
+  async surfaces(): Promise<readonly ComputerSurface[]> {
+    const page = this.page
+    return [{
+      id: SURFACE_ID,
+      kind: 'browser',
+      title: page === undefined ? 'browser (not started)' : await page.title().catch(() => ''),
+      locator: page === undefined ? 'about:blank' : page.url(),
+    }]
+  }
+
+  /** Single-surface provider: focusing its own surface is a no-op. */
+  async focus(surfaceId: string): Promise<ComputerSurface> {
+    if (surfaceId !== SURFACE_ID) {
+      throw new Error(`computer_focus: this provider only drives "${SURFACE_ID}", not "${surfaceId}"`)
+    }
+    const [surface] = await this.surfaces()
+    return surface as ComputerSurface
   }
 
   /** The single page, launched or attached on first use. */
