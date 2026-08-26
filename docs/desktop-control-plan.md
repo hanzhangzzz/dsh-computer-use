@@ -1,10 +1,22 @@
 # 桌面控制方案：对标 Codex app，用公开 API 走得更远
 
-日期：2026-08-26。状态：待人类裁决。读者：接手实施的 AI 或人。
+日期：2026-08-26（2026-08-26 修订：目标升级为人机共驾，见「目标」节）。状态：待人类裁决。读者：接手实施的 AI 或人。
 
 本文回答一个问题：**dsh-computer-use 要怎么获得 Codex app 级别的桌面控制能力。**
 结论先行——不需要任何 macOS 私有 API，而且在 Electron 应用这一类上本插件的架构本来就比
 Codex 更准。理由全部落在下面的实测证据上。
+
+## 目标：人机共驾
+
+由人类确定的终极判据，本文的一切裁决服从它：
+
+1. **agent 有自己的可见光标**——用户能实时看到 agent 在点哪里，而不是屏幕上无缘无故地变化。
+2. **不与用户争抢当前活跃环境**——用户的系统光标不动、frontmost 不变、不被拖过 Space；
+   人和 agent 同时用一台机器互不干扰。
+
+两条合起来就是「人机共驾」：不是 agent 接管电脑，是人和 agent 各有一套输入通道共用一块屏幕。
+D16–D21 表明这个目标**可以零私有 API 达成**，前提是主路径坚持 element-index grounding
+（见裁决 2 修订版与裁决 10）。
 
 阅读顺序建议：先看「证据底座」和「一句话结论」，再看「架构裁决」，实施时看「接口改造」
 和「实施路线」。**不要跳过证据底座直接实施**——本文每条裁决都绑定了证据编号，证据被推翻
@@ -40,6 +52,12 @@ D1–D5、D12 是**本机实测**（macOS 26.5.2 / arm64 / 2026-08-26），探�
 | D13 | 开源复刻件：trycua/cua（MIT，21.9k star，活跃，Python/Swift，无 Node SDK）、OpenCodexLabs/open-codex-computer-use（MIT，Swift MCP server，已停更）、iFurySt/open-codex-computer-use（MIT，npm 包但依赖外部二进制）。**Node 生态没有成熟的 AX 绑定**（robotjs 过时、ffi-napi 停维护） | 仓库调研 |
 | D14 | **attach 模式下截图尺寸元数据是错的，且刚落地的坐标兜底依赖它**：以 900×600 窗口起 Chrome 并 attach，真实 PNG 为 **1800×1026**（Retina DPR=2，对应 900×513 CSS 像素），而 provider 向模型报告 `1280×800`（配置默认值）。`page.mouse.click(x, y)` 吃的是 CSS 像素，模型却按错误尺寸的图推坐标 | 本机实测，见「已知缺陷」节的复现脚本 |
 | D15 | **`page.screenshot({ scale: 'css' })` 使截图像素与点击坐标空间同一**：同一场景下产出 900×513，恰等于 `innerWidth/innerHeight` | 本机实测 |
+| D16 | **CDP 鼠标派发在 attach 的 Electron 上完全可靠，此前的"不可靠"是坐标空间错配的误诊**：微信开发者工具实测 CSS 视口 711×700 / DPR 2 / PNG 1422×1400 / provider 报告 1280×800（三者互不相同）。模型在 1422×1400 的图上读到图标在 (28,143)，`page.mouse.click` 吃 CSS 像素，落在 `span`（死区），前后截图字节相同。改 `scale:'css'` 后同一宿主 `page.mouse.click(14,72)` 命中 `div "小程序"`，页面切换 | 本机实测，`cdp-coord-verify.spec.ts`（`WECHAT_CDP=1`），修复见 commit `6a9ea06` |
+| D17 | **可见 agent 光标是纯呈现层，与输入注入无关**：Codex 的 `SkyComputerUseService` 用 `NSWindow`/`CALayer` 画光标，路径是分段三次 Bezier（每次移动生成 20 条候选路径按长度/转角能量加权评分）+ VelocityVerlet 弹簧物理（response 1.4 / damping 0.9 / 1&#47;240s 定步长）。**这套全部是公开 API**；cua 的 `cursor-overlay` crate 同样"渲染 agent 光标而不移动硬件光标" | 逆向文档 + cua 文档，可靠度中高 |
+| D18 | **cua 的主 grounding 也是 element_index 而非像素**：`get_window_state` 返回结构化 AX 树，`click({pid, window_id, element_index})` 直接触发 AX 动作，**对隐藏/被遮挡窗口有效且不涉及坐标**。默认 capture 模式 `som` = AX 树 + 截图 | cua DeepWiki，可靠度高 |
+| D19 | **私有 API 的必要性可逐格拆解，且只剩一格与我们相关**：`SLEventPostToPid` 只在**往 Chromium 渲染器注入像素坐标鼠标**时必需（Chromium 的渲染器 IPC 过滤掉缺少 HID 遥测字段的合成事件；还需 (-1,-1) 诱饵点击过 user-activation gate）；`SLPSPostEventRecordTo` 只用于 focus-without-raise；键盘 `CGEvent.postToPid` 即可，**无需任何 SkyLight 包装** | cua 一手技术博客，可靠度高 |
+| D20 | **另有纯 `CGEventPostToPid` 的公开路线存在**：`mac-cua` 的设计铁律是"CGEventPostToPid, never CGEventPost — 所有输入按进程定向"，配合 ScreenCaptureKit 按 window ID 免激活截图。**但它不万能**：Apple 开发者论坛记录了模态对话框必须先获得焦点才响应的失败案例 | 仓库调研 + Apple 论坛，可靠度中 |
+| D21 | **公开 AX 路线的已知失败面**（另一个公开 API 复刻件实测记录）：日历类与 Catalyst 应用 AX 支持太薄需降级前台；游戏与 canvas 无真实 AX 树；跨 Space 的被遮挡窗口截不到（系统没有那些像素）。其架构为守权限的 daemon + Unix socket 上的长度前缀 JSON-RPC，返回"一个窗口的截图 + 该窗口带编号的 AX 树" | 第三方一手实现记录，可靠度中高 |
 
 ### D3 的关键辨析：pull 与 push 不是一回事
 
@@ -104,7 +122,13 @@ Codex 之所以必须上 SkyLight，是因为它要在**屏幕坐标**上合成�
 **实施约束**：任何引入 `SLEventPostToPid` / `SLPSPostEventRecordTo` / `_AXObserverAdd...` 的
 PR 默认拒绝，除非附带「AX 动作路径在真实任务上失败」的实测数据。
 
-### 裁决 2：不劫持用户的真实光标与焦点，写进 provider 契约
+### 裁决 2：不劫持用户的**真实**光标与焦点；agent 用自己的光标
+
+**2026-08-26 修订**：本裁决初版隐含了"不做光标"，那是错的推论。人机共驾要的是
+**两套光标**——系统光标属于用户，永不被动；agent 另有一套渲染出来的光标，让用户看得见
+agent 在做什么。D17 表明这两件事在实现上本就无关（Codex 也是分开的：`NSWindow`/`CALayer`
+画光标，SkyLight 注入事件）。不变量因此精确化为：**不得移动系统光标、不得改变 frontmost**，
+而不是"不得出现光标"。具体形态见裁决 10。
 
 这既是安全 DNA 的延续，也机械地把实现锁死在公开 API 上：一旦允许 `CGEventPost`（进 HID 流），
 就会移动用户真实光标（D7），于是就需要私有 API 去规避，于是裁决 1 失守。
@@ -233,6 +257,51 @@ DO.md 2026-08-26 10:40 记录的微信开发者工具盲区（React 合成事件
 所以先落地无妨；原生应用上第 4 层昂贵（需合成 HID 鼠标 → 私有 API 或劫持光标），
 所以桌面 provider **必须**把第 2、3 层做在前面，不能照抄浏览器侧的顺序。
 
+### 裁决 10：可见 agent 光标是独立的呈现层，绑在 surface 上，公开 API 实现
+
+人机共驾的第 1 条要求（用户看得见 agent 在点哪）由此裁决兑现。核心认识来自 D17：
+**光标是渲染，不是输入。** Codex 把两者绑在一起，是因为它的 grounding 就是屏幕坐标——
+既然事件已经按坐标注入了，顺手照着同一坐标画个光标是零额外成本。我们的 grounding 是
+element index（与 cua 同构，D18），但元素有几何（裁决 9 第 3 层的 `rect`），照样能算出
+"光标该飞到哪"。**这正是第 3 层几何字段的第三个理由**——除了让模型对齐视觉、给坐标点击做
+命中验证，它还是可见光标的输入。
+
+两个 surface 类各用自己的渲染器，同一套语义：
+
+| surface | 渲染 | 不动系统光标的理由 |
+|---|---|---|
+| `browser` | 页面内注入一个 `position:fixed; pointer-events:none; z-index:2147483647` 的 overlay 节点 | 它只是 DOM，压根不碰输入系统 |
+| `app` | `NSWindow`（`.screenSaver` 级、`isOpaque=false`、`ignoresMouseEvents=true`）里放 `CALayer` | 窗口透明且不接受鼠标事件，用户的点击穿透过去 |
+
+动效第一版**不抄** Codex 的 20 候选 Bezier + 弹簧物理（D17）——那是拟人化打磨，
+先做直线插值 + 点击涟漪，够用即止。何时升级由"用户看不清 agent 在干什么"的真实反馈触发。
+
+**这一层是可关的**：`cursor: false` 时 provider 行为完全不变（渲染层不参与任何动作路径）。
+自动化/无人值守场景不需要它，回归测试也不该依赖它。
+
+### 裁决 11：私有 API 的必要性逐格拆解，与我们相关的格子为零
+
+D19 把「Codex 需要私有 API」拆成了具体格子。逐格对照本插件：
+
+| 能力格 | 手段 | 私有？ | 本插件 |
+|---|---|---|---|
+| 原生应用元素点击（后台、被遮挡也行） | `AXUIElementPerformAction` | 公开 | 主路径（D1） |
+| 键盘输入到指定进程 | `CGEvent.postToPid` | 公开（D19 明说无需 SkyLight 包装） | 采用 |
+| 原生应用坐标点击 | `CGEventPostToPid` | 公开 | 兜底，**有边界**（D20：模态框可能需焦点） |
+| **Chromium/Electron 内容操作** | **CDP** | 公开 | **已有，且比 SkyLight 路线更准** |
+| 被遮挡窗口截图 | ScreenCaptureKit 按 window ID | 公开 | 片 5（D5 已判定必经） |
+| 可见 agent 光标 | `NSWindow` + `CALayer` | 公开 | 裁决 10 |
+| Chromium **像素**坐标注入 | `SLEventPostToPid` + (-1,-1) 诱饵点击 | **私有** | **不需要**——这一格 CDP 全覆盖 |
+| focus-without-raise | `SLPSPostEventRecordTo` | **私有** | **不需要**——AX 动作不要求 AppKit-active（D1） |
+| 遮挡时的 Electron AX 通知 | `_AXObserverAddNotificationAndCheckRemote` | **私有** | **不需要**——我们是 pull 模型（D3 辨析） |
+
+**结论**：Codex 必须用私有 API 的那一格（往 Chromium 渲染器打像素鼠标）恰好是我们唯一
+已经有更好解法的格子。人机共驾的两条要求在公开 API 上全部可兑现。
+
+**留在台面上的真实代价**（不粉饰）：D21 记录的公开 AX 路线失败面依然存在——日历类/Catalyst
+应用 AX 太薄、游戏与 canvas 无 AX 树、跨 Space 被遮挡窗口无像素可截。这些场景下要么降级
+前台（破坏共驾承诺），要么承认不支持。届时是重新评估私有 API 的**唯一**正当触发点。
+
 ## 接口改造
 
 以下是对 `packages/computer/src/types.ts` 的具体改造。这是 breaking change，但插件处于 0.3.x、
@@ -335,7 +404,14 @@ true 就当作缺陷上报而不是静默通过。这样不变量不靠人记，
 按 index 定位——这与浏览器侧 `interactiveHandles` 是索引唯一权威的做法同构，
 **必须保持一致，否则会重演 DO.md 2026-08-25 11:40 的索引错位事故**。
 
-## 已知缺陷：截图尺寸元数据（阻塞坐标兜底的正确性）
+## 已修：截图尺寸元数据（曾阻塞坐标兜底的正确性）
+
+**2026-08-26 已修复（commit `6a9ea06`）**：`screenshot()` 改 `scale:'css'` 并回报 PNG 自身
+尺寸，截图像素、报告尺寸、点击坐标三者收敛为同一空间。同时 D16 证伪了"CDP 派发在 attach 的
+Electron 上不可靠"这一误诊，据此写的 `elementFromPoint` + `.click()` 变通已回退为
+`page.mouse.click`（真实鼠标事件序列，会发 pointer 事件，比 `element.click()` 忠实）。
+回归网：attach 一个 900×600 且 `--force-device-scale-factor=2` 的宿主，断言报告尺寸 ==
+真实 PNG 尺寸。以下为修复前的现象记录，保留作为"三个坐标空间"这类缺陷的样本。
 
 **这条独立于桌面控制，但必须先修**——它让刚落地的坐标兜底在 attach 模式（也就是触发该
 功能的微信开发者工具场景）下系统性偏移。
@@ -381,13 +457,16 @@ console.log('viewport:', await page.evaluate(() => [innerWidth, innerHeight, dev
 
 | 片 | 内容 | 验收 | 状态 |
 |---|---|---|---|
-| 0 | 可行性探针 | `probe press` 在后台应用上动作成功、焦点光标未动 | ✅ 本次完成（D1） |
-| 0.5 | 修截图尺寸元数据（见「已知缺陷」） | attach 一个非 1280×800 的宿主，断言报告尺寸 == 真实 PNG 尺寸 == CSS 视口尺寸 | **待做，阻塞坐标兜底正确性** |
+| 0 | 可行性探针 | `probe press` 在后台应用上动作成功、焦点光标未动 | ✅ 完成（D1） |
+| 0.5 | 修截图尺寸元数据（见「已修」节） | attach 一个非 1280×800 的宿主，断言报告尺寸 == 真实 PNG 尺寸 == CSS 视口尺寸 | ✅ 完成（`6a9ea06`，D16） |
 | 1 | seam 多 surface 路由 + Playwright provider 适配 | 现有单测全绿、10 任务验收套件重跑 10/10（纯重构，行为不许变） | 待做 |
-| 2 | Swift helper 最小可用（surfaces/snapshot/press/setValue/key）+ Node 侧 macOS provider + bundle 白名单 | 单测：对计算器做 navigate-free 的 snapshot→press→回读断言；helper 每次回报 focusStolen=false | 待做 |
-| 3 | 模型级桌面验收套件 | 仿 `experiments/phase2-acceptance/run.py` 建桌面任务集，log 核验工具真实调用 + 零越界 bash | 待做 |
-| 4 | 几何字段 + 枚举启发式（裁决 9 第 1–3 层，第 4 层已落地） | 先出度量数据再改代码；Wikipedia 与微信开发者工具双页面对比 | 待做 |
-| 5 | ScreenCaptureKit 截图（含被遮挡窗口） | D5 决定的必经之路；验收=遮挡状态下截到正确内容 | 待做 |
+| 2 | 几何字段 `rect`（浏览器侧，裁决 9 第 3 层） | `getBoundingClientRect` 进 snapshot；坐标点击的命中验证跑通 | 待做，**提前到片 4 之前**：裁决 10 的光标依赖它 |
+| 3 | 可见 agent 光标（浏览器 surface，裁决 10） | 人眼可见：光标移到目标元素中心、点击涟漪、`cursor:false` 时行为零差异 | 待做 |
+| 4 | Swift helper 最小可用（surfaces/snapshot/press/setValue/key）+ Node 侧 macOS provider + bundle 白名单 | 单测：对计算器做 snapshot→press→回读断言；helper 每次回报 focusStolen=false / cursorMoved=false | 待做 |
+| 5 | 可见 agent 光标（app surface，`NSWindow`+`CALayer`） | 后台操作计算器时用户看得见光标飞过去，系统光标全程不动 | 待做 |
+| 6 | 模型级桌面验收套件 | 仿 `experiments/phase2-acceptance/run.py` 建桌面任务集，log 核验工具真实调用 + 零越界 bash | 待做 |
+| 7 | 枚举启发式扩充（裁决 9 第 1、2 层） | 先出度量数据再改代码；Wikipedia 与微信开发者工具双页面对比 | 待做 |
+| 8 | ScreenCaptureKit 截图（含被遮挡窗口） | D5 决定的必经之路；验收=遮挡状态下截到正确内容 | 待做 |
 
 触发制开放项（沿用 docs/phase3-roadmap.md 的制度，未触发不做）：
 
