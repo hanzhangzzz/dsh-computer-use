@@ -1,0 +1,144 @@
+{
+  "pages": [
+    {
+      "name": "wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Main_Page",
+      "baselineTotal": 346,
+      "baselineInViewport": 134,
+      "pointerExtra": 0,
+      "pointerVisible": 0,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 0,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 0,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    },
+    {
+      "name": "hn",
+      "url": "https://news.ycombinator.com",
+      "baselineTotal": 227,
+      "baselineInViewport": 227,
+      "pointerExtra": 0,
+      "pointerVisible": 0,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 0,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 0,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    },
+    {
+      "name": "github",
+      "url": "https://github.com/openai/codex",
+      "baselineTotal": 449,
+      "baselineInViewport": 194,
+      "pointerExtra": 2,
+      "pointerVisible": 1,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 1,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 1,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    },
+    {
+      "name": "react-docs",
+      "url": "https://react.dev",
+      "baselineTotal": 116,
+      "baselineInViewport": 14,
+      "pointerExtra": 2,
+      "pointerVisible": 1,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 1,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 1,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    },
+    {
+      "name": "mdn",
+      "url": "https://developer.mozilla.org/en-US/",
+      "baselineTotal": 170,
+      "baselineInViewport": 42,
+      "pointerExtra": 0,
+      "pointerVisible": 0,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 0,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 0,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    },
+    {
+      "name": "example",
+      "url": "https://example.com",
+      "baselineTotal": 1,
+      "baselineInViewport": 1,
+      "pointerExtra": 0,
+      "pointerVisible": 0,
+      "pointerNested": 0,
+      "genuineNew": 0,
+      "ambiguousWrappers": 0,
+      "lostToAmbiguity": 0,
+      "rejection": {
+        "invisible": 0,
+        "nested": 0,
+        "giant": 0,
+        "offscreen": 0,
+        "notTopmost": 0,
+        "noText": 0,
+        "kept": 0
+      },
+      "genuineTags": {},
+      "missRate": 0
+    }
+  ],
+  "totalBaseline": 1309,
+  "totalNew": 0
+}
