@@ -37,6 +37,8 @@ from pathlib import Path
 
 HELPER = Path(__file__).resolve().parents[2] / "packages/computer-macos/helper/dsh-computer-macos-helper"
 CALCULATOR = "com.apple.calculator"
+# The WeChat devtools; Chromium applications report this bundle id.
+ELECTRON = "com.github.Electron"
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
@@ -253,16 +255,37 @@ def case_coordinate_mismatch(helper: Helper) -> Outcome:
                    response.get("error", {}).get("message", "no error")[:120], checks)
 
 
-def case_unchanged_collapse(helper: Helper) -> Outcome:
-    """A repeated read of an unchanged window must not repay its full cost."""
-    helper.call("snapshot", bundleId=CALCULATOR)
-    first = helper.call("snapshot", bundleId=CALCULATOR)["result"]
-    size_full = len(json.dumps(first))
-    checks = {"elements_returned": len(first["elements"]) > 0}
-    # The helper drops its cache after any action, so a bare repeat is the
-    # only way to observe the collapse at this layer.
-    return Outcome("unchanged-collapse", all(checks.values()),
-                   f"{len(first['elements'])} elements, {size_full} bytes", checks)
+def case_electron_target(helper: Helper) -> Outcome:
+    """The class of application this is actually for.
+
+    Every other case drives Calculator, which is native, well behaved, and the
+    friendliest target on the machine. It proves the mechanism and nothing
+    about the real world. Most desktop software worth automating is Chromium,
+    which exposes no tree at all until asked and is where the interesting
+    failures live.
+
+    Skips rather than fails when the target is not running: an absent
+    application is not a defect in the code under test.
+    """
+    probe = helper.call("snapshot", bundleId=ELECTRON)
+    if "error" in probe and probe["error"].get("code") == "MACOS_APP_NOT_RUNNING":
+        return Outcome("electron-target", True, "skipped: the WeChat devtools are not running",
+                       {"skipped": True})
+    if "error" in probe:
+        return Outcome("electron-target", False, probe["error"]["message"])
+    result = probe["result"]
+    elements = result["elements"]
+    named = [e for e in elements if e.get("name")]
+    checks = {
+        # Zero would mean the tree never got built, which is the failure mode
+        # the settle-wait exists to prevent.
+        "tree_was_built": len(elements) > 0,
+        "names_resolved": len(named) > 0,
+        "geometry_present": any(e.get("rect") for e in elements),
+    }
+    return Outcome("electron-target", all(checks.values()),
+                   f"{len(elements)} elements, {len(named)} named, window {result.get('title','')!r}",
+                   checks)
 
 
 def case_window_geometry(helper: Helper) -> Outcome:
@@ -312,7 +335,7 @@ CASES = [
     Case("identity-guard", "a stale target is refused before acting", case_identity_guard),
     Case("coordinate-hit-test", "a coordinate resolves to a named element", case_coordinate_hit_test),
     Case("coordinate-mismatch", "a wrong aim is caught before the press", case_coordinate_mismatch),
-    Case("unchanged-collapse", "a repeated read collapses", case_unchanged_collapse),
+    Case("electron-target", "a Chromium application exposes a built tree", case_electron_target),
     Case("window-geometry", "a window moves and restores without a pointer", case_window_geometry),
     Case("stale-index", "an out-of-range index is refused with guidance", case_stale_index),
     Case("missing-app", "an absent application is named, not swallowed", case_missing_app),

@@ -55,11 +55,13 @@
       }
     },
     {
-      "name": "unchanged-collapse",
+      "name": "electron-target",
       "passed": true,
-      "detail": "24 elements, 4058 bytes",
+      "detail": "13 elements, 9 named, window '项目列表'",
       "checks": {
-        "elements_returned": true
+        "tree_was_built": true,
+        "names_resolved": true,
+        "geometry_present": true
       }
     },
     {
