@@ -272,7 +272,18 @@ class PlaywrightProvider implements ComputerProvider {
     // off this image is directly usable by clickAt. Without it a Retina or
     // attached host renders at devicePixelRatio and every coordinate the model
     // derives is off by that factor (measured 2× on the WeChat devtools host).
-    const data = await page.screenshot({ type: 'png', scale: 'css' })
+    // The navigation budget, not the action budget. `actionTimeoutMs` is sized
+    // for waiting on one element to become interactable; a screenshot instead
+    // waits for the page to finish rendering, which is load time. Measured on
+    // the acceptance path: clicking through to iana.org costs ~2.5s and its
+    // first screenshot another ~2.2s, so the pair sat right on the 5s action
+    // budget and failed intermittently — while the same call on an already
+    // painted page takes under 40ms.
+    const data = await page.screenshot({
+      type: 'png',
+      scale: 'css',
+      timeout: this.config.navigationTimeoutMs,
+    })
     // Report the image's own dimensions, never the configured viewport: attach
     // mode adopts the host application's context and never applies that config.
     const [width, height] = pngSize(data)
