@@ -204,8 +204,9 @@ func runningApp(_ bundleId: String) -> NSRunningApplication? {
   NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == bundleId }
 }
 
-/// Apps already told to expose their tree; asking twice is harmless but the
-/// settle wait is not free.
+/// Apps this process switched into Chromium's full accessibility mode, so the
+/// settle wait is paid once and — more importantly — so they can all be
+/// switched back when this process ends.
 var accessibilityEnabled = Set<pid_t>()
 
 /// Chromium builds its accessibility tree only once it believes an assistive
@@ -219,11 +220,31 @@ var accessibilityEnabled = Set<pid_t>()
 /// Electron, and without this the whole class reads as empty.
 func enableAccessibility(_ axApp: AXUIElement, _ pid: pid_t) {
   if accessibilityEnabled.contains(pid) { return }
-  accessibilityEnabled.insert(pid)
   let accepted = AXUIElementSetAttributeValue(axApp, "AXManualAccessibility" as CFString, kCFBooleanTrue) == .success
-  // Native applications reject the attribute; they had a tree all along.
+  // Native applications reject the attribute; they had a tree all along, and
+  // recording them would make the restore below touch apps we never changed.
   if !accepted { return }
+  accessibilityEnabled.insert(pid)
   waitForTreeToSettle(axApp)
+}
+
+/// Put every application back the way it was found.
+///
+/// The flag turns off the optimisation Chromium relies on to stay cheap: it
+/// builds no accessibility tree until it believes an assistive client is
+/// watching, and this tells it one is. Leaving that on after we stop watching
+/// leaves the application maintaining a full tree for nobody, for as long as
+/// it runs — the cost is unbounded because the process outlives ours.
+///
+/// Restoring is best-effort by nature. An application that has quit, hung, or
+/// stopped answering the accessibility API cannot be reset, and failing to
+/// reset one must not stop the rest from being reset.
+func restoreAccessibility() {
+  for pid in accessibilityEnabled {
+    let axApp = AXUIElementCreateApplication(pid)
+    _ = AXUIElementSetAttributeValue(axApp, "AXManualAccessibility" as CFString, kCFBooleanFalse)
+  }
+  accessibilityEnabled.removeAll()
 }
 
 /// Wait until the tree stops growing, rather than for a fixed interval.
@@ -645,6 +666,23 @@ func handlePermissions(_ id: Int) {
 
 // MARK: - Loop
 
+/// Restore before exiting, on the ordinary path and on the signals a parent
+/// uses to stop a child. Without the handlers the common case — the plugin's
+/// fiber disposing and terminating this process — would skip the restore
+/// entirely, which is precisely when it matters.
+///
+/// The handlers do the minimum that is safe to do in that context: reset the
+/// flag, then re-raise with the default disposition so the exit status still
+/// tells the truth about how the process ended.
+for signalNumber in [SIGTERM, SIGINT, SIGHUP] {
+  signal(signalNumber, { received in
+    restoreAccessibility()
+    signal(received, SIG_DFL)
+    raise(received)
+  })
+}
+atexit { restoreAccessibility() }
+
 let decoder = JSONDecoder()
 while let line = readLine(strippingNewline: true) {
   if line.isEmpty { continue }
@@ -670,3 +708,7 @@ while let line = readLine(strippingNewline: true) {
   default: fail(request.id, "unknown method \(request.method)", code: "MACOS_UNKNOWN_METHOD")
   }
 }
+
+// stdin closed: the parent is done with us and the applications we switched
+// into full accessibility mode should not keep paying for it.
+restoreAccessibility()
