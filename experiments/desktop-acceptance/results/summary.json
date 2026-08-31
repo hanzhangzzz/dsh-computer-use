@@ -16,7 +16,7 @@
     {
       "name": "press-by-index",
       "passed": true,
-      "detail": "display '\\u200e5' -> '\\u200e7\\u200e×\\u200e6 | \\u200e42'; 7:focusStolen=False cursorMoved=False; 乘:focusStolen=False cursorMoved=False; 6:focusStolen=False cursorMoved=False; 等于:focusStolen=False cursorMoved=False",
+      "detail": "display '\\u200e0' -> '\\u200e7\\u200e×\\u200e6 | \\u200e42'; 7:focusStolen=False cursorMoved=False; 乘:focusStolen=False cursorMoved=False; 6:focusStolen=False cursorMoved=False; 等于:focusStolen=False cursorMoved=False",
       "checks": {
         "state_changed": true,
         "result_is_42": true,

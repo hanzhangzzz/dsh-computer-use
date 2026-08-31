@@ -331,7 +331,10 @@ async function viewportSize(page: Page): Promise<string> {
 async function interactiveHandles(page: Page): Promise<Array<import('playwright-core').ElementHandle<HTMLElement>>> {
   const collect = () => page.evaluateHandle(selector => {
     const nodes = Array.from(document.querySelectorAll(selector))
-    const docLang = document.documentElement.lang || ''
+    // A navigation can leave the page between documents, where querySelectorAll
+    // answers but documentElement is still null. Reading `.lang` off it then
+    // throws from inside the page, which surfaces as an opaque TypeError.
+    const docLang = document.documentElement?.lang ?? ''
     const out: HTMLElement[] = []
     for (const node of nodes) {
       const el = node as HTMLElement
@@ -351,7 +354,15 @@ async function interactiveHandles(page: Page): Promise<Array<import('playwright-
   try {
     return await resolve()
   } catch (error: unknown) {
-    if (!(error instanceof Error) || !String(error.message).includes('Execution context was destroyed')) throw error
+    // Both messages are the same race seen from different moments: the old
+    // document went away mid-enumeration, or the new one has not arrived yet.
+    // Either way the fix is to wait for the document and read again, rather
+    // than hand the model an error it can do nothing with.
+    const message = error instanceof Error ? error.message : ''
+    const midNavigation = message.includes('Execution context was destroyed')
+      || message.includes('Cannot read properties of null')
+      || message.includes('Target closed')
+    if (!midNavigation) throw error
     await page.waitForLoadState('domcontentloaded', { timeout: 5_000 }).catch(() => {})
     return await resolve()
   }

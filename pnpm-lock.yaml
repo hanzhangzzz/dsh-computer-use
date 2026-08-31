@@ -48,6 +48,15 @@ importers:
         specifier: 4.0.1
         version: 4.0.1
 
+  packages/computer-macos:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: 4.0.1
+        version: 4.0.1
+      dsh-computer:
+        specifier: workspace:*
+        version: link:../computer
+
   packages/computer-playwright:
     dependencies:
       '@deepseek-ai/cordis':

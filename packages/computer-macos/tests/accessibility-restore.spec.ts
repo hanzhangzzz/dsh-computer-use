@@ -55,6 +55,39 @@ async function actionableCount(bundleId: string, stop: 'stdin' | 'sigterm'): Pro
   return { live }
 }
 
+describe.skipIf(process.platform !== 'darwin')('the helper does not outlive its parent', () => {
+  test('an orphaned helper exits instead of running forever', async () => {
+    // The main loop blocks on stdin, so an ordinary parent exit closes the
+    // pipe and the helper follows. That covers most cases but not all: kill a
+    // parent outright while something else holds the write end and the read
+    // never ends. A helper stuck there keeps an application in full
+    // accessibility mode and burns CPU with nothing on screen to explain it.
+    //
+    // The watchdog reacts to being reparented, so this drives the real thing:
+    // a detached grandchild whose parent is killed outright.
+    const script = 'const { spawn } = require("node:child_process");'
+      + ` const c = spawn(${JSON.stringify(HELPER)}, [], { stdio: ["pipe","pipe","pipe"], detached: true });`
+      + ' c.unref(); console.log(c.pid); setInterval(() => {}, 1000);'
+    const parent = spawn(process.execPath, ['-e', script], { stdio: ['ignore', 'pipe', 'ignore'] })
+    let out = ''
+    parent.stdout.setEncoding('utf8').on('data', (value: string) => { out += value })
+    await new Promise(resolve => setTimeout(resolve, 1_500))
+    const helperPid = Number(out.trim())
+    expect(Number.isInteger(helperPid) && helperPid > 0, `no helper pid: ${out}`).toBe(true)
+
+    const alive = (pid: number): boolean => {
+      try { process.kill(pid, 0); return true } catch { return false }
+    }
+    expect(alive(helperPid), 'the helper should be running before its parent goes away').toBe(true)
+
+    parent.kill('SIGKILL')
+    await new Promise(resolve => setTimeout(resolve, 6_000))
+    if (alive(helperPid)) process.kill(helperPid, 'SIGKILL')
+    expect(alive(helperPid), 'the helper outlived its parent, which is how a machine ends up'
+      + ' running an invisible process at full CPU for days').toBe(false)
+  }, 30_000)
+})
+
 describe.skipIf(TARGET === '' || process.platform !== 'darwin')('accessibility mode is restored', () => {
   test('a tree that the helper opened collapses again once it exits', async () => {
     const { live } = await actionableCount(TARGET, 'stdin')

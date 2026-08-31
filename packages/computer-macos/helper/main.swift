@@ -683,6 +683,33 @@ for signalNumber in [SIGTERM, SIGINT, SIGHUP] {
 }
 atexit { restoreAccessibility() }
 
+/// Exit when the parent does, even if the pipe never closes.
+///
+/// The main loop blocks on stdin, so an ordinary parent exit closes the pipe
+/// and this process follows. That covers most cases but not all: if the parent
+/// is killed outright while something else holds the write end of the pipe,
+/// the read never ends and this process waits forever — a stray helper holding
+/// an application in full accessibility mode, costing CPU with nothing on
+/// screen to explain it. A machine ran a hung Electron process at 99% for a
+/// day and a half before anyone noticed, which is exactly how expensive
+/// invisible leftovers are.
+///
+/// Watching the parent pid is cheap and needs no cooperation from it. `getppid`
+/// returns 1 once the original parent is gone and launchd adopts us.
+let orphanWatch = Thread {
+  let parentAtStart = getppid()
+  while true {
+    Thread.sleep(forTimeInterval: 2)
+    let parent = getppid()
+    if parent != parentAtStart || parent <= 1 {
+      restoreAccessibility()
+      exit(0)
+    }
+  }
+}
+orphanWatch.name = "orphan-watch"
+orphanWatch.start()
+
 let decoder = JSONDecoder()
 while let line = readLine(strippingNewline: true) {
   if line.isEmpty { continue }
