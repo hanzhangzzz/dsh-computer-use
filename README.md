@@ -37,8 +37,8 @@ Electron applications through the Accessibility API. It is built and tested from
 but it is not wired into `dsh-tool-computer` and is absent from the npm tarball. Installing the
 published plugin therefore does not provide native macOS Accessibility control.
 
-The experimental native provider has two guards, both from incidents rather than theory. An
-action carries the identity its caller expected and is refused when the live element no longer
+Two guards protect different surfaces. In the experimental native provider, an action carries
+the identity its caller expected and is refused when the live element no longer
 matches, because a wrong press on a desktop cannot be undone. For the published CDP provider, an
 attached application that disconnects is a terminal state: every later call answers "report this
 and wait, do not restart the host yourself".
@@ -75,6 +75,6 @@ python3 experiments/desktop-acceptance/run.py    # desktop capability acceptance
 | [docs/EVIDENCE.md](docs/EVIDENCE.md) | Every measured conclusion, with how to reproduce it |
 | `AGENTS.md` | Repository layout and the invariants that are not visible in the code |
 
-Published as `dsh-tool-computer` (npm). At the time of this update, npm `latest` is `0.4.0` while
+Published as `dsh-tool-computer` (npm). As checked on 2026-09-20, npm `latest` is `0.4.0` while
 the newest GitHub Release is `v0.3.2`; the release page therefore does not describe every change
 in the npm package. Repository: hanzhangzzz/dsh-computer-use.
